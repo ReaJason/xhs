@@ -25,6 +25,8 @@ setup(
     packages=["xhs"],
     install_requires=["requests", "PyExecJS"],
     keywords="xhs crawl",
+    include_package_data=True,
+    zip_safe=False,
     python_requires=">=3.7",
     classifiers=[
         "Development Status :: 3 - Alpha",
