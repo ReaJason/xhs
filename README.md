@@ -1,2 +1,3 @@
 # xhs
-基于小红书 Web 端进行的请求封装。https://www.xiaohongshu.com/explore
+
+> 该项目只用于学习研究，请勿用于非法用途，请合理设置爬虫间隔不要对目标服务器造成破坏
