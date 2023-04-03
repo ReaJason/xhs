@@ -1,0 +1,7 @@
+requests
+PyExecJS
+flake8
+pre-commit
+pytest
+setuptools
+twine

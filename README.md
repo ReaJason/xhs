@@ -1,3 +1,19 @@
 # xhs
 
-> 该项目只用于学习研究，请勿用于非法用途，请合理设置爬虫间隔不要对目标服务器造成破坏
+**xhs** is a crawling tool designed to extract data from [xiaohongshu website](https://www.xiaohongshu.com/explore)
+
+# Usage
+
+xhs is available on PyPI:
+
+```console
+$ python -m pip install requests
+```
+
+basic usage:
+
+```python
+>>> import xhs
+>>> r = xhs.add(2, 2)
+4
+```
