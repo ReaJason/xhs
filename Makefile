@@ -1,8 +1,10 @@
 .PHONY: docs
 init:
 		pip install -r requirements.txt
+ci:
+		pytest tests --junitxml=report.xml
 test:
-		pytest tests
+		tox -p
 upload:
 		python setup.py sdist bdist_wheel
 		twine upload dist/*
