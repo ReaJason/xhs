@@ -17,9 +17,9 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: html-docs
-          path: docs/build/html/
+          path: docs/_build/html/
       - name: Deploy
         uses: peaceiris/actions-gh-pages@v3
         with:
           personal_token: ${{ secrets.PERSONAL_TOKEN }}
-          publish_dir: docs/build/html
+          publish_dir: docs/_build/html
