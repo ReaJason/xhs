@@ -3,6 +3,6 @@ import logging
 from logging import NullHandler
 
 from .__version__ import __author__, __copyright__, __title__, __version__
-from .core import add
+from .core import XhsClient
 
 logging.getLogger(__name__).addHandler(NullHandler())
