@@ -1,5 +1,11 @@
-import xhs
+from xhs import XhsClient
 
 
-def test_add():
-    assert xhs.add(2, 2) == 4
+def test_init_with_session_id():
+    session_id = "123123"
+    xhsClient = XhsClient(session_id)
+    assert xhsClient.get_session_id() == session_id
+
+
+def test_init_with_options():
+    pass
