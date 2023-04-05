@@ -1,5 +1,4 @@
 requests
-PyExecJS
 flake8
 pre-commit
 tox
