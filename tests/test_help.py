@@ -61,6 +61,7 @@ def test_sign_post(header):
     assert json_data["code"] == 0
 
 
+@pytest.mark.skip(reason="xhs website limit search numbers")
 def test_search_id(header):
     search_id = help.get_search_id()
     uri = "/api/sns/web/v1/search/notes"
