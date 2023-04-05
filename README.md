@@ -24,7 +24,34 @@ $ python -m pip install xhs
 basic usage:
 
 ```python
->>> import xhs
->>> r = xhs.add(2, 2)
-4
+# please get cookie in website
+>>> from xhs import XhsClient
+>>> xshClient = XhsClient("cookie")
+>>> xhsClient.get_session_id()
+"cookie"
+
+# more functions in development
 ```
+
+use signature function:
+
+```python
+# sign get request
+>>> from xhs import help
+>>> help.sign("/api/sns/web/v1/user/otherinfo?target_user_id=5ff0e6410000000001008400")
+{'x-s': '1l5LsiTlZYavOYwvOid6OlU6OisCZ6dBZjvL1gsCOg13', 'x-t': '1680701208022'}
+
+# sign post request
+>>> help.sign("/api/sns/web/v1/feed", {"source_note_id": "63db8819000000001a01ead1"})
+{'x-s': 'sY5LOg9WOYFKsYFWOBcis2MlsiFCsjMb0jTKZja6OjA3', 'x-t': '1680701310666'}
+
+# get search_id parameter
+>>> help.get_search_id()
+'2BHU39J8HCTIW665YHFCW'
+```
+
+For more examples, refer to the tests file.
+
+- [send get request](https://github.com/ReaJason/xhs/blob/master/tests/test_help.py#L20)
+- [send post request](https://github.com/ReaJason/xhs/blob/master/tests/test_help.py#L41)
+- [search notes](https://github.com/ReaJason/xhs/blob/master/tests/test_help.py#L64)

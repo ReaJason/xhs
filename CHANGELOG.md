@@ -4,6 +4,12 @@
 
 - define user interface api
 
+## 0.0.4
+
+### ADD
+
+- add x-s 、search_id signature
+
 ## 0.0.3
 
 ### ADD
