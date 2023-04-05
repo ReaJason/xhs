@@ -2,8 +2,9 @@ name: Tests
 
 on:
   push:
-    paths-ignore:
-      - "docs/**"
+    paths:
+      - "xhs/**"
+      - "tests/**"
 
 permissions:
   contents: read
