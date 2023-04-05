@@ -1,6 +1,9 @@
 name: Tests
 
-on: [push, pull_request]
+on:
+  push:
+    paths-ignore:
+      - "docs/**"
 
 permissions:
   contents: read

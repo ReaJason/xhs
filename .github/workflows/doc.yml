@@ -4,7 +4,8 @@ name: Sphinx Doc
 
 on:
   push:
-    branches: [master, docs]
+    paths:
+      - "docs/**"
 
 jobs:
   build:
