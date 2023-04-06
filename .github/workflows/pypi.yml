@@ -2,8 +2,8 @@ name: PyPI
 
 on:
   push:
-    branches:
-      - master
+    tags:
+      - v*
 
 permissions:
   contents: read
@@ -11,7 +11,6 @@ permissions:
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags')
     steps:
       - uses: actions/checkout@v3
       - name: Set up Python
@@ -22,7 +21,6 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          make
           pip install build
       - name: Build package
         run: python -m build
