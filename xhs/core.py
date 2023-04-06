@@ -36,10 +36,10 @@ class FeedType(Enum):
 class XhsClient:
 
     def __init__(self,
-                 cookie: str | None = None,
-                 user_agent: str | None = None,
-                 timeout: int | None = None,
-                 proxies: dict | None = None):
+                 cookie=None,
+                 user_agent=None,
+                 timeout=None,
+                 proxies=None):
         self._user_agent = user_agent or ("Mozilla/5.0 "
                                           "(Windows NT 10.0; Win64; x64) "
                                           "AppleWebKit/537.36 "
@@ -75,7 +75,7 @@ class XhsClient:
     def set_timeout(self, timeout):
         self._timeout = timeout
 
-    def _pre_headers(self, url: str, data: dict | None = None):
+    def _pre_headers(self, url: str, data=None):
         assert self._cookie
         signs = sign(url, data)
         return {
@@ -96,7 +96,7 @@ class XhsClient:
         else:
             raise DataFetchError(data.get("msg", None))
 
-    def get(self, uri: str, params: dict | None = None):
+    def get(self, uri: str, params=None):
         final_uri = uri
         if isinstance(params, dict):
             final_uri = (f"{uri}?"
