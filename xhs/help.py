@@ -5,6 +5,9 @@ import time
 
 
 def sign(uri, data=None, ctime=None):
+    """
+    takes in a URI (uniform resource identifier), an optional data dictionary, and an optional ctime parameter. It returns a dictionary containing two keys: "x-s" and "x-t".
+    """
     def h(n):
         m = ""
         a = 0
