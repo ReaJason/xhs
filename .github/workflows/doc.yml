@@ -2,10 +2,7 @@
 
 name: Sphinx Doc
 
-on:
-  push:
-    paths:
-      - "docs/**"
+on: push
 
 jobs:
   build:
