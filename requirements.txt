@@ -3,4 +3,5 @@ flake8
 pre-commit
 tox
 pytest
+pytest-cov
 twine

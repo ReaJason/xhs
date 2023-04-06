@@ -5,6 +5,8 @@ ci:
 		pytest tests --junitxml=report.xml
 test:
 		tox -p
+cov:
+		pytest --verbose --cov-report term --cov-report xml --cov=xhs tests/
 upload:
 		python setup.py sdist bdist_wheel
 		twine upload dist/*
