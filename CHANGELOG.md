@@ -9,6 +9,12 @@
 ### ADD
 
 - add x-s 、search_id signature
+- add get note by id api
+- add get self info api
+- add get user info api
+- add get home feed api
+- add get note by keyword api
+- add get user notes api
 
 ## 0.0.3
 

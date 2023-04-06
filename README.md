@@ -24,14 +24,31 @@ $ python -m pip install xhs
 basic usage:
 
 ```python
-# please get cookie in website
->>> from xhs import XhsClient
->>> xshClient = XhsClient("cookie")
->>> xhsClient.get_session_id()
-"cookie"
+from xhs import FeedType, XhsClient
+
+cookie = "please get cookie in website"
+xhs_client = XhsClient(cookie)
+
+# get note info
+note_info = xhs_client.get_note_by_id("63db8819000000001a01ead1")
+
+# get user info
+user_info = xhs_client.get_user_info("5ff0e6410000000001008400")
+
+# get user notes
+user_notes = xhs_client.get_user_notes("63273a77000000002303cc9b")
+
+# search note
+notes = xhs_client.get_note_by_keyword("小红书")
+
+# get home recommend feed
+recommend_type = FeedType.RECOMMEND
+recommend_notes = xhs_client.get_home_feed(recommend_type)
 
 # more functions in development
 ```
+
+Please refer to the [document(WIP)](https://reajason.github.io/xhs/) for more API references.
 
 use signature function:
 
@@ -49,9 +66,3 @@ use signature function:
 >>> help.get_search_id()
 '2BHU39J8HCTIW665YHFCW'
 ```
-
-For more examples, refer to the tests file.
-
-- [send get request](https://github.com/ReaJason/xhs/blob/master/tests/test_help.py#L20)
-- [send post request](https://github.com/ReaJason/xhs/blob/master/tests/test_help.py#L41)
-- [search notes](https://github.com/ReaJason/xhs/blob/master/tests/test_help.py#L64)
