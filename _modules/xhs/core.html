@@ -33,6 +33,7 @@
             
   <h1>xhs.core 源代码</h1><div class="highlight"><pre>
 <span></span><span class="kn">import</span> <span class="nn">json</span>
+<span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">from</span> <span class="nn">enum</span> <span class="kn">import</span> <span class="n">Enum</span>
 
 <span class="kn">import</span> <span class="nn">requests</span>
@@ -65,6 +66,23 @@
     <span class="n">TRAVEL</span> <span class="o">=</span> <span class="s2">&quot;homefeed.travel_v3&quot;</span>
     <span class="c1"># 健身</span>
     <span class="n">FITNESS</span> <span class="o">=</span> <span class="s2">&quot;homefeed.fitness_v3&quot;</span></div>
+
+
+<span class="k">class</span> <span class="nc">NoteType</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
+    <span class="n">NOMAL</span> <span class="o">=</span> <span class="s2">&quot;nomal&quot;</span>
+    <span class="n">VIDEO</span> <span class="o">=</span> <span class="s2">&quot;video&quot;</span>
+
+
+<span class="k">def</span> <span class="nf">download_file</span><span class="p">(</span><span class="n">url</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">filename</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+    <span class="k">with</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">stream</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span> <span class="k">as</span> <span class="n">r</span><span class="p">:</span>
+        <span class="n">r</span><span class="o">.</span><span class="n">raise_for_status</span><span class="p">()</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s1">&#39;wb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">chunk</span> <span class="ow">in</span> <span class="n">r</span><span class="o">.</span><span class="n">iter_content</span><span class="p">(</span><span class="n">chunk_size</span><span class="o">=</span><span class="mi">8192</span><span class="p">):</span>
+                <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">chunk</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">get_img_url_by_trace_id</span><span class="p">(</span><span class="n">trace_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+    <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;https://sns-img-bd.xhscdn.com/</span><span class="si">{trace_id}</span><span class="s2">?imageView2/format/png&quot;</span>
 
 
 <div class="viewcode-block" id="XhsClient"><a class="viewcode-back" href="../../source/xhs.html#xhs.XhsClient">[文档]</a><span class="k">class</span> <span class="nc">XhsClient</span><span class="p">:</span>
@@ -157,10 +175,43 @@
                             <span class="n">headers</span><span class="o">=</span><span class="n">headers</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="XhsClient.get_note_by_id"><a class="viewcode-back" href="../../source/xhs.html#xhs.XhsClient.get_note_by_id">[文档]</a>    <span class="k">def</span> <span class="nf">get_note_by_id</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">note_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        :param note_id: note_id you want to fetch</span>
+<span class="sd">        :type note_id: str</span>
+<span class="sd">        :return: {&quot;time&quot;:1679019883000,&quot;user&quot;:{&quot;nickname&quot;:&quot;nickname&quot;,&quot;avatar&quot;:&quot;avatar&quot;,&quot;user_id&quot;:&quot;user_id&quot;},&quot;image_list&quot;:[{&quot;url&quot;:&quot;https://sns-img-qc.xhscdn.com/c8e505ca-4e5f-44be-fe1c-ca0205a38bad&quot;,&quot;trace_id&quot;:&quot;1000g00826s57r6cfu0005ossb1e9gk8c65d0c80&quot;,&quot;file_id&quot;:&quot;c8e505ca-4e5f-44be-fe1c-ca0205a38bad&quot;,&quot;height&quot;:1920,&quot;width&quot;:1440}],&quot;tag_list&quot;:[{&quot;id&quot;:&quot;5be78cdfdb601f000100d0bc&quot;,&quot;name&quot;:&quot;jk&quot;,&quot;type&quot;:&quot;topic&quot;}],&quot;desc&quot;:&quot;裙裙&quot;,&quot;interact_info&quot;:{&quot;followed&quot;:false,&quot;liked&quot;:false,&quot;liked_count&quot;:&quot;1732&quot;,&quot;collected&quot;:false,&quot;collected_count&quot;:&quot;453&quot;,&quot;comment_count&quot;:&quot;30&quot;,&quot;share_count&quot;:&quot;41&quot;},&quot;at_user_list&quot;:[],&quot;last_update_time&quot;:1679019884000,&quot;note_id&quot;:&quot;6413cf6b00000000270115b5&quot;,&quot;type&quot;:&quot;normal&quot;,&quot;title&quot;:&quot;title&quot;}</span>
+<span class="sd">        :rtype: dict</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">data</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;source_note_id&quot;</span><span class="p">:</span> <span class="n">note_id</span><span class="p">}</span>
         <span class="n">uri</span> <span class="o">=</span> <span class="s2">&quot;/api/sns/web/v1/feed&quot;</span>
         <span class="n">res</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="n">uri</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">res</span><span class="p">[</span><span class="s2">&quot;items&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span></div>
+        <span class="k">return</span> <span class="n">res</span><span class="p">[</span><span class="s2">&quot;items&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;note_card&quot;</span><span class="p">]</span></div>
+
+<div class="viewcode-block" id="XhsClient.save_files_from_note_id"><a class="viewcode-back" href="../../source/xhs.html#xhs.XhsClient.save_files_from_note_id">[文档]</a>    <span class="k">def</span> <span class="nf">save_files_from_note_id</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">note_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">dir_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;this function will fetch note and save file in dir_path/note_title</span>
+
+<span class="sd">        :param note_id: note_id that you want to fetch</span>
+<span class="sd">        :type note_id: str</span>
+<span class="sd">        :param dir_path: in fact, files will be stored in your dir_path/note_title directory</span>
+<span class="sd">        :type dir_path: str</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">note</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_note_by_id</span><span class="p">(</span><span class="n">note_id</span><span class="p">)</span>
+        <span class="n">title</span> <span class="o">=</span> <span class="n">note</span><span class="p">[</span><span class="s2">&quot;title&quot;</span><span class="p">]</span>
+
+        <span class="n">new_dir_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">dir_path</span><span class="p">,</span> <span class="n">title</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">new_dir_path</span><span class="p">):</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">new_dir_path</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">note</span><span class="p">[</span><span class="s2">&quot;type&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="n">NoteType</span><span class="o">.</span><span class="n">VIDEO</span><span class="o">.</span><span class="n">value</span><span class="p">:</span>
+            <span class="n">video</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="nb">filter</span><span class="p">(</span><span class="k">lambda</span> <span class="n">value</span><span class="p">:</span> <span class="nb">len</span><span class="p">(</span><span class="n">value</span><span class="p">),</span> <span class="n">note</span><span class="p">[</span><span class="s2">&quot;video&quot;</span><span class="p">][</span><span class="s2">&quot;media&quot;</span><span class="p">][</span><span class="s2">&quot;stream&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">()))[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">video_url</span> <span class="o">=</span> <span class="n">video</span><span class="p">[</span><span class="s2">&quot;master_url&quot;</span><span class="p">]</span>
+            <span class="n">video_filename</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">new_dir_path</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{title}</span><span class="s2">.mp4&quot;</span><span class="p">)</span>
+            <span class="n">download_file</span><span class="p">(</span><span class="n">video_url</span><span class="p">,</span> <span class="n">video_filename</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">imgs</span> <span class="o">=</span> <span class="n">note</span><span class="p">[</span><span class="s2">&quot;image_list&quot;</span><span class="p">]</span>
+            <span class="k">for</span> <span class="n">index</span><span class="p">,</span> <span class="n">img</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">imgs</span><span class="p">):</span>
+                <span class="n">img_url</span> <span class="o">=</span> <span class="n">get_img_url_by_trace_id</span><span class="p">(</span><span class="n">img</span><span class="p">[</span><span class="s2">&quot;trace_id&quot;</span><span class="p">])</span>
+                <span class="n">img_file_name</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">new_dir_path</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{title}{index}</span><span class="s2">.png&quot;</span><span class="p">)</span>
+                <span class="n">download_file</span><span class="p">(</span><span class="n">img_url</span><span class="p">,</span> <span class="n">img_file_name</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="XhsClient.get_self_info"><a class="viewcode-back" href="../../source/xhs.html#xhs.XhsClient.get_self_info">[文档]</a>    <span class="k">def</span> <span class="nf">get_self_info</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">uri</span> <span class="o">=</span> <span class="s2">&quot;/api/sns/web/v1/user/selfinfo&quot;</span>
@@ -168,6 +219,12 @@
         <span class="k">return</span> <span class="n">res</span></div>
 
 <div class="viewcode-block" id="XhsClient.get_user_info"><a class="viewcode-back" href="../../source/xhs.html#xhs.XhsClient.get_user_info">[文档]</a>    <span class="k">def</span> <span class="nf">get_user_info</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">user_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        :param user_id: user_id you want fetch</span>
+<span class="sd">        :type user_id: str</span>
+<span class="sd">        :return: {&quot;basic_info&quot;:{&quot;imageb&quot;:&quot;imageb&quot;,&quot;nickname&quot;:&quot;nickname&quot;,&quot;images&quot;:&quot;images&quot;,&quot;red_id&quot;:&quot;red_id&quot;,&quot;gender&quot;:1,&quot;ip_location&quot;:&quot;ip_location&quot;,&quot;desc&quot;:&quot;desc&quot;},&quot;interactions&quot;:[{&quot;count&quot;:&quot;5&quot;,&quot;type&quot;:&quot;follows&quot;,&quot;name&quot;:&quot;关注&quot;},{&quot;type&quot;:&quot;fans&quot;,&quot;name&quot;:&quot;粉丝&quot;,&quot;count&quot;:&quot;16736&quot;},{&quot;type&quot;:&quot;interaction&quot;,&quot;name&quot;:&quot;获赞与收藏&quot;,&quot;count&quot;:&quot;293043&quot;}],&quot;tags&quot;:[{&quot;icon&quot;:&quot;icon&quot;,&quot;tagType&quot;:&quot;info&quot;}],&quot;tab_public&quot;:{&quot;collection&quot;:false},&quot;extra_info&quot;:{&quot;fstatus&quot;:&quot;none&quot;},&quot;result&quot;:{&quot;success&quot;:true,&quot;code&quot;:0,&quot;message&quot;:&quot;success&quot;}}</span>
+<span class="sd">        :rtype: dict</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">uri</span> <span class="o">=</span> <span class="s2">&quot;/api/sns/web/v1/user/otherinfo&quot;</span>
         <span class="n">params</span> <span class="o">=</span> <span class="p">{</span>
             <span class="s2">&quot;target_user_id&quot;</span><span class="p">:</span> <span class="n">user_id</span>
@@ -305,7 +362,7 @@
 <div class="viewcode-block" id="XhsClient.get_qrcode"><a class="viewcode-back" href="../../source/xhs.html#xhs.XhsClient.get_qrcode">[文档]</a>    <span class="k">def</span> <span class="nf">get_qrcode</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;create qrcode, you can trasform response url to qrcode</span>
 
-<span class="sd">        :return:{&quot;qr_id&quot;:&quot;87323168**&quot;,&quot;code&quot;:&quot;280148&quot;,&quot;url&quot;:&quot;xhsdiscover://**&quot;,&quot;multi_flag&quot;:0}</span>
+<span class="sd">        :return: {&quot;qr_id&quot;:&quot;87323168**&quot;,&quot;code&quot;:&quot;280148&quot;,&quot;url&quot;:&quot;xhsdiscover://**&quot;,&quot;multi_flag&quot;:0}</span>
 <span class="sd">        :rtype: dict</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">uri</span> <span class="o">=</span> <span class="s2">&quot;/api/sns/web/v1/login/qrcode/create&quot;</span>

@@ -114,7 +114,18 @@
 <dl class="py method">
 <dt class="sig sig-object py" id="xhs.XhsClient.get_note_by_id">
 <span class="sig-name descname"><span class="pre">get_note_by_id</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">note_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xhs/core.html#XhsClient.get_note_by_id"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#xhs.XhsClient.get_note_by_id" title="永久链接至目标">¶</a></dt>
-<dd></dd></dl>
+<dd><dl class="field-list simple">
+<dt class="field-odd">参数</dt>
+<dd class="field-odd"><p><strong>note_id</strong> (<em>str</em>) – note_id you want to fetch</p>
+</dd>
+<dt class="field-even">返回</dt>
+<dd class="field-even"><p>{“time”:1679019883000,”user”:{“nickname”:”nickname”,”avatar”:”avatar”,”user_id”:”user_id”},”image_list”:[{“url”:”<a class="reference external" href="https://sns-img-qc.xhscdn.com/c8e505ca-4e5f-44be-fe1c-ca0205a38bad">https://sns-img-qc.xhscdn.com/c8e505ca-4e5f-44be-fe1c-ca0205a38bad</a>”,”trace_id”:”1000g00826s57r6cfu0005ossb1e9gk8c65d0c80”,”file_id”:”c8e505ca-4e5f-44be-fe1c-ca0205a38bad”,”height”:1920,”width”:1440}],”tag_list”:[{“id”:”5be78cdfdb601f000100d0bc”,”name”:”jk”,”type”:”topic”}],”desc”:”裙裙”,”interact_info”:{“followed”:false,”liked”:false,”liked_count”:”1732”,”collected”:false,”collected_count”:”453”,”comment_count”:”30”,”share_count”:”41”},”at_user_list”:[],”last_update_time”:1679019884000,”note_id”:”6413cf6b00000000270115b5”,”type”:”normal”,”title”:”title”}</p>
+</dd>
+<dt class="field-odd">返回类型</dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="xhs.XhsClient.get_note_by_keyword">
@@ -130,8 +141,14 @@
 <dt class="sig sig-object py" id="xhs.XhsClient.get_qrcode">
 <span class="sig-name descname"><span class="pre">get_qrcode</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xhs/core.html#XhsClient.get_qrcode"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#xhs.XhsClient.get_qrcode" title="永久链接至目标">¶</a></dt>
 <dd><p>create qrcode, you can trasform response url to qrcode</p>
-<p>:return:{“qr_id”:”87323168**”,”code”:”280148”,”url”:”xhsdiscover://<a href="#id1"><span class="problematic" id="id2">**</span></a>”,”multi_flag”:0}
-:rtype: dict</p>
+<dl class="field-list simple">
+<dt class="field-odd">返回</dt>
+<dd class="field-odd"><p>{“qr_id”:”87323168**”,”code”:”280148”,”url”:”xhsdiscover://<a href="#id1"><span class="problematic" id="id2">**</span></a>”,”multi_flag”:0}</p>
+</dd>
+<dt class="field-even">返回类型</dt>
+<dd class="field-even"><p>dict</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
@@ -152,7 +169,18 @@
 <dl class="py method">
 <dt class="sig sig-object py" id="xhs.XhsClient.get_user_info">
 <span class="sig-name descname"><span class="pre">get_user_info</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">user_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xhs/core.html#XhsClient.get_user_info"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#xhs.XhsClient.get_user_info" title="永久链接至目标">¶</a></dt>
-<dd></dd></dl>
+<dd><dl class="field-list simple">
+<dt class="field-odd">参数</dt>
+<dd class="field-odd"><p><strong>user_id</strong> (<em>str</em>) – user_id you want fetch</p>
+</dd>
+<dt class="field-even">返回</dt>
+<dd class="field-even"><p>{“basic_info”:{“imageb”:”imageb”,”nickname”:”nickname”,”images”:”images”,”red_id”:”red_id”,”gender”:1,”ip_location”:”ip_location”,”desc”:”desc”},”interactions”:[{“count”:”5”,”type”:”follows”,”name”:”关注”},{“type”:”fans”,”name”:”粉丝”,”count”:”16736”},{“type”:”interaction”,”name”:”获赞与收藏”,”count”:”293043”}],”tags”:[{“icon”:”icon”,”tagType”:”info”}],”tab_public”:{“collection”:false},”extra_info”:{“fstatus”:”none”},”result”:{“success”:true,”code”:0,”message”:”success”}}</p>
+</dd>
+<dt class="field-odd">返回类型</dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="xhs.XhsClient.get_user_notes">
@@ -178,6 +206,20 @@
 <dt class="sig sig-object py" id="xhs.XhsClient.request">
 <span class="sig-name descname"><span class="pre">request</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">method</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">url</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xhs/core.html#XhsClient.request"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#xhs.XhsClient.request" title="永久链接至目标">¶</a></dt>
 <dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="xhs.XhsClient.save_files_from_note_id">
+<span class="sig-name descname"><span class="pre">save_files_from_note_id</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">note_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dir_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xhs/core.html#XhsClient.save_files_from_note_id"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#xhs.XhsClient.save_files_from_note_id" title="永久链接至目标">¶</a></dt>
+<dd><p>this function will fetch note and save file in dir_path/note_title</p>
+<dl class="field-list simple">
+<dt class="field-odd">参数</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>note_id</strong> (<em>str</em>) – note_id that you want to fetch</p></li>
+<li><p><strong>dir_path</strong> (<em>str</em>) – in fact, files will be stored in your dir_path/note_title directory</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="xhs.XhsClient.set_cookie">
