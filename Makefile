@@ -12,4 +12,4 @@ upload:
 		twine upload dist/*
 		rm -fr build dist .egg xhs.egg-info
 docs:
-		cd docs && make html
+		cd docs && make clean html

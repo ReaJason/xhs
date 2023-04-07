@@ -178,29 +178,7 @@ class XhsClient:
     def comment_note(self, note_id: str, content: str):
         """comment a note
 
-        :return: {
-            "time": 1680834576180,
-            "toast": "评论已发布",
-            "comment": {
-                "id": "id",
-                "note_id": "note_id",
-                "status": 2,
-                "liked": false,
-                "show_tags": [
-                "is_author"
-                ],
-                "ip_location": "ip_location",
-                "content": "content",
-                "at_users": [],
-                "like_count": "0",
-                "user_info": {
-                "image": "**",
-                "user_id": "user_id",
-                "nickname": "nickname"
-                },
-                "create_time": create_time
-            }
-        }
+        :return: {"time":1680834576180,"toast":"评论已发布","comment":{"id":"id","note_id":"note_id","status":2,"liked":false,"show_tags":["is_author"],"ip_location":"ip_location","content":"content","at_users":[],"like_count":"0","user_info":{"image":"**","user_id":"user_id","nickname":"nickname"},"create_time":create_time}}
         :rtype: dict
         """
         uri = "/api/sns/web/v1/comment/post"
@@ -221,37 +199,8 @@ class XhsClient:
 
     def comment_user(self, note_id: str, comment_id: str, content: str):
         """
-        :return: {
-            "comment": {
-                "like_count": "0",
-                "user_info": {
-                "user_id": user_id
-                "user_id": "user_id",
-                "image": "image"
-                },
-                "show_tags": [
-                "is_author"
-                ],
-                "ip_location": "ip_location",
-                "id": "id",
-                "content": "content",
-                "at_users": [],
-                "create_time": 1680847204059,
-                "target_comment": {
-                "id": "id",
-                "user_info": {
-                    "user_id": "user_id",
-                    "nickname": "nickname",
-                    "image": "image"
-                }
-                },
-                "note_id": "note_id",
-                "status": 2,
-                "liked": false
-            },
-            "time": 1680847204089,
-            "toast": "你的回复已发布"
-            }
+        :return: {"comment":{"like_count":"0","user_info":{"user_id":user_id"user_id":"user_id","image":"image"},"show_tags":["is_author"],"ip_location":"ip_location","id":"id","content":"content","at_users":[],"create_time":1680847204059,"target_comment":{"id":"id","user_info":{"user_id":"user_id","nickname":"nickname","image":"image"}},"note_id":"note_id","status":2,"liked":false},"time":1680847204089,"toast":"你的回复已发布"}
+        :rtype: dict
         """
         uri = "/api/sns/web/v1/comment/post"
         data = {
@@ -322,13 +271,8 @@ class XhsClient:
     def get_qrcode(self):
         """create qrcode, you can trasform response url to qrcode
 
-        :return:
-        {
-            "qr_id": "87323168**",
-            "code": "280148",
-            "url": "xhsdiscover://**",
-            "multi_flag": 0
-        }
+        :return:{"qr_id":"87323168**","code":"280148","url":"xhsdiscover://**","multi_flag":0}
+        :rtype: dict
         """
         uri = "/api/sns/web/v1/login/qrcode/create"
         data = {}
