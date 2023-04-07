@@ -19,13 +19,15 @@ def test_init_with_session_id():
 
 
 def test_get_note_by_id(xhs_client: XhsClient):
-    note_id = "63db8819000000001a01ead1"
+    note_id = "6413cf6b00000000270115b5"
     data = xhs_client.get_note_by_id(note_id)
-    assert data["id"] == note_id
+    beauty_print(data)
+    assert data["note_id"] == note_id
 
 
 def test_get_self_info(xhs_client: XhsClient):
     data = xhs_client.get_self_info()
+    beauty_print(data)
     assert isinstance(data, dict)
 
 
@@ -33,14 +35,16 @@ def test_get_user_info(xhs_client: XhsClient):
     user_id = "5ff0e6410000000001008400"
     data = xhs_client.get_user_info(user_id)
     basic_info = data["basic_info"]
+    beauty_print(data)
     assert (basic_info["red_id"] == "hh06ovo"
             or basic_info["nickname"] == "小王不爱睡")
 
 
 def test_get_home_feed(xhs_client: XhsClient):
     recommend_type = FeedType.RECOMMEND
-    res = xhs_client.get_home_feed(recommend_type)
-    assert len(res["items"]) > 0
+    data = xhs_client.get_home_feed(recommend_type)
+    beauty_print(data)
+    assert len(data["items"]) > 0
 
 
 def test_get_note_by_keyword(xhs_client: XhsClient):
@@ -53,6 +57,7 @@ def test_get_note_by_keyword(xhs_client: XhsClient):
 def test_get_user_notes(xhs_client: XhsClient):
     user_id = "63273a77000000002303cc9b"
     data = xhs_client.get_user_notes(user_id)
+    beauty_print(data)
     assert len(data["notes"]) > 0
 
 

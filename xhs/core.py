@@ -141,6 +141,12 @@ class XhsClient:
                             headers=headers)
 
     def get_note_by_id(self, note_id: str):
+        """
+        :param note_id: note_id you want to fetch
+        :type note_id: str
+        :return: {"time":1679019883000,"user":{"nickname":"nickname","avatar":"avatar","user_id":"user_id"},"image_list":[{"url":"https://sns-img-qc.xhscdn.com/c8e505ca-4e5f-44be-fe1c-ca0205a38bad","trace_id":"1000g00826s57r6cfu0005ossb1e9gk8c65d0c80","file_id":"c8e505ca-4e5f-44be-fe1c-ca0205a38bad","height":1920,"width":1440}],"tag_list":[{"id":"5be78cdfdb601f000100d0bc","name":"jk","type":"topic"}],"desc":"裙裙","interact_info":{"followed":false,"liked":false,"liked_count":"1732","collected":false,"collected_count":"453","comment_count":"30","share_count":"41"},"at_user_list":[],"last_update_time":1679019884000,"note_id":"6413cf6b00000000270115b5","type":"normal","title":"title"}
+        :rtype: dict
+        """
         data = {"source_note_id": note_id}
         uri = "/api/sns/web/v1/feed"
         res = self.post(uri, data)
@@ -179,6 +185,12 @@ class XhsClient:
         return res
 
     def get_user_info(self, user_id: str):
+        """
+        :param user_id: user_id you want fetch
+        :type user_id: str
+        :return: {"basic_info":{"imageb":"imageb","nickname":"nickname","images":"images","red_id":"red_id","gender":1,"ip_location":"ip_location","desc":"desc"},"interactions":[{"count":"5","type":"follows","name":"关注"},{"type":"fans","name":"粉丝","count":"16736"},{"type":"interaction","name":"获赞与收藏","count":"293043"}],"tags":[{"icon":"icon","tagType":"info"}],"tab_public":{"collection":false},"extra_info":{"fstatus":"none"},"result":{"success":true,"code":0,"message":"success"}}
+        :rtype: dict
+        """
         uri = "/api/sns/web/v1/user/otherinfo"
         params = {
             "target_user_id": user_id
