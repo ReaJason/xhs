@@ -15,7 +15,7 @@ sys.path.insert(0, os.path.abspath('..'))
 
 # -- Project information -----------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
-import xhs
+import xhs  # NOQA
 
 project = xhs.__title__
 copyright = xhs.__copyright__
