@@ -1,0 +1,352 @@
+
+<!DOCTYPE html>
+
+<html lang="zh_CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Documentation &#8212; xhs 0.0.4 文档</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/alabaster.css" />
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/translations.js"></script>
+    <link rel="index" title="索引" href="../genindex.html" />
+    <link rel="search" title="搜索" href="../search.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="documentation">
+<h1>Documentation<a class="headerlink" href="#documentation" title="永久链接至标题">¶</a></h1>
+<div class="section" id="the-xhsclient-class">
+<h2>The <code class="docutils literal notranslate"><span class="pre">XhsClient</span></code> class<a class="headerlink" href="#the-xhsclient-class" title="永久链接至标题">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="xhs.XhsClient">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">xhs.</span></span><span class="sig-name descname"><span class="pre">XhsClient</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cookie</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">user_agent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timeout</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">proxies</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xhs/core.html#XhsClient"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#xhs.XhsClient" title="永久链接至目标">¶</a></dt>
+<dd><p>基类：<code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="xhs.XhsClient.check_qrcode">
+<span class="sig-name descname"><span class="pre">check_qrcode</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">qr_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">code</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xhs/core.html#XhsClient.check_qrcode"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#xhs.XhsClient.check_qrcode" title="永久链接至目标">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="xhs.XhsClient.collect_note">
+<span class="sig-name descname"><span class="pre">collect_note</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">note_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xhs/core.html#XhsClient.collect_note"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#xhs.XhsClient.collect_note" title="永久链接至目标">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="xhs.XhsClient.comment_note">
+<span class="sig-name descname"><span class="pre">comment_note</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">note_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">content</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xhs/core.html#XhsClient.comment_note"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#xhs.XhsClient.comment_note" title="永久链接至目标">¶</a></dt>
+<dd><p>comment a note</p>
+<dl class="field-list simple">
+<dt class="field-odd">返回</dt>
+<dd class="field-odd"><p>{“time”:1680834576180,”toast”:”评论已发布”,”comment”:{“id”:”id”,”note_id”:”note_id”,”status”:2,”liked”:false,”show_tags”:[“is_author”],”ip_location”:”ip_location”,”content”:”content”,”at_users”:[],”like_count”:”0”,”user_info”:{“image”:”**”,”user_id”:”user_id”,”nickname”:”nickname”},”create_time”:create_time}}</p>
+</dd>
+<dt class="field-even">返回类型</dt>
+<dd class="field-even"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="xhs.XhsClient.comment_user">
+<span class="sig-name descname"><span class="pre">comment_user</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">note_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">comment_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">content</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xhs/core.html#XhsClient.comment_user"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#xhs.XhsClient.comment_user" title="永久链接至目标">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">返回</dt>
+<dd class="field-odd"><p>{“comment”:{“like_count”:”0”,”user_info”:{“user_id”:user_id”user_id”:”user_id”,”image”:”image”},”show_tags”:[“is_author”],”ip_location”:”ip_location”,”id”:”id”,”content”:”content”,”at_users”:[],”create_time”:1680847204059,”target_comment”:{“id”:”id”,”user_info”:{“user_id”:”user_id”,”nickname”:”nickname”,”image”:”image”}},”note_id”:”note_id”,”status”:2,”liked”:false},”time”:1680847204089,”toast”:”你的回复已发布”}</p>
+</dd>
+<dt class="field-even">返回类型</dt>
+<dd class="field-even"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="xhs.XhsClient.delete_note_comment">
+<span class="sig-name descname"><span class="pre">delete_note_comment</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">note_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">comment_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xhs/core.html#XhsClient.delete_note_comment"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#xhs.XhsClient.delete_note_comment" title="永久链接至目标">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="xhs.XhsClient.dislike_comment">
+<span class="sig-name descname"><span class="pre">dislike_comment</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">comment_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xhs/core.html#XhsClient.dislike_comment"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#xhs.XhsClient.dislike_comment" title="永久链接至目标">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="xhs.XhsClient.dislike_note">
+<span class="sig-name descname"><span class="pre">dislike_note</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">note_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xhs/core.html#XhsClient.dislike_note"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#xhs.XhsClient.dislike_note" title="永久链接至目标">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="xhs.XhsClient.follow_user">
+<span class="sig-name descname"><span class="pre">follow_user</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">user_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xhs/core.html#XhsClient.follow_user"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#xhs.XhsClient.follow_user" title="永久链接至目标">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="xhs.XhsClient.get">
+<span class="sig-name descname"><span class="pre">get</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">uri</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">params</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xhs/core.html#XhsClient.get"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#xhs.XhsClient.get" title="永久链接至目标">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="xhs.XhsClient.get_cookie">
+<span class="sig-name descname"><span class="pre">get_cookie</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xhs/core.html#XhsClient.get_cookie"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#xhs.XhsClient.get_cookie" title="永久链接至目标">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="xhs.XhsClient.get_home_feed">
+<span class="sig-name descname"><span class="pre">get_home_feed</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">feed_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#xhs.FeedType" title="xhs.core.FeedType"><span class="pre">xhs.core.FeedType</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xhs/core.html#XhsClient.get_home_feed"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#xhs.XhsClient.get_home_feed" title="永久链接至目标">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="xhs.XhsClient.get_note_by_id">
+<span class="sig-name descname"><span class="pre">get_note_by_id</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">note_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xhs/core.html#XhsClient.get_note_by_id"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#xhs.XhsClient.get_note_by_id" title="永久链接至目标">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="xhs.XhsClient.get_note_by_keyword">
+<span class="sig-name descname"><span class="pre">get_note_by_keyword</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">keyword</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xhs/core.html#XhsClient.get_note_by_keyword"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#xhs.XhsClient.get_note_by_keyword" title="永久链接至目标">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="xhs.XhsClient.get_proxies">
+<span class="sig-name descname"><span class="pre">get_proxies</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xhs/core.html#XhsClient.get_proxies"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#xhs.XhsClient.get_proxies" title="永久链接至目标">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="xhs.XhsClient.get_qrcode">
+<span class="sig-name descname"><span class="pre">get_qrcode</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xhs/core.html#XhsClient.get_qrcode"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#xhs.XhsClient.get_qrcode" title="永久链接至目标">¶</a></dt>
+<dd><p>create qrcode, you can trasform response url to qrcode</p>
+<p>:return:{“qr_id”:”87323168**”,”code”:”280148”,”url”:”xhsdiscover://<a href="#id1"><span class="problematic" id="id2">**</span></a>”,”multi_flag”:0}
+:rtype: dict</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="xhs.XhsClient.get_self_info">
+<span class="sig-name descname"><span class="pre">get_self_info</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xhs/core.html#XhsClient.get_self_info"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#xhs.XhsClient.get_self_info" title="永久链接至目标">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="xhs.XhsClient.get_timeout">
+<span class="sig-name descname"><span class="pre">get_timeout</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xhs/core.html#XhsClient.get_timeout"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#xhs.XhsClient.get_timeout" title="永久链接至目标">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="xhs.XhsClient.get_user_agent">
+<span class="sig-name descname"><span class="pre">get_user_agent</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xhs/core.html#XhsClient.get_user_agent"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#xhs.XhsClient.get_user_agent" title="永久链接至目标">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="xhs.XhsClient.get_user_info">
+<span class="sig-name descname"><span class="pre">get_user_info</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">user_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xhs/core.html#XhsClient.get_user_info"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#xhs.XhsClient.get_user_info" title="永久链接至目标">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="xhs.XhsClient.get_user_notes">
+<span class="sig-name descname"><span class="pre">get_user_notes</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">user_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cursor</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xhs/core.html#XhsClient.get_user_notes"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#xhs.XhsClient.get_user_notes" title="永久链接至目标">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="xhs.XhsClient.like_comment">
+<span class="sig-name descname"><span class="pre">like_comment</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">note_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">comment_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xhs/core.html#XhsClient.like_comment"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#xhs.XhsClient.like_comment" title="永久链接至目标">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="xhs.XhsClient.like_note">
+<span class="sig-name descname"><span class="pre">like_note</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">note_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xhs/core.html#XhsClient.like_note"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#xhs.XhsClient.like_note" title="永久链接至目标">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="xhs.XhsClient.post">
+<span class="sig-name descname"><span class="pre">post</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">uri</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xhs/core.html#XhsClient.post"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#xhs.XhsClient.post" title="永久链接至目标">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="xhs.XhsClient.request">
+<span class="sig-name descname"><span class="pre">request</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">method</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">url</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xhs/core.html#XhsClient.request"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#xhs.XhsClient.request" title="永久链接至目标">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="xhs.XhsClient.set_cookie">
+<span class="sig-name descname"><span class="pre">set_cookie</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cookie</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xhs/core.html#XhsClient.set_cookie"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#xhs.XhsClient.set_cookie" title="永久链接至目标">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="xhs.XhsClient.set_proxies">
+<span class="sig-name descname"><span class="pre">set_proxies</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">proxies</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xhs/core.html#XhsClient.set_proxies"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#xhs.XhsClient.set_proxies" title="永久链接至目标">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="xhs.XhsClient.set_timeout">
+<span class="sig-name descname"><span class="pre">set_timeout</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">timeout</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xhs/core.html#XhsClient.set_timeout"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#xhs.XhsClient.set_timeout" title="永久链接至目标">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="xhs.XhsClient.set_user_agent">
+<span class="sig-name descname"><span class="pre">set_user_agent</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">user_agent</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xhs/core.html#XhsClient.set_user_agent"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#xhs.XhsClient.set_user_agent" title="永久链接至目标">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="xhs.XhsClient.uncollect_note">
+<span class="sig-name descname"><span class="pre">uncollect_note</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">note_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xhs/core.html#XhsClient.uncollect_note"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#xhs.XhsClient.uncollect_note" title="永久链接至目标">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="xhs.XhsClient.unfollow_user">
+<span class="sig-name descname"><span class="pre">unfollow_user</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">user_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xhs/core.html#XhsClient.unfollow_user"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#xhs.XhsClient.unfollow_user" title="永久链接至目标">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="the-feedtype-class">
+<h2>The <code class="docutils literal notranslate"><span class="pre">FeedType</span></code> class<a class="headerlink" href="#the-feedtype-class" title="永久链接至标题">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="xhs.FeedType">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">xhs.</span></span><span class="sig-name descname"><span class="pre">FeedType</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xhs/core.html#FeedType"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#xhs.FeedType" title="永久链接至目标">¶</a></dt>
+<dd><p>基类：<code class="xref py py-class docutils literal notranslate"><span class="pre">enum.Enum</span></code></p>
+<p>An enumeration.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="xhs.FeedType.CAREER">
+<span class="sig-name descname"><span class="pre">CAREER</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'homefeed.career_v3'</span></em><a class="headerlink" href="#xhs.FeedType.CAREER" title="永久链接至目标">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="xhs.FeedType.COSMETICS">
+<span class="sig-name descname"><span class="pre">COSMETICS</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'homefeed.cosmetics_v3'</span></em><a class="headerlink" href="#xhs.FeedType.COSMETICS" title="永久链接至目标">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="xhs.FeedType.EMOTION">
+<span class="sig-name descname"><span class="pre">EMOTION</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'homefeed.love_v3'</span></em><a class="headerlink" href="#xhs.FeedType.EMOTION" title="永久链接至目标">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="xhs.FeedType.FASION">
+<span class="sig-name descname"><span class="pre">FASION</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'homefeed.fashion_v3'</span></em><a class="headerlink" href="#xhs.FeedType.FASION" title="永久链接至目标">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="xhs.FeedType.FITNESS">
+<span class="sig-name descname"><span class="pre">FITNESS</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'homefeed.fitness_v3'</span></em><a class="headerlink" href="#xhs.FeedType.FITNESS" title="永久链接至目标">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="xhs.FeedType.FOOD">
+<span class="sig-name descname"><span class="pre">FOOD</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'homefeed.food_v3'</span></em><a class="headerlink" href="#xhs.FeedType.FOOD" title="永久链接至目标">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="xhs.FeedType.GAME">
+<span class="sig-name descname"><span class="pre">GAME</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'homefeed.gaming_v3'</span></em><a class="headerlink" href="#xhs.FeedType.GAME" title="永久链接至目标">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="xhs.FeedType.HOURSE">
+<span class="sig-name descname"><span class="pre">HOURSE</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'homefeed.household_product_v3'</span></em><a class="headerlink" href="#xhs.FeedType.HOURSE" title="永久链接至目标">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="xhs.FeedType.MOVIE">
+<span class="sig-name descname"><span class="pre">MOVIE</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'homefeed.movie_and_tv_v3'</span></em><a class="headerlink" href="#xhs.FeedType.MOVIE" title="永久链接至目标">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="xhs.FeedType.RECOMMEND">
+<span class="sig-name descname"><span class="pre">RECOMMEND</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'homefeed_recommend'</span></em><a class="headerlink" href="#xhs.FeedType.RECOMMEND" title="永久链接至目标">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="xhs.FeedType.TRAVEL">
+<span class="sig-name descname"><span class="pre">TRAVEL</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'homefeed.travel_v3'</span></em><a class="headerlink" href="#xhs.FeedType.TRAVEL" title="永久链接至目标">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../index.html">xhs</a></h1>
+
+
+
+
+
+
+<p>
+<iframe src="https://ghbtns.com/github-btn.html?user=ReaJason&repo=xhs&type=watch&count=true&size=large&v=2"
+  allowtransparency="true" frameborder="0" scrolling="0" width="200px" height="35px"></iframe>
+</p>
+
+
+
+
+
+<h3>导航</h3>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">快速搜索</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="转向" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;Copyright ReaJason.
+      
+      |
+      <a href="../_sources/source/xhs.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+    <a href="https://github.com/ReaJason/xhs" class="github">
+        <img style="position: absolute; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png" alt="Fork me on GitHub"  class="github"/>
+    </a>
+    
+
+    
+  </body>
+</html>
