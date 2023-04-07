@@ -89,3 +89,12 @@ def test_delete_comment(xhs_client: XhsClient):
     data = xhs_client.delete_note_comment("642b96640000000014027cd2",
                                           "642f801000000000150037f8")
     beauty_print(data)
+
+
+@pytest.mark.parametrize("note_id", [
+        "6413cf6b00000000270115b5",
+        "641718a200000000130143f2"
+    ])
+@pytest.mark.skip()
+def test_save_files_from_note_id(xhs_client: XhsClient, note_id: str):
+    xhs_client.save_files_from_note_id(note_id, r"C:\Users\ReaJason\Desktop")

@@ -1,4 +1,5 @@
 import json
+import os
 from enum import Enum
 
 import requests
@@ -31,6 +32,23 @@ class FeedType(Enum):
     TRAVEL = "homefeed.travel_v3"
     # 健身
     FITNESS = "homefeed.fitness_v3"
+
+
+class NoteType(Enum):
+    NOMAL = "nomal"
+    VIDEO = "video"
+
+
+def download_file(url: str, filename: str):
+    with requests.get(url, stream=True) as r:
+        r.raise_for_status()
+        with open(filename, 'wb') as f:
+            for chunk in r.iter_content(chunk_size=8192):
+                f.write(chunk)
+
+
+def get_img_url_by_trace_id(trace_id: str):
+    return f"https://sns-img-bd.xhscdn.com/{trace_id}?imageView2/format/png"
 
 
 class XhsClient:
@@ -126,7 +144,34 @@ class XhsClient:
         data = {"source_note_id": note_id}
         uri = "/api/sns/web/v1/feed"
         res = self.post(uri, data)
-        return res["items"][0]
+        return res["items"][0]["note_card"]
+
+    def save_files_from_note_id(self, note_id: str, dir_path: str):
+        """this function will fetch note and save file in dir_path/note_title
+
+        :param note_id: note_id that you want to fetch
+        :type note_id: str
+        :param dir_path: in fact, files will be stored in your dir_path/note_title directory
+        :type dir_path: str
+        """
+        note = self.get_note_by_id(note_id)
+        title = note["title"]
+
+        new_dir_path = os.path.join(dir_path, title)
+        if not os.path.exists(new_dir_path):
+            os.mkdir(new_dir_path)
+
+        if note["type"] == NoteType.VIDEO.value:
+            video = next(filter(lambda value: len(value), note["video"]["media"]["stream"].values()))[0]
+            video_url = video["master_url"]
+            video_filename = os.path.join(new_dir_path, f"{title}.mp4")
+            download_file(video_url, video_filename)
+        else:
+            imgs = note["image_list"]
+            for index, img in enumerate(imgs):
+                img_url = get_img_url_by_trace_id(img["trace_id"])
+                img_file_name = os.path.join(new_dir_path, f"{title}{index}.png")
+                download_file(img_url, img_file_name)
 
     def get_self_info(self):
         uri = "/api/sns/web/v1/user/selfinfo"
@@ -271,7 +316,7 @@ class XhsClient:
     def get_qrcode(self):
         """create qrcode, you can trasform response url to qrcode
 
-        :return:{"qr_id":"87323168**","code":"280148","url":"xhsdiscover://**","multi_flag":0}
+        :return: {"qr_id":"87323168**","code":"280148","url":"xhsdiscover://**","multi_flag":0}
         :rtype: dict
         """
         uri = "/api/sns/web/v1/login/qrcode/create"
