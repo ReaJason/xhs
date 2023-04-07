@@ -41,12 +41,18 @@ language = 'zh_CN'
 
 html_theme = 'alabaster'
 html_theme_options = {
-    "show_powered_by": False,
+    "show_powered_by": True,
     "github_user": "ReaJason",
     "github_repo": "xhs",
+    "github_type": "star",
     "github_banner": True,
     "show_related": False,
     "note_bg": "#FFF59C",
+    "extra_nav_links": {
+        "ReaJason": "https://reajason.eu.org"
+    },
+    "collapse_navigation": True,
+    "navigation_depth": 6
 }
 
 html_static_path = ['_static']
