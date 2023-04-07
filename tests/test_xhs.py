@@ -1,6 +1,8 @@
 import pytest
 
-from xhs import DataFetchError, FeedType, XhsClient
+from xhs import FeedType, XhsClient
+
+from .utils import beauty_print
 
 
 @pytest.fixture
@@ -43,11 +45,47 @@ def test_get_home_feed(xhs_client: XhsClient):
 
 def test_get_note_by_keyword(xhs_client: XhsClient):
     keyword = "小红书"
-    with pytest.raises(DataFetchError):
-        xhs_client.get_note_by_keyword(keyword)
+    data = xhs_client.get_note_by_keyword(keyword)
+    beauty_print(data)
+    assert len(data["items"]) > 0
 
 
 def test_get_user_notes(xhs_client: XhsClient):
     user_id = "63273a77000000002303cc9b"
     data = xhs_client.get_user_notes(user_id)
     assert len(data["notes"]) > 0
+
+
+def test_get_qrcode(xhs_client: XhsClient):
+    data = xhs_client.get_qrcode()
+    beauty_print(data)
+    assert data["url"].startswith("xhsdiscover://")
+
+
+@pytest.mark.skip()
+def test_check_qrcode(xhs_client: XhsClient):
+    data = xhs_client.check_qrcode("901061680834121471", "658742")
+    assert data.get("code_status")
+
+
+@pytest.mark.skip()
+def test_comment_note(xhs_client: XhsClient):
+    data = xhs_client.comment_note("642b96640000000014027cd2", "你最好说你在说你自己")
+    beauty_print(data)
+    assert data["comment"]["id"]
+
+
+@pytest.mark.skip()
+def test_comment_user(xhs_client: XhsClient):
+    data = xhs_client.comment_user("642b96640000000014027cd2",
+                                   "642f801000000000150037f8",
+                                   "我评论你了")
+    beauty_print(data)
+    assert data["comment"]["id"]
+
+
+@pytest.mark.skip()
+def test_delete_comment(xhs_client: XhsClient):
+    data = xhs_client.delete_note_comment("642b96640000000014027cd2",
+                                          "642f801000000000150037f8")
+    beauty_print(data)

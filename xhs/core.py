@@ -34,12 +34,22 @@ class FeedType(Enum):
 
 
 class XhsClient:
-
     def __init__(self,
                  cookie=None,
                  user_agent=None,
-                 timeout=None,
+                 timeout=10,
                  proxies=None):
+        """constructor
+
+        :param cookie: get it form your website, defaults to None
+        :type cookie: str, optional
+        :param user_agent: requests user agent, defaults to None
+        :type user_agent: str, optional
+        :param timeout: requests timeout, defaults to None
+        :type timeout: int, optional
+        :param proxies: requests proxies, defaults to None
+        :type proxies: dict, optional
+        """
         self._user_agent = user_agent or ("Mozilla/5.0 "
                                           "(Windows NT 10.0; Win64; x64) "
                                           "AppleWebKit/537.36 "
@@ -48,7 +58,7 @@ class XhsClient:
         self._cookie = cookie
         self._proxies = proxies
         self._session: requests.Session = requests.session()
-        self._timeout = timeout or 10
+        self._timeout = timeout
         self._host = "https://edith.xiaohongshu.com"
 
     def set_cookie(self, cookie: str):
@@ -92,7 +102,7 @@ class XhsClient:
             proxies=self._proxies, **kwargs)
         data = response.json()
         if data["success"]:
-            return data["data"]
+            return data.get("data", data.get("success"))
         else:
             raise DataFetchError(data.get("msg", None))
 
@@ -162,5 +172,172 @@ class XhsClient:
             "num": 30,
             "cursor": cursor,
             "user_id": user_id
+        }
+        return self.get(uri, params)
+
+    def comment_note(self, note_id: str, content: str):
+        """comment a note
+
+        :return: {
+            "time": 1680834576180,
+            "toast": "评论已发布",
+            "comment": {
+                "id": "id",
+                "note_id": "note_id",
+                "status": 2,
+                "liked": false,
+                "show_tags": [
+                "is_author"
+                ],
+                "ip_location": "ip_location",
+                "content": "content",
+                "at_users": [],
+                "like_count": "0",
+                "user_info": {
+                "image": "**",
+                "user_id": "user_id",
+                "nickname": "nickname"
+                },
+                "create_time": create_time
+            }
+        }
+        :rtype: dict
+        """
+        uri = "/api/sns/web/v1/comment/post"
+        data = {
+            "note_id": note_id,
+            "content": content,
+            "at_users": []
+        }
+        return self.post(uri, data)
+
+    def delete_note_comment(self, note_id: str, comment_id: str):
+        uri = "/api/sns/web/v1/comment/delete"
+        data = {
+            "note_id": note_id,
+            "comment_id": comment_id
+        }
+        return self.post(uri, data)
+
+    def comment_user(self, note_id: str, comment_id: str, content: str):
+        """
+        :return: {
+            "comment": {
+                "like_count": "0",
+                "user_info": {
+                "user_id": user_id
+                "user_id": "user_id",
+                "image": "image"
+                },
+                "show_tags": [
+                "is_author"
+                ],
+                "ip_location": "ip_location",
+                "id": "id",
+                "content": "content",
+                "at_users": [],
+                "create_time": 1680847204059,
+                "target_comment": {
+                "id": "id",
+                "user_info": {
+                    "user_id": "user_id",
+                    "nickname": "nickname",
+                    "image": "image"
+                }
+                },
+                "note_id": "note_id",
+                "status": 2,
+                "liked": false
+            },
+            "time": 1680847204089,
+            "toast": "你的回复已发布"
+            }
+        """
+        uri = "/api/sns/web/v1/comment/post"
+        data = {
+            "note_id": note_id,
+            "content": content,
+            "target_comment_id": comment_id,
+            "at_users": []
+        }
+        return self.post(uri, data)
+
+    def follow_user(self, user_id: str):
+        uri = "/api/sns/web/v1/user/follow"
+        data = {
+            "target_user_id": user_id
+        }
+        return self.post(uri, data)
+
+    def unfollow_user(self, user_id: str):
+        uri = "/api/sns/web/v1/user/unfollow"
+        data = {
+            "target_user_id": user_id
+        }
+        return self.post(uri, data)
+
+    def collect_note(self, note_id: str):
+        uri = "/api/sns/web/v1/note/collect"
+        data = {
+            "note_id": note_id
+        }
+        return self.post(uri, data)
+
+    def uncollect_note(self, note_id: str):
+        uri = "/api/sns/web/v1/note/uncollect"
+        data = {
+            "note_ids": note_id
+        }
+        return self.post(uri, data)
+
+    def like_note(self, note_id: str):
+        uri = "/api/sns/web/v1/note/like"
+        data = {
+            "note_oid": note_id
+        }
+        return self.post(uri, data)
+
+    def like_comment(self, note_id: str, comment_id: str):
+        uri = "/api/sns/web/v1/comment/like"
+        data = {
+            "note_id": note_id,
+            "comment_id": comment_id
+        }
+        return self.post(uri, data)
+
+    def dislike_note(self, note_id: str):
+        uri = "/api/sns/web/v1/note/dislike"
+        data = {
+            "note_oid": note_id
+        }
+        return self.post(uri, data)
+
+    def dislike_comment(self, comment_id: str):
+        uri = "/api/sns/web/v1/comment/dislike"
+        data = {
+            "note_oid": comment_id
+        }
+        return self.post(uri, data)
+
+    def get_qrcode(self):
+        """create qrcode, you can trasform response url to qrcode
+
+        :return:
+        {
+            "qr_id": "87323168**",
+            "code": "280148",
+            "url": "xhsdiscover://**",
+            "multi_flag": 0
+        }
+        """
+        uri = "/api/sns/web/v1/login/qrcode/create"
+        data = {}
+        return self.post(uri, data)
+
+    def check_qrcode(self, qr_id: str, code: str):
+        uri = "/api/sns/web/v1/login/qrcode/status"
+        params = {
+            "qr_id": qr_id,
+            "code": code
         }
         return self.get(uri, params)
