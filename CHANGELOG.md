@@ -2,7 +2,27 @@
 
 ## dev
 
-- define user interface api
+- Improve documentation
+- Add more test function
+
+## 0.1.0
+
+### ADD
+
+- add comment note api
+- add delete note comment api
+- add comment user api
+- add follow user api
+- add unfollow user api
+- add collect note api
+- add uncollect note api
+- add like note api
+- add like comment api
+- add dislike note api
+- add dislike comment api
+- add get qrcode api
+- add check qrcode api
+- add save files from note id api
 
 ## 0.0.4
 
