@@ -39,6 +39,28 @@ class NoteType(Enum):
     VIDEO = "video"
 
 
+class SearchSortType(Enum):
+    """serach sort type
+    """
+    # default
+    GENERAL = "general"
+    # most popular
+    MOST_POPULAR = "popularity_descending"
+    # Latest
+    LATEST = "time_descending"
+
+
+class SearchNoteType(Enum):
+    """search note type
+    """
+    # default
+    ALL = 0
+    # only video
+    VIDEO = 1
+    # only image
+    IMAGE = 2
+
+
 def download_file(url: str, filename: str):
     with requests.get(url, stream=True) as r:
         r.raise_for_status()
@@ -211,15 +233,33 @@ class XhsClient:
         }
         return self.post(uri, data)
 
-    def get_note_by_keyword(self, keyword: str):
+    def get_note_by_keyword(self, keyword: str,
+                            page: int = 1, page_size: int = 20,
+                            sort: SearchSortType = SearchSortType.GENERAL,
+                            note_type: SearchNoteType = SearchNoteType.ALL):
+        """search note by keyword
+
+        :param keyword: what notes you want to search
+        :type keyword: str
+        :param page: page number, defaults to 1
+        :type page: int, optional
+        :param page_size: page size, defaults to 20
+        :type page_size: int, optional
+        :param sort: sort ordering, defaults to SearchSortType.GENERAL
+        :type sort: SearchSortType, optional
+        :param note_type: note type, defaults to SearchNoteType.ALL
+        :type note_type: SearchNoteType, optional
+        :return: {has_more: true, items: []}
+        :rtype: dict
+        """
         uri = "/api/sns/web/v1/search/notes"
         data = {
             "keyword": keyword,
-            "page": 1,
-            "page_size": 20,
+            "page": page,
+            "page_size": page_size,
             "search_id": get_search_id(),
-            "sort": "general",
-            "note_type": 0
+            "sort": sort.value,
+            "note_type": note_type.value
         }
         return self.post(uri, data)
 
