@@ -73,6 +73,28 @@
     <span class="n">VIDEO</span> <span class="o">=</span> <span class="s2">&quot;video&quot;</span>
 
 
+<span class="k">class</span> <span class="nc">SearchSortType</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;serach sort type</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># default</span>
+    <span class="n">GENERAL</span> <span class="o">=</span> <span class="s2">&quot;general&quot;</span>
+    <span class="c1"># most popular</span>
+    <span class="n">MOST_POPULAR</span> <span class="o">=</span> <span class="s2">&quot;popularity_descending&quot;</span>
+    <span class="c1"># Latest</span>
+    <span class="n">LATEST</span> <span class="o">=</span> <span class="s2">&quot;time_descending&quot;</span>
+
+
+<span class="k">class</span> <span class="nc">SearchNoteType</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;search note type</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># default</span>
+    <span class="n">ALL</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="c1"># only video</span>
+    <span class="n">VIDEO</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="c1"># only image</span>
+    <span class="n">IMAGE</span> <span class="o">=</span> <span class="mi">2</span>
+
+
 <span class="k">def</span> <span class="nf">download_file</span><span class="p">(</span><span class="n">url</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">filename</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
     <span class="k">with</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">stream</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span> <span class="k">as</span> <span class="n">r</span><span class="p">:</span>
         <span class="n">r</span><span class="o">.</span><span class="n">raise_for_status</span><span class="p">()</span>
@@ -245,15 +267,33 @@
         <span class="p">}</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="n">uri</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="XhsClient.get_note_by_keyword"><a class="viewcode-back" href="../../source/xhs.html#xhs.XhsClient.get_note_by_keyword">[文档]</a>    <span class="k">def</span> <span class="nf">get_note_by_keyword</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">keyword</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+<div class="viewcode-block" id="XhsClient.get_note_by_keyword"><a class="viewcode-back" href="../../source/xhs.html#xhs.XhsClient.get_note_by_keyword">[文档]</a>    <span class="k">def</span> <span class="nf">get_note_by_keyword</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">keyword</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+                            <span class="n">page</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">page_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">20</span><span class="p">,</span>
+                            <span class="n">sort</span><span class="p">:</span> <span class="n">SearchSortType</span> <span class="o">=</span> <span class="n">SearchSortType</span><span class="o">.</span><span class="n">GENERAL</span><span class="p">,</span>
+                            <span class="n">note_type</span><span class="p">:</span> <span class="n">SearchNoteType</span> <span class="o">=</span> <span class="n">SearchNoteType</span><span class="o">.</span><span class="n">ALL</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;search note by keyword</span>
+
+<span class="sd">        :param keyword: what notes you want to search</span>
+<span class="sd">        :type keyword: str</span>
+<span class="sd">        :param page: page number, defaults to 1</span>
+<span class="sd">        :type page: int, optional</span>
+<span class="sd">        :param page_size: page size, defaults to 20</span>
+<span class="sd">        :type page_size: int, optional</span>
+<span class="sd">        :param sort: sort ordering, defaults to SearchSortType.GENERAL</span>
+<span class="sd">        :type sort: SearchSortType, optional</span>
+<span class="sd">        :param note_type: note type, defaults to SearchNoteType.ALL</span>
+<span class="sd">        :type note_type: SearchNoteType, optional</span>
+<span class="sd">        :return: {has_more: true, items: []}</span>
+<span class="sd">        :rtype: dict</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">uri</span> <span class="o">=</span> <span class="s2">&quot;/api/sns/web/v1/search/notes&quot;</span>
         <span class="n">data</span> <span class="o">=</span> <span class="p">{</span>
             <span class="s2">&quot;keyword&quot;</span><span class="p">:</span> <span class="n">keyword</span><span class="p">,</span>
-            <span class="s2">&quot;page&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
-            <span class="s2">&quot;page_size&quot;</span><span class="p">:</span> <span class="mi">20</span><span class="p">,</span>
+            <span class="s2">&quot;page&quot;</span><span class="p">:</span> <span class="n">page</span><span class="p">,</span>
+            <span class="s2">&quot;page_size&quot;</span><span class="p">:</span> <span class="n">page_size</span><span class="p">,</span>
             <span class="s2">&quot;search_id&quot;</span><span class="p">:</span> <span class="n">get_search_id</span><span class="p">(),</span>
-            <span class="s2">&quot;sort&quot;</span><span class="p">:</span> <span class="s2">&quot;general&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;note_type&quot;</span><span class="p">:</span> <span class="mi">0</span>
+            <span class="s2">&quot;sort&quot;</span><span class="p">:</span> <span class="n">sort</span><span class="o">.</span><span class="n">value</span><span class="p">,</span>
+            <span class="s2">&quot;note_type&quot;</span><span class="p">:</span> <span class="n">note_type</span><span class="o">.</span><span class="n">value</span>
         <span class="p">}</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="n">uri</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span></div>
 

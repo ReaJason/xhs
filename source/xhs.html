@@ -129,8 +129,26 @@
 
 <dl class="py method">
 <dt class="sig sig-object py" id="xhs.XhsClient.get_note_by_keyword">
-<span class="sig-name descname"><span class="pre">get_note_by_keyword</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">keyword</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xhs/core.html#XhsClient.get_note_by_keyword"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#xhs.XhsClient.get_note_by_keyword" title="永久链接至目标">¶</a></dt>
-<dd></dd></dl>
+<span class="sig-name descname"><span class="pre">get_note_by_keyword</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">keyword</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">page</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">page_size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">20</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sort</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">xhs.core.SearchSortType</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">SearchSortType.GENERAL</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">note_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">xhs.core.SearchNoteType</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">SearchNoteType.ALL</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xhs/core.html#XhsClient.get_note_by_keyword"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#xhs.XhsClient.get_note_by_keyword" title="永久链接至目标">¶</a></dt>
+<dd><p>search note by keyword</p>
+<dl class="field-list simple">
+<dt class="field-odd">参数</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>keyword</strong> (<em>str</em>) – what notes you want to search</p></li>
+<li><p><strong>page</strong> (<em>int</em><em>, </em><em>optional</em>) – page number, defaults to 1</p></li>
+<li><p><strong>page_size</strong> (<em>int</em><em>, </em><em>optional</em>) – page size, defaults to 20</p></li>
+<li><p><strong>sort</strong> (<em>SearchSortType</em><em>, </em><em>optional</em>) – sort ordering, defaults to SearchSortType.GENERAL</p></li>
+<li><p><strong>note_type</strong> (<em>SearchNoteType</em><em>, </em><em>optional</em>) – note type, defaults to SearchNoteType.ALL</p></li>
+</ul>
+</dd>
+<dt class="field-even">返回</dt>
+<dd class="field-even"><p>{has_more: true, items: []}</p>
+</dd>
+<dt class="field-odd">返回类型</dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="xhs.XhsClient.get_proxies">
