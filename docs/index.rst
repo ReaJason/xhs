@@ -6,6 +6,10 @@
 xhs 用户文档
 ===============================
 
+.. image:: https://img.shields.io/pypi/dm/xhs?style=for-the-badge
+   :target: https://pypi.org/project/xhs/
+   :alt: PyPI - Downloads
+
 .. image:: https://img.shields.io/pypi/v/xhs?style=for-the-badge
    :target: https://pypi.org/project/xhs/
    :alt: PyPI
