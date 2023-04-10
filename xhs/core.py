@@ -1,5 +1,6 @@
 import json
 import os
+import re
 from enum import Enum
 
 import requests
@@ -184,6 +185,12 @@ class XhsClient:
         """
         note = self.get_note_by_id(note_id)
         title = note["title"]
+
+        invalid_chars = '<>:"/\\|?*'
+        title = re.sub('[{}]'.format(re.escape(invalid_chars)), '_', title)
+
+        if not title:
+            title = note_id
 
         new_dir_path = os.path.join(dir_path, title)
         if not os.path.exists(new_dir_path):

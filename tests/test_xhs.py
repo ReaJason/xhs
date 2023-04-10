@@ -9,7 +9,7 @@ from .utils import beauty_print
 def xhs_client():
     return XhsClient(
         cookie=('webId=e3455f4405340fc431af976dbf3de167;'
-                "web_session=040069b253793fdd9ccd9bd21c364b0033a638;"))
+                "web_session=040069b253793fdd9ccd9a5f01364b856d4088"))
 
 
 def test_init_with_session_id():
@@ -102,4 +102,13 @@ def test_delete_comment(xhs_client: XhsClient):
     ])
 @pytest.mark.skip()
 def test_save_files_from_note_id(xhs_client: XhsClient, note_id: str):
+    xhs_client.save_files_from_note_id(note_id, r"C:\Users\ReaJason\Desktop")
+
+
+@pytest.mark.parametrize("note_id", [
+    "639a7064000000001f0098a8",
+    "635d06790000000015020497"
+])
+@pytest.mark.skip()
+def test_save_files_from_note_id_invalid_title(xhs_client: XhsClient, note_id):
     xhs_client.save_files_from_note_id(note_id, r"C:\Users\ReaJason\Desktop")
