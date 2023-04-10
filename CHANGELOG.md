@@ -5,6 +5,16 @@
 - Improve documentation
 - Add more test function
 
+## 0.1.1
+
+### ADD
+
+- add search sort and note_type args
+
+### FIX
+
+- fix save file error when invalid title
+
 ## 0.1.0
 
 ### ADD
