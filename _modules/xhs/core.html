@@ -41,7 +41,8 @@
 
 <span class="kn">from</span> <span class="nn">xhs.exception</span> <span class="kn">import</span> <span class="n">DataFetchError</span>
 
-<span class="kn">from</span> <span class="nn">.help</span> <span class="kn">import</span> <span class="n">get_search_id</span><span class="p">,</span> <span class="n">sign</span>
+<span class="kn">from</span> <span class="nn">.help</span> <span class="kn">import</span> <span class="p">(</span><span class="n">cookie_jar_to_cookie_str</span><span class="p">,</span> <span class="n">get_search_id</span><span class="p">,</span> <span class="n">sign</span><span class="p">,</span>
+                   <span class="n">update_session_cookies_from_cookie</span><span class="p">)</span>
 
 
 <div class="viewcode-block" id="FeedType"><a class="viewcode-back" href="../../source/xhs.html#xhs.FeedType">[文档]</a><span class="k">class</span> <span class="nc">FeedType</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
@@ -114,62 +115,63 @@
                  <span class="n">user_agent</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                  <span class="n">timeout</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
                  <span class="n">proxies</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;constructor</span>
-
-<span class="sd">        :param cookie: get it form your website, defaults to None</span>
-<span class="sd">        :type cookie: str, optional</span>
-<span class="sd">        :param user_agent: requests user agent, defaults to None</span>
-<span class="sd">        :type user_agent: str, optional</span>
-<span class="sd">        :param timeout: requests timeout, defaults to None</span>
-<span class="sd">        :type timeout: int, optional</span>
-<span class="sd">        :param proxies: requests proxies, defaults to None</span>
-<span class="sd">        :type proxies: dict, optional</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_user_agent</span> <span class="o">=</span> <span class="n">user_agent</span> <span class="ow">or</span> <span class="p">(</span><span class="s2">&quot;Mozilla/5.0 &quot;</span>
-                                          <span class="s2">&quot;(Windows NT 10.0; Win64; x64) &quot;</span>
-                                          <span class="s2">&quot;AppleWebKit/537.36 &quot;</span>
-                                          <span class="s2">&quot;(KHTML, like Gecko) &quot;</span>
-                                          <span class="s2">&quot;Chrome/111.0.0.0 Safari/537.36&quot;</span><span class="p">)</span>
+        <span class="sd">&quot;&quot;&quot;constructor&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_cookie</span> <span class="o">=</span> <span class="n">cookie</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_proxies</span> <span class="o">=</span> <span class="n">proxies</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_session</span><span class="p">:</span> <span class="n">requests</span><span class="o">.</span><span class="n">Session</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">session</span><span class="p">()</span>
+        <span class="n">update_session_cookies_from_cookie</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_session</span><span class="p">,</span> <span class="n">cookie</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_timeout</span> <span class="o">=</span> <span class="n">timeout</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_host</span> <span class="o">=</span> <span class="s2">&quot;https://edith.xiaohongshu.com&quot;</span>
-
-<div class="viewcode-block" id="XhsClient.set_cookie"><a class="viewcode-back" href="../../source/xhs.html#xhs.XhsClient.set_cookie">[文档]</a>    <span class="k">def</span> <span class="nf">set_cookie</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cookie</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_cookie</span> <span class="o">=</span> <span class="n">cookie</span></div>
-
-<div class="viewcode-block" id="XhsClient.get_cookie"><a class="viewcode-back" href="../../source/xhs.html#xhs.XhsClient.get_cookie">[文档]</a>    <span class="k">def</span> <span class="nf">get_cookie</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cookie</span></div>
-
-<div class="viewcode-block" id="XhsClient.get_user_agent"><a class="viewcode-back" href="../../source/xhs.html#xhs.XhsClient.get_user_agent">[文档]</a>    <span class="k">def</span> <span class="nf">get_user_agent</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_user_agent</span></div>
-
-<div class="viewcode-block" id="XhsClient.set_user_agent"><a class="viewcode-back" href="../../source/xhs.html#xhs.XhsClient.set_user_agent">[文档]</a>    <span class="k">def</span> <span class="nf">set_user_agent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">user_agent</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_user_agent</span> <span class="o">=</span> <span class="n">user_agent</span></div>
-
-<div class="viewcode-block" id="XhsClient.get_proxies"><a class="viewcode-back" href="../../source/xhs.html#xhs.XhsClient.get_proxies">[文档]</a>    <span class="k">def</span> <span class="nf">get_proxies</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_proxies</span></div>
-
-<div class="viewcode-block" id="XhsClient.set_proxies"><a class="viewcode-back" href="../../source/xhs.html#xhs.XhsClient.set_proxies">[文档]</a>    <span class="k">def</span> <span class="nf">set_proxies</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">proxies</span><span class="p">:</span> <span class="nb">dict</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_proxies</span> <span class="o">=</span> <span class="n">proxies</span></div>
-
-<div class="viewcode-block" id="XhsClient.get_timeout"><a class="viewcode-back" href="../../source/xhs.html#xhs.XhsClient.get_timeout">[文档]</a>    <span class="k">def</span> <span class="nf">get_timeout</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_timeout</span></div>
-
-<div class="viewcode-block" id="XhsClient.set_timeout"><a class="viewcode-back" href="../../source/xhs.html#xhs.XhsClient.set_timeout">[文档]</a>    <span class="k">def</span> <span class="nf">set_timeout</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">timeout</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_timeout</span> <span class="o">=</span> <span class="n">timeout</span></div>
-
-    <span class="k">def</span> <span class="nf">_pre_headers</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">url</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-        <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cookie</span>
-        <span class="n">signs</span> <span class="o">=</span> <span class="n">sign</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
-        <span class="k">return</span> <span class="p">{</span>
-            <span class="s2">&quot;User-Agent&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_user_agent</span><span class="p">,</span>
-            <span class="s2">&quot;cookie&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cookie</span><span class="p">,</span>
-            <span class="s2">&quot;x-s&quot;</span><span class="p">:</span> <span class="n">signs</span><span class="p">[</span><span class="s2">&quot;x-s&quot;</span><span class="p">],</span>
-            <span class="s2">&quot;x-t&quot;</span><span class="p">:</span> <span class="n">signs</span><span class="p">[</span><span class="s2">&quot;x-t&quot;</span><span class="p">],</span>
+        <span class="n">user_agent</span> <span class="o">=</span> <span class="n">user_agent</span> <span class="ow">or</span> <span class="p">(</span><span class="s2">&quot;Mozilla/5.0 &quot;</span>
+                                    <span class="s2">&quot;(Windows NT 10.0; Win64; x64) &quot;</span>
+                                    <span class="s2">&quot;AppleWebKit/537.36 &quot;</span>
+                                    <span class="s2">&quot;(KHTML, like Gecko) &quot;</span>
+                                    <span class="s2">&quot;Chrome/111.0.0.0 Safari/537.36&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_session</span><span class="o">.</span><span class="n">headers</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;user-agent&quot;</span><span class="p">:</span> <span class="n">user_agent</span><span class="p">,</span>
             <span class="s2">&quot;Content-Type&quot;</span><span class="p">:</span> <span class="s2">&quot;application/json&quot;</span>
         <span class="p">}</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">cookie</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">cookie_jar_to_cookie_str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_session</span><span class="p">)</span>
+
+    <span class="nd">@cookie</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">cookie</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cookie</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="n">update_session_cookies_from_cookie</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_session</span><span class="p">,</span> <span class="n">cookie</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">session</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_session</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">user_agent</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_session</span><span class="o">.</span><span class="n">headers</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;user-agent&quot;</span><span class="p">)</span>
+
+    <span class="nd">@user_agent</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">user_agent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">user_agent</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_session</span><span class="o">.</span><span class="n">headers</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s2">&quot;user-agent&quot;</span><span class="p">:</span> <span class="n">user_agent</span><span class="p">})</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">proxies</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_proxies</span>
+
+    <span class="nd">@proxies</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">proxies</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">proxies</span><span class="p">:</span> <span class="nb">dict</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_proxies</span> <span class="o">=</span> <span class="n">proxies</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">timeout</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_timeout</span>
+
+    <span class="nd">@timeout</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">timeout</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">timeout</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_timeout</span> <span class="o">=</span> <span class="n">timeout</span>
+
+    <span class="k">def</span> <span class="nf">_pre_headers</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">url</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="n">signs</span> <span class="o">=</span> <span class="n">sign</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_session</span><span class="o">.</span><span class="n">headers</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s2">&quot;x-s&quot;</span><span class="p">:</span> <span class="n">signs</span><span class="p">[</span><span class="s2">&quot;x-s&quot;</span><span class="p">]})</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_session</span><span class="o">.</span><span class="n">headers</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s2">&quot;x-t&quot;</span><span class="p">:</span> <span class="n">signs</span><span class="p">[</span><span class="s2">&quot;x-t&quot;</span><span class="p">]})</span>
 
 <div class="viewcode-block" id="XhsClient.request"><a class="viewcode-back" href="../../source/xhs.html#xhs.XhsClient.request">[文档]</a>    <span class="k">def</span> <span class="nf">request</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">method</span><span class="p">,</span> <span class="n">url</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_session</span><span class="o">.</span><span class="n">request</span><span class="p">(</span>
@@ -186,16 +188,14 @@
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
             <span class="n">final_uri</span> <span class="o">=</span> <span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{uri}</span><span class="s2">?&quot;</span>
                          <span class="sa">f</span><span class="s2">&quot;{&#39;&amp;&#39;.join([f&#39;</span><span class="si">{k}</span><span class="s2">=</span><span class="si">{v}</span><span class="s2">&#39;for k,v in params.items()])}&quot;</span><span class="p">)</span>
-        <span class="n">headers</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pre_headers</span><span class="p">(</span><span class="n">final_uri</span><span class="p">)</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">request</span><span class="p">(</span><span class="n">method</span><span class="o">=</span><span class="s2">&quot;GET&quot;</span><span class="p">,</span> <span class="n">url</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{self._host}{final_uri}</span><span class="s2">&quot;</span><span class="p">,</span>
-                            <span class="n">headers</span><span class="o">=</span><span class="n">headers</span><span class="p">)</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_pre_headers</span><span class="p">(</span><span class="n">final_uri</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">request</span><span class="p">(</span><span class="n">method</span><span class="o">=</span><span class="s2">&quot;GET&quot;</span><span class="p">,</span> <span class="n">url</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{self._host}{final_uri}</span><span class="s2">&quot;</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="XhsClient.post"><a class="viewcode-back" href="../../source/xhs.html#xhs.XhsClient.post">[文档]</a>    <span class="k">def</span> <span class="nf">post</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">uri</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="nb">dict</span><span class="p">):</span>
-        <span class="n">headers</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pre_headers</span><span class="p">(</span><span class="n">uri</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_pre_headers</span><span class="p">(</span><span class="n">uri</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
         <span class="n">json_str</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">separators</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;,&#39;</span><span class="p">,</span> <span class="s1">&#39;:&#39;</span><span class="p">),</span> <span class="n">ensure_ascii</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">request</span><span class="p">(</span><span class="n">method</span><span class="o">=</span><span class="s2">&quot;POST&quot;</span><span class="p">,</span> <span class="n">url</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{self._host}{uri}</span><span class="s2">&quot;</span><span class="p">,</span>
-                            <span class="n">data</span><span class="o">=</span><span class="n">json_str</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s2">&quot;utf-8&quot;</span><span class="p">),</span>
-                            <span class="n">headers</span><span class="o">=</span><span class="n">headers</span><span class="p">)</span></div>
+                            <span class="n">data</span><span class="o">=</span><span class="n">json_str</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s2">&quot;utf-8&quot;</span><span class="p">))</span></div>
 
 <div class="viewcode-block" id="XhsClient.get_note_by_id"><a class="viewcode-back" href="../../source/xhs.html#xhs.XhsClient.get_note_by_id">[文档]</a>    <span class="k">def</span> <span class="nf">get_note_by_id</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">note_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
