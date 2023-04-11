@@ -3,6 +3,8 @@ import json
 import random
 import time
 
+import requests
+
 
 def sign(uri, data=None, ctime=None):
     """
@@ -74,3 +76,21 @@ def get_search_id():
     e = int(time.time() * 1000) << 64
     t = int(random.uniform(0, 2147483646))
     return base36encode((e + t))
+
+
+def cookie_str_to_cookie_dict(cookie_str: str):
+    cookie_blocks = [cookie_block.split("=")
+                     for cookie_block in cookie_str.split(";")]
+    return {cookie[0]: cookie[1] for cookie in cookie_blocks}
+
+
+def cookie_jar_to_cookie_str(session: requests.Session):
+    cookie_dict = requests.utils.dict_from_cookiejar(session.cookies)
+    return ";".join([f"{key}={value}" for key, value in cookie_dict.items()])
+
+
+def update_session_cookies_from_cookie(session: requests.Session, cookie: str):
+    cookies = session.cookies
+    new_cookies = requests.utils.add_dict_to_cookiejar(
+        cookies, cookie_str_to_cookie_dict(cookie))
+    session.cookies = new_cookies

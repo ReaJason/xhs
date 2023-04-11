@@ -12,10 +12,13 @@ def xhs_client():
                 "web_session=040069b253793fdd9ccd9a5f01364b856d4088"))
 
 
-def test_init_with_session_id():
-    cookie = "123123"
+def test_cookie_setter_getter():
+    cookie = "web_session=123"
     xhs_client = XhsClient(cookie)
-    assert xhs_client.get_cookie() == cookie
+    assert xhs_client.cookie == cookie
+    new_cookie = "web_session=456"
+    xhs_client.cookie = new_cookie
+    assert xhs_client.cookie == new_cookie
 
 
 def test_get_note_by_id(xhs_client: XhsClient):

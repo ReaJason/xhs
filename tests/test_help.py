@@ -91,3 +91,9 @@ def test_search_id(header):
     print(json_data)
     assert json_data["code"] == 0
     print(json_data["data"])
+
+
+def test_cookie_to_dict():
+    cookie = "a1=1875ee347c84l911yfccaewmv2ntixkksu1c6vyu550000205660;"
+    cookie_dict = help.cookie_str_to_cookie_dict(cookie)
+    assert cookie_dict.get("a1")

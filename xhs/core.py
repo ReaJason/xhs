@@ -7,7 +7,8 @@ import requests
 
 from xhs.exception import DataFetchError
 
-from .help import get_search_id, sign
+from .help import (cookie_jar_to_cookie_str, get_search_id, sign,
+                   update_session_cookies_from_cookie)
 
 
 class FeedType(Enum):
@@ -80,62 +81,63 @@ class XhsClient:
                  user_agent=None,
                  timeout=10,
                  proxies=None):
-        """constructor
-
-        :param cookie: get it form your website, defaults to None
-        :type cookie: str, optional
-        :param user_agent: requests user agent, defaults to None
-        :type user_agent: str, optional
-        :param timeout: requests timeout, defaults to None
-        :type timeout: int, optional
-        :param proxies: requests proxies, defaults to None
-        :type proxies: dict, optional
-        """
-        self._user_agent = user_agent or ("Mozilla/5.0 "
-                                          "(Windows NT 10.0; Win64; x64) "
-                                          "AppleWebKit/537.36 "
-                                          "(KHTML, like Gecko) "
-                                          "Chrome/111.0.0.0 Safari/537.36")
+        """constructor"""
         self._cookie = cookie
         self._proxies = proxies
         self._session: requests.Session = requests.session()
+        update_session_cookies_from_cookie(self._session, cookie)
         self._timeout = timeout
         self._host = "https://edith.xiaohongshu.com"
+        user_agent = user_agent or ("Mozilla/5.0 "
+                                    "(Windows NT 10.0; Win64; x64) "
+                                    "AppleWebKit/537.36 "
+                                    "(KHTML, like Gecko) "
+                                    "Chrome/111.0.0.0 Safari/537.36")
+        self._session.headers = {
+            "user-agent": user_agent,
+            "Content-Type": "application/json"
+        }
 
-    def set_cookie(self, cookie: str):
-        self._cookie = cookie
+    @property
+    def cookie(self):
+        return cookie_jar_to_cookie_str(self._session)
 
-    def get_cookie(self):
-        return self._cookie
+    @cookie.setter
+    def cookie(self, cookie: str):
+        update_session_cookies_from_cookie(self._session, cookie)
 
-    def get_user_agent(self):
-        return self._user_agent
+    @property
+    def session(self):
+        return self._session
 
-    def set_user_agent(self, user_agent: str):
-        self._user_agent = user_agent
+    @property
+    def user_agent(self):
+        return self._session.headers.get("user-agent")
 
-    def get_proxies(self):
+    @user_agent.setter
+    def user_agent(self, user_agent: str):
+        self._session.headers.update({"user-agent": user_agent})
+
+    @property
+    def proxies(self):
         return self._proxies
 
-    def set_proxies(self, proxies: dict):
+    @proxies.setter
+    def proxies(self, proxies: dict):
         self._proxies = proxies
 
-    def get_timeout(self):
+    @property
+    def timeout(self):
         return self._timeout
 
-    def set_timeout(self, timeout):
+    @timeout.setter
+    def timeout(self, timeout):
         self._timeout = timeout
 
     def _pre_headers(self, url: str, data=None):
-        assert self._cookie
         signs = sign(url, data)
-        return {
-            "User-Agent": self._user_agent,
-            "cookie": self._cookie,
-            "x-s": signs["x-s"],
-            "x-t": signs["x-t"],
-            "Content-Type": "application/json"
-        }
+        self._session.headers.update({"x-s": signs["x-s"]})
+        self._session.headers.update({"x-t": signs["x-t"]})
 
     def request(self, method, url, **kwargs):
         response = self._session.request(
@@ -152,16 +154,14 @@ class XhsClient:
         if isinstance(params, dict):
             final_uri = (f"{uri}?"
                          f"{'&'.join([f'{k}={v}'for k,v in params.items()])}")
-        headers = self._pre_headers(final_uri)
-        return self.request(method="GET", url=f"{self._host}{final_uri}",
-                            headers=headers)
+        self._pre_headers(final_uri)
+        return self.request(method="GET", url=f"{self._host}{final_uri}")
 
     def post(self, uri: str, data: dict):
-        headers = self._pre_headers(uri, data)
+        self._pre_headers(uri, data)
         json_str = json.dumps(data, separators=(',', ':'), ensure_ascii=False)
         return self.request(method="POST", url=f"{self._host}{uri}",
-                            data=json_str.encode("utf-8"),
-                            headers=headers)
+                            data=json_str.encode("utf-8"))
 
     def get_note_by_id(self, note_id: str):
         """
