@@ -80,7 +80,7 @@ def get_search_id():
 
 def cookie_str_to_cookie_dict(cookie_str: str):
     cookie_blocks = [cookie_block.split("=")
-                     for cookie_block in cookie_str.split(";")]
+                     for cookie_block in cookie_str.split(";") if cookie_block]
     return {cookie[0]: cookie[1] for cookie in cookie_blocks}
 
 
