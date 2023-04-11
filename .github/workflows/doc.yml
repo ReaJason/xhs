@@ -2,8 +2,12 @@
 
 name: Sphinx Doc
 
-on: push
-
+on:
+  push:
+    paths:
+      - "docs/**"
+    tags:
+      - v*
 jobs:
   build:
     runs-on: ubuntu-latest
