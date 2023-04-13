@@ -1,7 +1,9 @@
 import json
 import os
 import re
+import time
 from enum import Enum
+from typing import NamedTuple
 
 import requests
 
@@ -61,6 +63,23 @@ class SearchNoteType(Enum):
     VIDEO = 1
     # only image
     IMAGE = 2
+
+
+class Note(NamedTuple):
+    """note typle"""
+    note_id: str
+    title: str
+    desc: str
+    type: str
+    user: dict
+    img_urls: list
+    video_url: str
+    tag_list: list
+    at_user_list: list
+    collected_count: str
+    comment_count: str
+    liked_count: str
+    share_count: str
 
 
 def download_file(url: str, filename: str):
@@ -197,16 +216,40 @@ class XhsClient:
             os.mkdir(new_dir_path)
 
         if note["type"] == NoteType.VIDEO.value:
-            video = next(filter(lambda value: len(value), note["video"]["media"]["stream"].values()))[0]
-            video_url = video["master_url"]
+            video_url = self._get_video_url_from_note(note)
             video_filename = os.path.join(new_dir_path, f"{title}.mp4")
             download_file(video_url, video_filename)
         else:
-            imgs = note["image_list"]
-            for index, img in enumerate(imgs):
-                img_url = get_img_url_by_trace_id(img["trace_id"])
+            img_urls = self._get_img_urls_from_note(note)
+            for index, img_url in enumerate(img_urls):
                 img_file_name = os.path.join(new_dir_path, f"{title}{index}.png")
                 download_file(img_url, img_file_name)
+
+    def _get_img_urls_from_note(self, note) -> list:
+        """get all no watermark img url from note
+
+        :param note: note info
+        :type note: dict
+        :return: images url list
+        :rtype: list
+        """
+        imgs = note["image_list"]
+        if not len(imgs):
+            return []
+        return [get_img_url_by_trace_id(img["trace_id"]) for img in imgs]
+
+    def _get_video_url_from_note(self, note) -> str:
+        """find video url from note
+
+        :param note: note info
+        :type note: dict
+        :return: video url
+        :rtype: str
+        """
+        if not note.get("video"):
+            return ""
+        video = next(filter(lambda value: len(value), note["video"]["media"]["stream"].values()))[0]
+        return video["master_url"]
 
     def get_self_info(self):
         uri = "/api/sns/web/v1/user/selfinfo"
@@ -271,6 +314,15 @@ class XhsClient:
         return self.post(uri, data)
 
     def get_user_notes(self, user_id: str, cursor: str = ""):
+        """get user notes just have simple info
+
+        :param user_id: user_id you want to fetch
+        :type user_id: str
+        :param cursor: return info has this argument, defaults to ""
+        :type cursor: str, optional
+        :return: {cursor:"", has_more:true,notes:[{cover:{},display_title:"",interact_info:{},note_id:"",type:"video"}]}
+        :rtype: dict
+        """
         uri = "/api/sns/web/v1/user_posted"
         params = {
             "num": 30,
@@ -278,6 +330,47 @@ class XhsClient:
             "user_id": user_id
         }
         return self.get(uri, params)
+
+    def get_user_all_notes(self, user_id: str, crawl_interval: int = 1) -> list[Note]:
+        """get user all notes with more info
+
+        :param user_id: user_id you want to fetch
+        :type user_id: str
+        :param crawl_interval: sleep seconds, defaults to 1
+        :type crawl_interval: int, optional
+        :return: note info list
+        :rtype: list[Note]
+        """
+        has_more = True
+        cursor = ""
+        result = []
+        while has_more:
+            res = self.get_user_notes(user_id, cursor)
+            has_more = res["has_more"]
+            cursor = res["cursor"]
+            note_ids = map(lambda note: note["note_id"], res["notes"])
+
+            for note_id in note_ids:
+                note = self.get_note_by_id(note_id)
+                interact_info = note["interact_info"]
+                note_info = Note(
+                    note_id=note["note_id"],
+                    title=note["title"],
+                    desc=note["desc"],
+                    type=note["type"],
+                    user=note["user"],
+                    img_urls=self._get_img_urls_from_note(note),
+                    video_url=self._get_video_url_from_note(note),
+                    tag_list=note["tag_list"],
+                    at_user_list=note["at_user_list"],
+                    collected_count=interact_info["collected_count"],
+                    comment_count=interact_info["comment_count"],
+                    liked_count=interact_info["liked_count"],
+                    share_count=interact_info["share_count"],
+                )
+                result.append(note_info)
+                time.sleep(crawl_interval)
+        return result
 
     def comment_note(self, note_id: str, content: str):
         """comment a note

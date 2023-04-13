@@ -8,8 +8,8 @@ from .utils import beauty_print
 @pytest.fixture
 def xhs_client():
     return XhsClient(
-        cookie=('webId=e3455f4405340fc431af976dbf3de167;'
-                "web_session=040069b253793fdd9ccd9a5f01364b856d4088"))
+        cookie=("webId=3ceadc9abfc351b88b07b556afddab35;"
+                "web_session=040069b253793fdd9ccd9a5f01364b856d4088;"))
 
 
 def test_cookie_setter_getter():
@@ -62,6 +62,13 @@ def test_get_user_notes(xhs_client: XhsClient):
     data = xhs_client.get_user_notes(user_id)
     beauty_print(data)
     assert len(data["notes"]) > 0
+
+
+@pytest.mark.skip()
+def test_get_user_all_notes(xhs_client: XhsClient):
+    user_id = "5c2766b500000000050283f1"
+    notes = xhs_client.get_user_all_notes(user_id, 0)
+    beauty_print(notes)
 
 
 def test_get_qrcode(xhs_client: XhsClient):
