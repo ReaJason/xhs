@@ -5,6 +5,16 @@
 - Improve documentation
 - Add more test function
 
+## 0.1.2
+
+### ADD
+
+- add get user all notes
+
+### Changed
+
+- change properties setter getter
+
 ## 0.1.1
 
 ### ADD
