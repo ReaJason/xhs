@@ -104,7 +104,8 @@ class XhsClient:
         self._cookie = cookie
         self._proxies = proxies
         self._session: requests.Session = requests.session()
-        update_session_cookies_from_cookie(self._session, cookie)
+        if cookie:
+            update_session_cookies_from_cookie(self._session, cookie)
         self._timeout = timeout
         self._host = "https://edith.xiaohongshu.com"
         user_agent = user_agent or ("Mozilla/5.0 "

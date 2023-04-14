@@ -9,7 +9,12 @@ from .utils import beauty_print
 def xhs_client():
     return XhsClient(
         cookie=("webId=3ceadc9abfc351b88b07b556afddab35;"
-                "web_session=040069b253793fdd9ccd9a5f01364b856d4088;"))
+                "web_session=040069b253793fdd9ccdae440c364b53145e4d;"))
+
+
+def test_xhs_client_init():
+    xhs_client = XhsClient()
+    assert xhs_client
 
 
 def test_cookie_setter_getter():

@@ -10,7 +10,7 @@ from xhs import help
 def header():
     return {
         "cookie": ('webId=e3455f4405340fc431af976dbf3de167;'
-                   "web_session=040069b253793fdd9ccd9a5f01364b856d4088"),
+                   "web_session=040069b253793fdd9ccdae440c364b53145e4d"),
         "user-agent": ("Mozilla/5.0 (Windows NT 10.0; Win64; x64)"
                        "AppleWebKit/537.36 (KHTML, like Gecko)"
                        "Chrome/111.0.0.0 Safari/537.36")
