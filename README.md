@@ -46,6 +46,13 @@ notes = xhs_client.get_note_by_keyword("小红书")
 recommend_type = FeedType.RECOMMEND
 recommend_notes = xhs_client.get_home_feed(recommend_type)
 
+# save notes file in disk
+xhs_client.save_files_from_note_id("63db8819000000001a01ead1",
+                                       r"C:\Users\User\Desktop"
+
+# get user all note detail
+notes = xhs_client.get_user_all_notes("5c2766b500000000050283f1")
+
 # more functions in development
 ```
 
