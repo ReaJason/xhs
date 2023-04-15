@@ -75,6 +75,21 @@ def test_get_user_all_notes(xhs_client: XhsClient):
     beauty_print(notes)
 
 
+def test_get_note_comments(xhs_client: XhsClient):
+    note_id = "63db8819000000001a01ead1"
+    comments = xhs_client.get_note_comments(note_id)
+    beauty_print(comments)
+    assert len(comments["comments"]) > 0
+
+
+def test_get_note_sub_comments(xhs_client: XhsClient):
+    note_id = "63db8819000000001a01ead1"
+    root_comment_id = "63db8957000000001c03e5b5"
+    comments = xhs_client.get_note_sub_comments(note_id, root_comment_id)
+    beauty_print(comments)
+    assert len(comments["comments"]) > 0
+
+
 def test_get_qrcode(xhs_client: XhsClient):
     data = xhs_client.get_qrcode()
     beauty_print(data)

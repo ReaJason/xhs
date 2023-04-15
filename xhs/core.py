@@ -356,6 +356,48 @@ class XhsClient:
                 time.sleep(crawl_interval)
         return result
 
+    def get_note_comments(self, note_id: str, cursor: str = ""):
+        """get note comments
+
+        :param note_id: note id you want to fetch
+        :type note_id: str
+        :param cursor: last you get cursor, defaults to ""
+        :type cursor: str, optional
+        :return: {"has_more": true,"cursor": "6422442d000000000700dcdb",comments: [],"user_id": "63273a77000000002303cc9b","time": 1681566542930}
+        :rtype: dict
+        """
+        uri = "/api/sns/web/v2/comment/page"
+        params = {
+            "note_id": note_id,
+            "cursor": cursor
+        }
+        return self.get(uri, params)
+
+    def get_note_sub_comments(self, note_id: str,
+                              root_comment_id: str,
+                              num: int = 30, cursor: str = ""):
+        """get note sub comments
+
+        :param note_id: note id you want to fetch
+        :type note_id: str
+        :param root_comment_id: parent comment id
+        :type root_comment_id: str
+        :param num: recommend 30, if num greater 30, it only return 30 comments
+        :type num: int
+        :param cursor: last you get cursor, defaults to ""
+        :type cursor: str optional
+        :return: {"has_more": true,"cursor": "6422442d000000000700dcdb",comments: [],"user_id": "63273a77000000002303cc9b","time": 1681566542930}
+        :rtype: dict
+        """
+        uri = "/api/sns/web/v2/comment/sub/page"
+        params = {
+            "note_id": note_id,
+            "root_comment_id": root_comment_id,
+            "num": num,
+            "cursor": cursor,
+        }
+        return self.get(uri, params)
+
     def comment_note(self, note_id: str, content: str):
         """comment a note
 
