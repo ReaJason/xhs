@@ -45,7 +45,7 @@ xhs 用户文档
    xhs_client.get_user_all_notes("63273a77000000002303cc9b")
 
    # 获取笔记全部的评论
-   xhs_client.get_note_all_comments("63273a77000000002303cc9b")
+   xhs_client.get_note_all_comments("63db8819000000001a01ead1")
 
    # 搜索笔记
    xhs_client.get_note_by_keyword("小红书")
