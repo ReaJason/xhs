@@ -93,6 +93,14 @@ xhs 用户文档
 ^^^^^^^^^^^^^
 ``xhs_client.get_user_notes("用户ID")``
 
+获取笔记评论
+^^^^^^^^^^^^
+``xhs_client.get_note_comments("笔记ID")``
+
+获取笔记子评论
+^^^^^^^^^^^^^^^
+``xhs_client.get_note_sub_comments("笔记ID", "父评论ID")``
+
 评论笔记
 ^^^^^^^^^^^^^^^^
 ``xhs_client.comment_note("笔记ID", "评论内容")``
