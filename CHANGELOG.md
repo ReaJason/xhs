@@ -5,6 +5,14 @@
 - Improve documentation
 - Add more test function
 
+## 0.1.3
+
+### ADD
+
+- add get note comments
+- add get note sub comments
+- add get note all comments
+
 ## 0.1.2
 
 ### ADD
