@@ -2,14 +2,13 @@ import pytest
 
 from xhs import FeedType, XhsClient
 
+from . import test_cookie
 from .utils import beauty_print
 
 
 @pytest.fixture
 def xhs_client():
-    return XhsClient(
-        cookie=("webId=3ceadc9abfc351b88b07b556afddab35;"
-                "web_session=040069b253793fdd9ccdae440c364b53145e4d;"))
+    return XhsClient(cookie=test_cookie)
 
 
 def test_xhs_client_init():

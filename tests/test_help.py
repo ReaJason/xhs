@@ -5,12 +5,13 @@ import requests
 
 from xhs import help
 
+from . import test_cookie
+
 
 @pytest.fixture
 def header():
     return {
-        "cookie": ('webId=e3455f4405340fc431af976dbf3de167;'
-                   "web_session=040069b253793fdd9ccdae440c364b53145e4d"),
+        "cookie": test_cookie,
         "user-agent": ("Mozilla/5.0 (Windows NT 10.0; Win64; x64)"
                        "AppleWebKit/537.36 (KHTML, like Gecko)"
                        "Chrome/111.0.0.0 Safari/537.36")
