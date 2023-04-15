@@ -101,68 +101,51 @@ class XhsClient:
                  timeout=10,
                  proxies=None):
         """constructor"""
-        self._cookie = cookie
-        self._proxies = proxies
-        self._session: requests.Session = requests.session()
+        self.proxies = proxies
+        self.__session: requests.Session = requests.session()
         if cookie:
-            update_session_cookies_from_cookie(self._session, cookie)
-        self._timeout = timeout
+            update_session_cookies_from_cookie(self.__session, cookie)
+        self.timeout = timeout
         self._host = "https://edith.xiaohongshu.com"
         user_agent = user_agent or ("Mozilla/5.0 "
                                     "(Windows NT 10.0; Win64; x64) "
                                     "AppleWebKit/537.36 "
                                     "(KHTML, like Gecko) "
                                     "Chrome/111.0.0.0 Safari/537.36")
-        self._session.headers = {
+        self.__session.headers = {
             "user-agent": user_agent,
             "Content-Type": "application/json"
         }
 
     @property
     def cookie(self):
-        return cookie_jar_to_cookie_str(self._session)
+        return cookie_jar_to_cookie_str(self.__session)
 
     @cookie.setter
     def cookie(self, cookie: str):
-        update_session_cookies_from_cookie(self._session, cookie)
+        update_session_cookies_from_cookie(self.__session, cookie)
 
     @property
     def session(self):
-        return self._session
+        return self.__session
 
     @property
     def user_agent(self):
-        return self._session.headers.get("user-agent")
+        return self.__session.headers.get("user-agent")
 
     @user_agent.setter
     def user_agent(self, user_agent: str):
-        self._session.headers.update({"user-agent": user_agent})
-
-    @property
-    def proxies(self):
-        return self._proxies
-
-    @proxies.setter
-    def proxies(self, proxies: dict):
-        self._proxies = proxies
-
-    @property
-    def timeout(self):
-        return self._timeout
-
-    @timeout.setter
-    def timeout(self, timeout):
-        self._timeout = timeout
+        self.__session.headers.update({"user-agent": user_agent})
 
     def _pre_headers(self, url: str, data=None):
         signs = sign(url, data)
-        self._session.headers.update({"x-s": signs["x-s"]})
-        self._session.headers.update({"x-t": signs["x-t"]})
+        self.__session.headers.update({"x-s": signs["x-s"]})
+        self.__session.headers.update({"x-t": signs["x-t"]})
 
     def request(self, method, url, **kwargs):
-        response = self._session.request(
-            method, url, timeout=self._timeout,
-            proxies=self._proxies, **kwargs)
+        response = self.__session.request(
+            method, url, timeout=self.timeout,
+            proxies=self.proxies, **kwargs)
         data = response.json()
         if data["success"]:
             return data.get("data", data.get("success"))
