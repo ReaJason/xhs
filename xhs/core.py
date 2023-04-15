@@ -332,7 +332,7 @@ class XhsClient:
         }
         return self.get(uri, params)
 
-    def get_user_all_notes(self, user_id: str, crawl_interval: int = 1) -> list[Note]:
+    def get_user_all_notes(self, user_id: str, crawl_interval: int = 1):
         """get user all notes with more info
 
         :param user_id: user_id you want to fetch
