@@ -68,7 +68,7 @@ def test_get_user_notes(xhs_client: XhsClient):
     assert len(data["notes"]) > 0
 
 
-@pytest.mark.skip()
+@pytest.mark.skip(reason="it take much request and time")
 def test_get_user_all_notes(xhs_client: XhsClient):
     user_id = "5c2766b500000000050283f1"
     notes = xhs_client.get_user_all_notes(user_id, 0)
@@ -88,6 +88,17 @@ def test_get_note_sub_comments(xhs_client: XhsClient):
     comments = xhs_client.get_note_sub_comments(note_id, root_comment_id)
     beauty_print(comments)
     assert len(comments["comments"]) > 0
+
+
+@pytest.mark.skip(reason="it take much request and time")
+def test_get_note_all_comments(xhs_client: XhsClient):
+    note_id = "63db8819000000001a01ead1"
+    note = xhs_client.get_note_by_id(note_id)
+    comments_count = int(note["interact_info"]["comment_count"])
+    print(comments_count)
+    comments = xhs_client.get_note_all_comments(note_id)
+    beauty_print(comments)
+    assert len(comments) == comments_count
 
 
 def test_get_qrcode(xhs_client: XhsClient):

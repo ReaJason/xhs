@@ -398,6 +398,40 @@ class XhsClient:
         }
         return self.get(uri, params)
 
+    def get_note_all_comments(self, note_id: str, crawl_interval: int = 1):
+        """get note all comments include sub comments
+
+        :param note_id: note id you want to fetch
+        :type note_id: str
+        """
+        result = []
+        comments_has_more = True
+        comments_cursor = ""
+        while comments_has_more:
+            comments_res = self.get_note_comments(note_id, comments_cursor)
+            comments_has_more = comments_res.get("has_more", False)
+            comments_cursor = comments_res.get("cursor", "")
+            comments = comments_res["comments"]
+            for comment in comments:
+                result.append(comment)
+                print(comment)
+                cur_sub_comment_count = int(comment["sub_comment_count"])
+                cur_sub_comments = comment["sub_comments"]
+                result.extend(cur_sub_comments)
+                sub_comments_has_more = comment["sub_comment_has_more"] and len(cur_sub_comments) < cur_sub_comment_count
+                sub_comment_cursor = comment["sub_comment_cursor"]
+                print(comment["content"] + str(sub_comments_has_more))
+                while sub_comments_has_more:
+                    page_num = 30
+                    sub_comments_res = self.get_note_sub_comments(note_id, comment["id"], num=page_num, cursor=sub_comment_cursor)
+                    sub_comments = sub_comments_res["comments"]
+                    sub_comments_has_more = sub_comments_res["has_more"] and len(sub_comments) == page_num
+                    sub_comment_cursor = sub_comments_res["cursor"]
+                    result.extend(sub_comments)
+                    time.sleep(crawl_interval)
+            time.sleep(crawl_interval)
+        return result
+
     def comment_note(self, note_id: str, content: str):
         """comment a note
 

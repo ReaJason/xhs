@@ -41,8 +41,11 @@ xhs 用户文档
    # 获取用户信息
    xhs_client.get_user_info("5ff0e6410000000001008400")
 
-   # 获取用户笔记
-   xhs_client.get_user_notes("63273a77000000002303cc9b")
+   # 获取用户全部的笔记
+   xhs_client.get_user_all_notes("63273a77000000002303cc9b")
+
+   # 获取笔记全部的评论
+   xhs_client.get_note_all_comments("63273a77000000002303cc9b")
 
    # 搜索笔记
    xhs_client.get_note_by_keyword("小红书")
