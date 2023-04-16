@@ -201,7 +201,7 @@ class XhsClient:
 
         if note["type"] == NoteType.VIDEO.value:
             video_url = self._get_video_url_from_note(note)
-            video_filename = os.path.join(new_dir_path, f"{title}.mp4")
+            video_filename = os.path.join(new_dir_path, f"{title}.mov")
             download_file(video_url, video_filename)
         else:
             img_urls = self._get_img_urls_from_note(note)
@@ -232,8 +232,7 @@ class XhsClient:
         """
         if not note.get("video"):
             return ""
-        video = next(filter(lambda value: len(value), note["video"]["media"]["stream"].values()))[0]
-        return video["master_url"]
+        return f"http://sns-video-bd.xhscdn.com/{note['video']['consumer']['origin_video_key']}"
 
     def get_self_info(self):
         uri = "/api/sns/web/v1/user/selfinfo"
