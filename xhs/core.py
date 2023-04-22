@@ -549,7 +549,7 @@ class XhsClient:
             "num": num,
             "cursor": cursor
         }
-        return self.get(uri, params)["notes"]
+        return self.get(uri, params)
 
     def get_user_like_notes(self, user_id: str, num: int = 30, cursor: str = ""):
         uri = "/api/sns/web/v1/note/like/page"
@@ -558,4 +558,4 @@ class XhsClient:
             "num": num,
             "cursor": cursor
         }
-        return self.get(uri, params)["notes"]
+        return self.get(uri, params)
