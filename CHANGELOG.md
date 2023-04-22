@@ -5,6 +5,13 @@
 - Improve documentation
 - Add more test function
 
+## 0.1.4
+
+### ADD
+
+- add get user like notes
+- add get user collect notes
+
 ## 0.1.3
 
 ### ADD
