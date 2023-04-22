@@ -152,3 +152,19 @@ def test_save_files_from_note_id(xhs_client: XhsClient, note_id: str):
 @pytest.mark.skip()
 def test_save_files_from_note_id_invalid_title(xhs_client: XhsClient, note_id):
     xhs_client.save_files_from_note_id(note_id, r"C:\Users\ReaJason\Desktop")
+
+
+@pytest.mark.skip()
+def test_get_user_collect_notes(xhs_client: XhsClient):
+    notes = xhs_client.get_user_collect_notes(
+        user_id="63273a77000000002303cc9b")
+    beauty_print(notes)
+    assert len(notes) == 1
+
+
+@pytest.mark.skip()
+def test_get_user_like_notes(xhs_client: XhsClient):
+    notes = xhs_client.get_user_like_notes(
+        user_id="63273a77000000002303cc9b")
+    beauty_print(notes)
+    assert len(notes) == 2
