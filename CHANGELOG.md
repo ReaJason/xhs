@@ -5,16 +5,22 @@
 - Improve documentation
 - Add more test function
 
+## 0.1.5
+
+### Fixed
+
+- fix get_user_all_notes lose note time and last_update_time
+
 ## 0.1.4
 
-### ADD
+### Added
 
 - add get user like notes
 - add get user collect notes
 
 ## 0.1.3
 
-### ADD
+### Added
 
 - add get note comments
 - add get note sub comments
@@ -22,7 +28,7 @@
 
 ## 0.1.2
 
-### ADD
+### Added
 
 - add get user all notes
 
@@ -32,17 +38,17 @@
 
 ## 0.1.1
 
-### ADD
+### Added
 
 - add search sort and note_type args
 
-### FIX
+### Fixed
 
 - fix save file error when invalid title
 
 ## 0.1.0
 
-### ADD
+### Added
 
 - add comment note api
 - add delete note comment api
@@ -61,7 +67,7 @@
 
 ## 0.0.4
 
-### ADD
+### Added
 
 - add x-s 、search_id signature
 - add get note by id api
@@ -73,18 +79,18 @@
 
 ## 0.0.3
 
-### ADD
+### Added
 
 - add pypi, doc, test ci actions
 
 ## 0.0.2
 
-### ADD
+### Added
 
 - add Sphinx Doc
 
 ## 0.0.1
 
-### ADD
+### Added
 
 - Structuring project (base on [Structuring Your Project](https://docs.python-guide.org/writing/structure/))
