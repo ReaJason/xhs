@@ -70,7 +70,7 @@ def test_get_user_notes(xhs_client: XhsClient):
 
 @pytest.mark.skip(reason="it take much request and time")
 def test_get_user_all_notes(xhs_client: XhsClient):
-    user_id = "5c2766b500000000050283f1"
+    user_id = "63273a77000000002303cc9b"
     notes = xhs_client.get_user_all_notes(user_id, 0)
     beauty_print(notes)
 

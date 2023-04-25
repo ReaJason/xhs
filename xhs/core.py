@@ -80,6 +80,8 @@ class Note(NamedTuple):
     comment_count: str
     liked_count: str
     share_count: str
+    time: int
+    last_update_time: int
 
 
 def download_file(url: str, filename: str):
@@ -350,6 +352,8 @@ class XhsClient:
                     comment_count=interact_info["comment_count"],
                     liked_count=interact_info["liked_count"],
                     share_count=interact_info["share_count"],
+                    time=note["time"],
+                    last_update_time=note["last_update_time"],
                 )
                 result.append(note_info)
                 time.sleep(crawl_interval)
