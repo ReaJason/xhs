@@ -18,6 +18,12 @@ def header():
     }
 
 
+def test_sign():
+    sign = help.sign("/api/sns/web/v1/user/otherinfo?"
+                     "target_user_id=5ff0e6410000000001008400")
+    print(sign)
+
+
 def test_sign_get(header):
     uri = ("/api/sns/web/v1/user/otherinfo?"
            "target_user_id=5ff0e6410000000001008400")
