@@ -143,7 +143,7 @@ class XhsClient:
         signs = sign(url, data)
         self.__session.headers.update({"x-s": signs["x-s"]})
         self.__session.headers.update({"x-t": signs["x-t"]})
-        self.__session.headers.update({"x-t": signs["x-t"]})
+        self.__session.headers.update({"x-s-common": signs["x-s-common"]})
 
     def request(self, method, url, **kwargs):
         response = self.__session.request(
