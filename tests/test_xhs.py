@@ -1,6 +1,6 @@
 import pytest
 
-from xhs import FeedType, XhsClient
+from xhs import FeedType, IPBlockError, XhsClient
 
 from . import test_cookie
 from .utils import beauty_print
@@ -29,6 +29,15 @@ def test_get_note_by_id(xhs_client: XhsClient):
     note_id = "6413cf6b00000000270115b5"
     data = xhs_client.get_note_by_id(note_id)
     beauty_print(data)
+    assert data["note_id"] == note_id
+
+
+def test_get_note_by_id_from_html(xhs_client: XhsClient):
+    note_id = "6413cf6b00000000270115b5"
+    data = xhs_client.get_note_by_id_from_html(note_id)
+    # pre_data = xhs_client.get_note_by_id(note_id)
+    beauty_print(data)
+    # assert pre_data == data
     assert data["note_id"] == note_id
 
 
@@ -154,7 +163,7 @@ def test_save_files_from_note_id_invalid_title(xhs_client: XhsClient, note_id):
     xhs_client.save_files_from_note_id(note_id, r"C:\Users\ReaJason\Desktop")
 
 
-# @pytest.mark.skip()
+@pytest.mark.skip()
 def test_get_user_collect_notes(xhs_client: XhsClient):
     notes = xhs_client.get_user_collect_notes(
         user_id="63273a77000000002303cc9b")["notes"]
@@ -162,9 +171,17 @@ def test_get_user_collect_notes(xhs_client: XhsClient):
     assert len(notes) == 1
 
 
-# @pytest.mark.skip()
+@pytest.mark.skip()
 def test_get_user_like_notes(xhs_client: XhsClient):
     notes = xhs_client.get_user_like_notes(
         user_id="63273a77000000002303cc9b")["notes"]
     beauty_print(notes)
     assert len(notes) == 2
+
+
+@pytest.mark.skip(reason="i don't want to block by ip")
+def test_ip_block_error(xhs_client: XhsClient):
+    with pytest.raises(IPBlockError):
+        note_id = "6413cf6b00000000270115b5"
+        for _ in range(150):
+            xhs_client.get_note_by_id(note_id)

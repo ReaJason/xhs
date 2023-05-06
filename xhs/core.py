@@ -7,7 +7,7 @@ from typing import NamedTuple
 
 import requests
 
-from xhs.exception import DataFetchError
+from xhs.exception import DataFetchError, IPBlockError
 
 from .help import (cookie_jar_to_cookie_str, get_search_id, sign,
                    update_session_cookies_from_cookie)
@@ -118,6 +118,8 @@ class XhsClient:
             "user-agent": user_agent,
             "Content-Type": "application/json"
         }
+        self.IP_ERROR_STR = "网络连接异常，请检查网络设置或重启试试"
+        self.IP_ERROR_CODE = 300012
 
     @property
     def cookie(self):
@@ -147,11 +149,14 @@ class XhsClient:
 
     def request(self, method, url, **kwargs):
         response = self.__session.request(
-            method, url, timeout=self.timeout,
-            proxies=self.proxies, **kwargs)
+                        method, url, timeout=self.timeout,
+                        proxies=self.proxies, **kwargs)
         data = response.json()
+        print(data)
         if data["success"]:
             return data.get("data", data.get("success"))
+        elif data["code"] == self.IP_ERROR_CODE:
+            raise IPBlockError(self.IP_ERROR_STR)
         else:
             raise DataFetchError(data.get("msg", None))
 
@@ -180,6 +185,43 @@ class XhsClient:
         uri = "/api/sns/web/v1/feed"
         res = self.post(uri, data)
         return res["items"][0]["note_card"]
+
+    def get_note_by_id_from_html(self, note_id: str):
+        """get note info from "https://www.xiaohongshu.com/explore/" + note_id, and the return obj is equal to get_note_by_id
+
+        :param note_id: note_id you want to fetch
+        :type note_id: str
+        """
+
+        def camel_to_underscore(key):
+            return re.sub(r'(?<!^)(?=[A-Z])', '_', key).lower()
+
+        def transform_json_keys(json_data):
+            data_dict = json.loads(json_data)
+            new_dict = {}
+            for key, value in data_dict.items():
+                new_key = camel_to_underscore(key)
+                if not value:
+                    new_dict[new_key] = value
+                elif isinstance(value, dict):
+                    new_dict[new_key] = transform_json_keys(json.dumps(value))
+                elif isinstance(value, list):
+                    new_dict[new_key] = [transform_json_keys(json.dumps(
+                        item)) if item else item for item in value]
+                else:
+                    new_dict[new_key] = value
+            return new_dict
+
+        url = "https://www.xiaohongshu.com/explore/" + note_id
+        res = self.session.get(url, headers={"user-agent": self.user_agent})
+        html = res.text
+        state = re.findall(r'window.__INITIAL_STATE__=({.*})</script>', html)[0].replace("undefined", '""')
+        if state != "{}":
+            new_dict = transform_json_keys(state)
+            return new_dict["note"]["note"]
+        elif self.IP_ERROR_STR in html:
+            raise IPBlockError(self.IP_ERROR_STR)
+        raise DataFetchError()
 
     def save_files_from_note_id(self, note_id: str, dir_path: str):
         """this function will fetch note and save file in dir_path/note_title
