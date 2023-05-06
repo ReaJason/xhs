@@ -9,8 +9,8 @@ import requests
 
 from xhs.exception import DataFetchError, IPBlockError
 
-from .help import (cookie_jar_to_cookie_str, get_search_id, sign,
-                   update_session_cookies_from_cookie)
+from .help import (cookie_jar_to_cookie_str, cookie_str_to_cookie_dict,
+                   get_search_id, sign, update_session_cookies_from_cookie)
 
 
 class FeedType(Enum):
@@ -105,10 +105,9 @@ class XhsClient:
         """constructor"""
         self.proxies = proxies
         self.__session: requests.Session = requests.session()
-        if cookie:
-            update_session_cookies_from_cookie(self.__session, cookie)
         self.timeout = timeout
         self._host = "https://edith.xiaohongshu.com"
+        self.home = "https://www.xiaohongshu.com"
         user_agent = user_agent or ("Mozilla/5.0 "
                                     "(Windows NT 10.0; Win64; x64) "
                                     "AppleWebKit/537.36 "
@@ -120,6 +119,7 @@ class XhsClient:
         }
         self.IP_ERROR_STR = "网络连接异常，请检查网络设置或重启试试"
         self.IP_ERROR_CODE = 300012
+        self.cookie = cookie
 
     @property
     def cookie(self):
@@ -128,6 +128,9 @@ class XhsClient:
     @cookie.setter
     def cookie(self, cookie: str):
         update_session_cookies_from_cookie(self.__session, cookie)
+        cookie_dict = cookie_str_to_cookie_dict(self.cookie)
+        if "web_session" not in cookie_dict:
+            self.activate()
 
     @property
     def session(self):
@@ -152,7 +155,6 @@ class XhsClient:
                         method, url, timeout=self.timeout,
                         proxies=self.proxies, **kwargs)
         data = response.json()
-        print(data)
         if data["success"]:
             return data.get("data", data.get("success"))
         elif data["code"] == self.IP_ERROR_CODE:
@@ -460,13 +462,11 @@ class XhsClient:
             comments = comments_res["comments"]
             for comment in comments:
                 result.append(comment)
-                print(comment)
                 cur_sub_comment_count = int(comment["sub_comment_count"])
                 cur_sub_comments = comment["sub_comments"]
                 result.extend(cur_sub_comments)
                 sub_comments_has_more = comment["sub_comment_has_more"] and len(cur_sub_comments) < cur_sub_comment_count
                 sub_comment_cursor = comment["sub_comment_cursor"]
-                print(comment["content"] + str(sub_comments_has_more))
                 while sub_comments_has_more:
                     page_num = 30
                     sub_comments_res = self.get_note_sub_comments(note_id, comment["id"], num=page_num, cursor=sub_comment_cursor)
@@ -588,6 +588,10 @@ class XhsClient:
             "code": code
         }
         return self.get(uri, params)
+
+    def activate(self):
+        uri = "/api/sns/web/v1/login/activate"
+        return self.post(uri, data={})
 
     def get_user_collect_notes(self, user_id: str, num: int = 30, cursor: str = ""):
         uri = "/api/sns/web/v2/note/collect/page"

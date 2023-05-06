@@ -1,14 +1,16 @@
+import binascii
 import ctypes
 import hashlib
 import json
 import random
+import string
 import time
 import urllib.parse
 
 import requests
 
 
-def sign(uri, data=None, ctime=None):
+def sign(uri, data=None, ctime=None, a1="", b1=""):
     """
     takes in a URI (uniform resource identifier), an optional data dictionary, and an optional ctime parameter. It returns a dictionary containing two keys: "x-s" and "x-t".
     """
@@ -42,10 +44,10 @@ def sign(uri, data=None, ctime=None):
         "x2": "Windows",
         "x3": "xhs-pc-web",
         "x4": "2.3.1",
-        "x5": "",  # cookie of a1
+        "x5": a1,  # cookie of a1
         "x6": x_t,
         "x7": x_s,
-        "x8": "",  # localStorage.getItem("b1")
+        "x8": b1,  # localStorage.getItem("b1")
         "x9": mrc(x_t + x_s),
         "x10": 1,  # getSigCount
     }
@@ -114,6 +116,20 @@ def mrc(e):
     for n in range(57):
         o = ie[(o & 255) ^ ord(e[n])] ^ right_without_sign(o, 8)
     return o ^ -1 ^ 3988292384
+
+
+def get_a1_and_web_id():
+    """generate a1 and webid cookie str, the first return value is a1, second is webId
+
+    for example: a1, web_id = get_a1_and_web_id()
+    """
+    def random_str(length):
+        alphabet = string.ascii_letters + string.digits
+        return ''.join(random.choice(alphabet) for _ in range(length))
+
+    d = hex(int(time.time() * 1000))[2:] + random_str(30) + "5" + "0" + "000"
+    g = (d + str(binascii.crc32(str(d).encode('utf-8'))))[:52]
+    return g, hashlib.md5(g.encode('utf-8')).hexdigest()
 
 
 lookup = [
@@ -283,7 +299,15 @@ def cookie_jar_to_cookie_str(session: requests.Session):
 
 
 def update_session_cookies_from_cookie(session: requests.Session, cookie: str):
-    cookies = session.cookies
-    new_cookies = requests.utils.add_dict_to_cookiejar(
-        cookies, cookie_str_to_cookie_dict(cookie))
+    cookie_dict = cookie_str_to_cookie_dict(cookie) if cookie else {}
+    if "a1" not in cookie_dict or "webId" not in cookie_dict:
+        # a1, web_id = get_a1_and_web_id()
+        cookie_dict |= {"a1": "187d2defea8dz1fgwydnci40kw265ikh9fsxn66qs50000726043",
+                        "webId": "ba57f42593b9e55840a289fa0b755374"}
+    if "gid" not in cookie_dict:
+        cookie_dict |= {
+            "gid.sign": "PSF1M3U6EBC/Jv6eGddPbmsWzLI=",
+            "gid": "yYWfJfi820jSyYWfJfdidiKK0YfuyikEvfISMAM348TEJC28K23TxI888WJK84q8S4WfY2Sy"
+        }
+    new_cookies = requests.utils.cookiejar_from_dict(cookie_dict)
     session.cookies = new_cookies

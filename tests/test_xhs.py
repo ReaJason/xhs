@@ -1,4 +1,5 @@
 import pytest
+import requests
 
 from xhs import FeedType, IPBlockError, XhsClient
 
@@ -17,12 +18,10 @@ def test_xhs_client_init():
 
 
 def test_cookie_setter_getter():
-    cookie = "web_session=123"
-    xhs_client = XhsClient(cookie)
-    assert xhs_client.cookie == cookie
-    new_cookie = "web_session=456"
-    xhs_client.cookie = new_cookie
-    assert xhs_client.cookie == new_cookie
+    xhs_client = XhsClient()
+    cd = requests.utils.dict_from_cookiejar(xhs_client.session.cookies)
+    beauty_print(cd)
+    assert "web_session" in cd
 
 
 def test_get_note_by_id(xhs_client: XhsClient):
@@ -185,3 +184,9 @@ def test_ip_block_error(xhs_client: XhsClient):
         note_id = "6413cf6b00000000270115b5"
         for _ in range(150):
             xhs_client.get_note_by_id(note_id)
+
+
+def test_activate(xhs_client: XhsClient):
+    info = xhs_client.activate()
+    beauty_print(info)
+    assert info["session"]
