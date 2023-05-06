@@ -5,6 +5,18 @@
 - Improve documentation
 - Add more test function
 
+## 0.1.6
+
+### Fixed
+
+- client init without cookie will casue a exception
+
+### Added
+
+- add get note by id from html api
+- add ip block error exception
+- add x-s-common sign
+
 ## 0.1.5
 
 ### Fixed
