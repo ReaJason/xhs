@@ -14,7 +14,7 @@
 
 **xhs** is a crawling tool designed to extract data from [xiaohongshu website](https://www.xiaohongshu.com/explore)
 
-# Usage
+## Usage
 
 xhs is available on PyPI:
 
@@ -64,13 +64,24 @@ use signature function:
 # sign get request
 >>> from xhs import help
 >>> help.sign("/api/sns/web/v1/user/otherinfo?target_user_id=5ff0e6410000000001008400")
-{'x-s': '1l5LsiTlZYavOYwvOid6OlU6OisCZ6dBZjvL1gsCOg13', 'x-t': '1680701208022'}
+{'x-s': 'sYMlOB5W0YdvZBVvOBw6slZJZjM+ZgaUOlFisBwJslc3', 'x-t': '1683368960336', 'x-s-common': '2UQAPsHC+aIjqArjwjHjNsQhPsHCH0rjNsQhPaHCH0P1PjhIHjIj2eHjwjQgynEDJ74AHjIj2ePjwjQhyoPTqBPT49pjHjIj2ecjwjHUN0P1PaHVHdWMH0ijHjIj2eGjwjHl+0W
+APAGhw/GIPAP9HjIj2eqjwjQAnLMV/FHMpAm88o8ycS89/FQ7+d+VnDkyyDF3nf4YpLRVzfSAcd4tq9l0PUHVHdWhH0ijHjIj2eDjwjFAPAPU+eHMweDANsQhP/Zjw0bR'}
+
 
 # sign post request
 >>> help.sign("/api/sns/web/v1/feed", {"source_note_id": "63db8819000000001a01ead1"})
-{'x-s': 'sY5LOg9WOYFKsYFWOBcis2MlsiFCsjMb0jTKZja6OjA3', 'x-t': '1680701310666'}
+{'x-s': '1lU6sBdUOY5WZY5Ksg9G0Yw60jwBOlFWZj5W0jM+slc3', 'x-t': '1683368998055', 'x-s-common': '2UQAPsHC+aIjqArjwjHjNsQhPsHCH0rjNsQhPaHCH0P1PjhIHjIj2eHjwjQgynEDJ74AHjIj2ePjwjQhyoPTqBPT49pjHjIj2ecjwjHUN0P1PaHVHdWMH0ijHjIj2eGjwjHl+0W
+APAGhw/DhPeLMHjIj2eqjwjHlJbL9qFQDpLR8+p4yn/pNq9qEzAm84AGIyd4s/9lBpMkx+pqIyDF3q9l0PUHVHdWhH0ijHjIj2eDjwjFlP0DEw/DFPeDANsQhP/Zjw0bR'}
+
+# generate a1 and webId, but it not useful until you sign them
+>>> help.get_a1_and_web_id()
+('187f09d3bc6wUrNpFbQ9Yc431AenpvlBJh2QIQahI50000261040', '12b49a1fd517aa8df85380e9961b6800')
 
 # get search_id parameter
 >>> help.get_search_id()
 '2BHU39J8HCTIW665YHFCW'
 ```
+
+## Donate
+
+[![](https://afdian.net/static/img/logo/logo.png)](https://afdian.net/a/reajason)
