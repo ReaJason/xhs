@@ -3,6 +3,7 @@ import ctypes
 import hashlib
 import json
 import random
+import re
 import string
 import time
 import urllib.parse
@@ -58,6 +59,85 @@ def sign(uri, data=None, ctime=None, a1="", b1=""):
         "x-t": x_t,
         "x-s-common": x_s_common,
     }
+
+
+def get_a1_and_web_id():
+    """generate a1 and webid cookie str, the first return value is a1, second is webId
+
+    for example: a1, web_id = get_a1_and_web_id()
+    """
+    def random_str(length):
+        alphabet = string.ascii_letters + string.digits
+        return ''.join(random.choice(alphabet) for _ in range(length))
+
+    d = hex(int(time.time() * 1000))[2:] + random_str(30) + "5" + "0" + "000"
+    g = (d + str(binascii.crc32(str(d).encode('utf-8'))))[:52]
+    return g, hashlib.md5(g.encode('utf-8')).hexdigest()
+
+
+img_cdns = [
+    "https://sns-img-qc.xhscdn.com",
+    "https://sns-img-hw.xhscdn.com",
+    "https://sns-img-bd.xhscdn.com",
+    "https://sns-img-qn.xhscdn.com",
+]
+
+
+def get_img_url_by_trace_id(trace_id: str, format: str = "png"):
+    return f"{random.choice(img_cdns)}/{trace_id}?imageView2/format/{format}"
+
+
+def get_img_urls_by_trace_id(trace_id: str, format: str = "png"):
+    return [f"{cdn}/{trace_id}?imageView2/format/{format}" for cdn in img_cdns]
+
+
+def get_imgs_url_from_note(note) -> list:
+    """the return type is [img1_url, img2_url, ...]"""
+    imgs = note["image_list"]
+    if not len(imgs):
+        return []
+    return [get_img_url_by_trace_id(img["trace_id"]) for img in imgs]
+
+
+def get_imgs_urls_from_note(note) -> list:
+    """the return type is [[img1_url1, img1_url2, img1_url3], [img2_url, img2_url2, img2_url3], ...]"""
+    imgs = note["image_list"]
+    if not len(imgs):
+        return []
+    return [get_img_urls_by_trace_id(img["trace_id"]) for img in imgs]
+
+
+video_cdns = [
+    "https://sns-video-qc.xhscdn.com",
+    "https://sns-video-hw.xhscdn.com",
+    "https://sns-video-bd.xhscdn.com",
+    "https://sns-video-qn.xhscdn.com",
+]
+
+
+def get_video_url_from_note(note) -> str:
+    if not note.get("video"):
+        return ""
+    origin_video_key = note['video']['consumer']['origin_video_key']
+    return f"{random.choice(video_cdns)}/{origin_video_key}"
+
+
+def get_video_urls_from_note(note) -> list:
+    origin_video_key = note['video']['consumer']['origin_video_key']
+    return [f"{cdn}/{origin_video_key}?imageView2/format/{format}" for cdn in video_cdns]
+
+
+def download_file(url: str, filename: str):
+    with requests.get(url, stream=True) as r:
+        r.raise_for_status()
+        with open(filename, 'wb') as f:
+            for chunk in r.iter_content(chunk_size=8192):
+                f.write(chunk)
+
+
+def get_valid_path_name(text):
+    invalid_chars = '<>:"/\\|?*'
+    return re.sub('[{}]'.format(re.escape(invalid_chars)), '_', text)
 
 
 def mrc(e):
@@ -116,20 +196,6 @@ def mrc(e):
     for n in range(57):
         o = ie[(o & 255) ^ ord(e[n])] ^ right_without_sign(o, 8)
     return o ^ -1 ^ 3988292384
-
-
-def get_a1_and_web_id():
-    """generate a1 and webid cookie str, the first return value is a1, second is webId
-
-    for example: a1, web_id = get_a1_and_web_id()
-    """
-    def random_str(length):
-        alphabet = string.ascii_letters + string.digits
-        return ''.join(random.choice(alphabet) for _ in range(length))
-
-    d = hex(int(time.time() * 1000))[2:] + random_str(30) + "5" + "0" + "000"
-    g = (d + str(binascii.crc32(str(d).encode('utf-8'))))[:52]
-    return g, hashlib.md5(g.encode('utf-8')).hexdigest()
 
 
 lookup = [

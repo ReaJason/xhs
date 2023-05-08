@@ -10,7 +10,9 @@ import requests
 from xhs.exception import DataFetchError, IPBlockError
 
 from .help import (cookie_jar_to_cookie_str, cookie_str_to_cookie_dict,
-                   get_search_id, sign, update_session_cookies_from_cookie)
+                   download_file, get_imgs_url_from_note, get_search_id,
+                   get_valid_path_name, get_video_url_from_note, sign,
+                   update_session_cookies_from_cookie)
 
 
 class FeedType(Enum):
@@ -82,18 +84,6 @@ class Note(NamedTuple):
     share_count: str
     time: int
     last_update_time: int
-
-
-def download_file(url: str, filename: str):
-    with requests.get(url, stream=True) as r:
-        r.raise_for_status()
-        with open(filename, 'wb') as f:
-            for chunk in r.iter_content(chunk_size=8192):
-                f.write(chunk)
-
-
-def get_img_url_by_trace_id(trace_id: str):
-    return f"https://sns-img-bd.xhscdn.com/{trace_id}?imageView2/format/png"
 
 
 class XhsClient:
@@ -234,10 +224,8 @@ class XhsClient:
         :type dir_path: str
         """
         note = self.get_note_by_id(note_id)
-        title = note["title"]
 
-        invalid_chars = '<>:"/\\|?*'
-        title = re.sub('[{}]'.format(re.escape(invalid_chars)), '_', title)
+        title = get_valid_path_name(note["title"])
 
         if not title:
             title = note_id
@@ -255,31 +243,6 @@ class XhsClient:
             for index, img_url in enumerate(img_urls):
                 img_file_name = os.path.join(new_dir_path, f"{title}{index}.png")
                 download_file(img_url, img_file_name)
-
-    def _get_img_urls_from_note(self, note) -> list:
-        """get all no watermark img url from note
-
-        :param note: note info
-        :type note: dict
-        :return: images url list
-        :rtype: list
-        """
-        imgs = note["image_list"]
-        if not len(imgs):
-            return []
-        return [get_img_url_by_trace_id(img["trace_id"]) for img in imgs]
-
-    def _get_video_url_from_note(self, note) -> str:
-        """find video url from note
-
-        :param note: note info
-        :type note: dict
-        :return: video url
-        :rtype: str
-        """
-        if not note.get("video"):
-            return ""
-        return f"http://sns-video-bd.xhscdn.com/{note['video']['consumer']['origin_video_key']}"
 
     def get_self_info(self):
         uri = "/api/sns/web/v1/user/selfinfo"
@@ -389,8 +352,8 @@ class XhsClient:
                     desc=note["desc"],
                     type=note["type"],
                     user=note["user"],
-                    img_urls=self._get_img_urls_from_note(note),
-                    video_url=self._get_video_url_from_note(note),
+                    img_urls=get_imgs_url_from_note(note),
+                    video_url=get_video_url_from_note(note),
                     tag_list=note["tag_list"],
                     at_user_list=note["at_user_list"],
                     collected_count=interact_info["collected_count"],
