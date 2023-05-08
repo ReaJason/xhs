@@ -1,5 +1,4 @@
 import pytest
-import requests
 
 from xhs import FeedType, IPBlockError, XhsClient
 
@@ -19,7 +18,7 @@ def test_xhs_client_init():
 
 def test_cookie_setter_getter():
     xhs_client = XhsClient()
-    cd = requests.utils.dict_from_cookiejar(xhs_client.session.cookies)
+    cd = xhs_client.cookie_dict
     beauty_print(cd)
     assert "web_session" in cd
 

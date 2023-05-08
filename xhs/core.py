@@ -9,9 +9,9 @@ import requests
 
 from xhs.exception import DataFetchError, IPBlockError
 
-from .help import (cookie_jar_to_cookie_str, cookie_str_to_cookie_dict,
-                   download_file, get_imgs_url_from_note, get_search_id,
-                   get_valid_path_name, get_video_url_from_note, sign,
+from .help import (cookie_jar_to_cookie_str, download_file,
+                   get_imgs_url_from_note, get_search_id, get_valid_path_name,
+                   get_video_url_from_note, sign,
                    update_session_cookies_from_cookie)
 
 
@@ -118,9 +118,12 @@ class XhsClient:
     @cookie.setter
     def cookie(self, cookie: str):
         update_session_cookies_from_cookie(self.__session, cookie)
-        cookie_dict = cookie_str_to_cookie_dict(self.cookie)
-        if "web_session" not in cookie_dict:
+        if "web_session" not in self.cookie_dict:
             self.activate()
+
+    @property
+    def cookie_dict(self):
+        return requests.utils.dict_from_cookiejar(self.session.cookies)
 
     @property
     def session(self):
