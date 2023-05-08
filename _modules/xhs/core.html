@@ -5,7 +5,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>xhs.core &#8212; xhs 0.1.7 文档</title>
+    <title>xhs.core &#8212; xhs 0.1.8 文档</title>
     <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/alabaster.css" />
     <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
@@ -44,7 +44,9 @@
 <span class="kn">from</span> <span class="nn">xhs.exception</span> <span class="kn">import</span> <span class="n">DataFetchError</span><span class="p">,</span> <span class="n">IPBlockError</span>
 
 <span class="kn">from</span> <span class="nn">.help</span> <span class="kn">import</span> <span class="p">(</span><span class="n">cookie_jar_to_cookie_str</span><span class="p">,</span> <span class="n">cookie_str_to_cookie_dict</span><span class="p">,</span>
-                   <span class="n">get_search_id</span><span class="p">,</span> <span class="n">sign</span><span class="p">,</span> <span class="n">update_session_cookies_from_cookie</span><span class="p">)</span>
+                   <span class="n">download_file</span><span class="p">,</span> <span class="n">get_imgs_url_from_note</span><span class="p">,</span> <span class="n">get_search_id</span><span class="p">,</span>
+                   <span class="n">get_valid_path_name</span><span class="p">,</span> <span class="n">get_video_url_from_note</span><span class="p">,</span> <span class="n">sign</span><span class="p">,</span>
+                   <span class="n">update_session_cookies_from_cookie</span><span class="p">)</span>
 
 
 <div class="viewcode-block" id="FeedType"><a class="viewcode-back" href="../../source/xhs.html#xhs.FeedType">[文档]</a><span class="k">class</span> <span class="nc">FeedType</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
@@ -116,18 +118,6 @@
     <span class="n">share_count</span><span class="p">:</span> <span class="nb">str</span>
     <span class="n">time</span><span class="p">:</span> <span class="nb">int</span>
     <span class="n">last_update_time</span><span class="p">:</span> <span class="nb">int</span>
-
-
-<span class="k">def</span> <span class="nf">download_file</span><span class="p">(</span><span class="n">url</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">filename</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
-    <span class="k">with</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">stream</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span> <span class="k">as</span> <span class="n">r</span><span class="p">:</span>
-        <span class="n">r</span><span class="o">.</span><span class="n">raise_for_status</span><span class="p">()</span>
-        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s1">&#39;wb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
-            <span class="k">for</span> <span class="n">chunk</span> <span class="ow">in</span> <span class="n">r</span><span class="o">.</span><span class="n">iter_content</span><span class="p">(</span><span class="n">chunk_size</span><span class="o">=</span><span class="mi">8192</span><span class="p">):</span>
-                <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">chunk</span><span class="p">)</span>
-
-
-<span class="k">def</span> <span class="nf">get_img_url_by_trace_id</span><span class="p">(</span><span class="n">trace_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
-    <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;https://sns-img-bd.xhscdn.com/</span><span class="si">{trace_id}</span><span class="s2">?imageView2/format/png&quot;</span>
 
 
 <div class="viewcode-block" id="XhsClient"><a class="viewcode-back" href="../../source/xhs.html#xhs.XhsClient">[文档]</a><span class="k">class</span> <span class="nc">XhsClient</span><span class="p">:</span>
@@ -268,10 +258,8 @@
 <span class="sd">        :type dir_path: str</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">note</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_note_by_id</span><span class="p">(</span><span class="n">note_id</span><span class="p">)</span>
-        <span class="n">title</span> <span class="o">=</span> <span class="n">note</span><span class="p">[</span><span class="s2">&quot;title&quot;</span><span class="p">]</span>
 
-        <span class="n">invalid_chars</span> <span class="o">=</span> <span class="s1">&#39;&lt;&gt;:&quot;/</span><span class="se">\\</span><span class="s1">|?*&#39;</span>
-        <span class="n">title</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="s1">&#39;[</span><span class="si">{}</span><span class="s1">]&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">re</span><span class="o">.</span><span class="n">escape</span><span class="p">(</span><span class="n">invalid_chars</span><span class="p">)),</span> <span class="s1">&#39;_&#39;</span><span class="p">,</span> <span class="n">title</span><span class="p">)</span>
+        <span class="n">title</span> <span class="o">=</span> <span class="n">get_valid_path_name</span><span class="p">(</span><span class="n">note</span><span class="p">[</span><span class="s2">&quot;title&quot;</span><span class="p">])</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="n">title</span><span class="p">:</span>
             <span class="n">title</span> <span class="o">=</span> <span class="n">note_id</span>
@@ -289,31 +277,6 @@
             <span class="k">for</span> <span class="n">index</span><span class="p">,</span> <span class="n">img_url</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">img_urls</span><span class="p">):</span>
                 <span class="n">img_file_name</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">new_dir_path</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{title}{index}</span><span class="s2">.png&quot;</span><span class="p">)</span>
                 <span class="n">download_file</span><span class="p">(</span><span class="n">img_url</span><span class="p">,</span> <span class="n">img_file_name</span><span class="p">)</span></div>
-
-    <span class="k">def</span> <span class="nf">_get_img_urls_from_note</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">note</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;get all no watermark img url from note</span>
-
-<span class="sd">        :param note: note info</span>
-<span class="sd">        :type note: dict</span>
-<span class="sd">        :return: images url list</span>
-<span class="sd">        :rtype: list</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">imgs</span> <span class="o">=</span> <span class="n">note</span><span class="p">[</span><span class="s2">&quot;image_list&quot;</span><span class="p">]</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="nb">len</span><span class="p">(</span><span class="n">imgs</span><span class="p">):</span>
-            <span class="k">return</span> <span class="p">[]</span>
-        <span class="k">return</span> <span class="p">[</span><span class="n">get_img_url_by_trace_id</span><span class="p">(</span><span class="n">img</span><span class="p">[</span><span class="s2">&quot;trace_id&quot;</span><span class="p">])</span> <span class="k">for</span> <span class="n">img</span> <span class="ow">in</span> <span class="n">imgs</span><span class="p">]</span>
-
-    <span class="k">def</span> <span class="nf">_get_video_url_from_note</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">note</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;find video url from note</span>
-
-<span class="sd">        :param note: note info</span>
-<span class="sd">        :type note: dict</span>
-<span class="sd">        :return: video url</span>
-<span class="sd">        :rtype: str</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">note</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;video&quot;</span><span class="p">):</span>
-            <span class="k">return</span> <span class="s2">&quot;&quot;</span>
-        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;http://sns-video-bd.xhscdn.com/</span><span class="si">{note[&#39;video&#39;][&#39;consumer&#39;][&#39;origin_video_key&#39;]}</span><span class="s2">&quot;</span>
 
 <div class="viewcode-block" id="XhsClient.get_self_info"><a class="viewcode-back" href="../../source/xhs.html#xhs.XhsClient.get_self_info">[文档]</a>    <span class="k">def</span> <span class="nf">get_self_info</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">uri</span> <span class="o">=</span> <span class="s2">&quot;/api/sns/web/v1/user/selfinfo&quot;</span>
@@ -423,8 +386,8 @@
                     <span class="n">desc</span><span class="o">=</span><span class="n">note</span><span class="p">[</span><span class="s2">&quot;desc&quot;</span><span class="p">],</span>
                     <span class="nb">type</span><span class="o">=</span><span class="n">note</span><span class="p">[</span><span class="s2">&quot;type&quot;</span><span class="p">],</span>
                     <span class="n">user</span><span class="o">=</span><span class="n">note</span><span class="p">[</span><span class="s2">&quot;user&quot;</span><span class="p">],</span>
-                    <span class="n">img_urls</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_get_img_urls_from_note</span><span class="p">(</span><span class="n">note</span><span class="p">),</span>
-                    <span class="n">video_url</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_get_video_url_from_note</span><span class="p">(</span><span class="n">note</span><span class="p">),</span>
+                    <span class="n">img_urls</span><span class="o">=</span><span class="n">get_imgs_url_from_note</span><span class="p">(</span><span class="n">note</span><span class="p">),</span>
+                    <span class="n">video_url</span><span class="o">=</span><span class="n">get_video_url_from_note</span><span class="p">(</span><span class="n">note</span><span class="p">),</span>
                     <span class="n">tag_list</span><span class="o">=</span><span class="n">note</span><span class="p">[</span><span class="s2">&quot;tag_list&quot;</span><span class="p">],</span>
                     <span class="n">at_user_list</span><span class="o">=</span><span class="n">note</span><span class="p">[</span><span class="s2">&quot;at_user_list&quot;</span><span class="p">],</span>
                     <span class="n">collected_count</span><span class="o">=</span><span class="n">interact_info</span><span class="p">[</span><span class="s2">&quot;collected_count&quot;</span><span class="p">],</span>
