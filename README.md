@@ -12,6 +12,9 @@
 
 </div>
 
+> **Warning**
+> This is in expriemental, so the api is not stable, every update should be cautious
+
 **xhs** is a crawling tool designed to extract data from [xiaohongshu website](https://www.xiaohongshu.com/explore)
 
 ## Usage
