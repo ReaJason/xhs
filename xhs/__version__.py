@@ -8,8 +8,8 @@
 __title__ = "xhs"
 __description__ = "xiaohongshu crawl sdk."
 __url__ = "https://github.com/ReaJason/xhs"
-__version__ = "0.1.7"
-__build__ = 0x000107
+__version__ = "0.1.8"
+__build__ = 0x000108
 __author__ = "ReaJason"
 __author_email__ = "reajason1225@gmail.com"
 __license__ = "MIT"

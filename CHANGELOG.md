@@ -5,6 +5,16 @@
 - Improve documentation
 - Add more test function
 
+## 0.1.8
+
+### Added
+
+- add get img and video to help
+
+### Changed
+
+- change get_img_url to help
+
 ## 0.1.7
 
 ### Fixed
