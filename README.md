@@ -4,9 +4,10 @@
 🍰xhs
 </h1>
 
+[![PyPI](https://img.shields.io/pypi/v/xhs?label=xhs)](https://pypi.org/project/xhs/)
 [![](https://static.pepy.tech/badge/xhs)](https://pepy.tech/project/xhs)
 [![](https://img.shields.io/github/license/ReaJason/xhs)](https://github.com/ReaJason/xhs/blob/master/LICENSE)
-[![](https://github.com/ReaJason/xhs/actions/workflows/doc.yml/badge.svg)](https://reajason.github.io/xhs/)
+<br /> [![](https://github.com/ReaJason/xhs/actions/workflows/doc.yml/badge.svg)](https://reajason.github.io/xhs/)
 [![](https://github.com/ReaJason/xhs/actions/workflows/test.yml/badge.svg)](https://github.com/ReaJason/xhs/actions/workflows/test.yml)
 [![](https://github.com/ReaJason/xhs/actions/workflows/pypi.yml/badge.svg)](https://github.com/ReaJason/xhs/actions/workflows/pypi.yml)
 
