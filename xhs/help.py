@@ -361,8 +361,8 @@ def cookie_str_to_cookie_dict(cookie_str: str):
     return {cookie[0]: cookie[1] for cookie in cookie_blocks}
 
 
-def cookie_jar_to_cookie_str(session: requests.Session):
-    cookie_dict = requests.utils.dict_from_cookiejar(session.cookies)
+def cookie_jar_to_cookie_str(cookie_jar):
+    cookie_dict = requests.utils.dict_from_cookiejar(cookie_jar)
     return ";".join([f"{key}={value}" for key, value in cookie_dict.items()])
 
 

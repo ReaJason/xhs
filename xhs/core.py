@@ -113,7 +113,7 @@ class XhsClient:
 
     @property
     def cookie(self):
-        return cookie_jar_to_cookie_str(self.__session)
+        return cookie_jar_to_cookie_str(self.__session.cookies)
 
     @cookie.setter
     def cookie(self, cookie: str):
