@@ -5,6 +5,12 @@
 - Improve documentation
 - Add more test function
 
+## 0.1.9
+
+### Fixed
+
+- fixed get videos key error
+
 ## 0.1.8
 
 ### Added
