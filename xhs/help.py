@@ -123,6 +123,8 @@ def get_video_url_from_note(note) -> str:
 
 
 def get_video_urls_from_note(note) -> list:
+    if not note.get("video"):
+        return []
     origin_video_key = note['video']['consumer']['origin_video_key']
     return [f"{cdn}/{origin_video_key}?imageView2/format/{format}" for cdn in video_cdns]
 
