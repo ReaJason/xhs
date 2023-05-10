@@ -109,6 +109,8 @@ class XhsClient:
         }
         self.IP_ERROR_STR = "网络连接异常，请检查网络设置或重启试试"
         self.IP_ERROR_CODE = 300012
+        self.NOTE_ABNORMAL_STR = "笔记状态异常，请稍后查看"
+        self.NOTE_ABNORMAL_CODE = -510001
         self.cookie = cookie
 
     @property
@@ -328,7 +330,7 @@ class XhsClient:
         return self.get(uri, params)
 
     def get_user_all_notes(self, user_id: str, crawl_interval: int = 1):
-        """get user all notes with more info
+        """get user all notes with more info, abnormal notes will be ignored
 
         :param user_id: user_id you want to fetch
         :type user_id: str
@@ -347,7 +349,13 @@ class XhsClient:
             note_ids = map(lambda note: note["note_id"], res["notes"])
 
             for note_id in note_ids:
-                note = self.get_note_by_id(note_id)
+                try:
+                    note = self.get_note_by_id(note_id)
+                except DataFetchError as e:
+                    if self.NOTE_ABNORMAL_STR in str(e):
+                        continue
+                    else:
+                        raise
                 interact_info = note["interact_info"]
                 note_info = Note(
                     note_id=note["note_id"],
