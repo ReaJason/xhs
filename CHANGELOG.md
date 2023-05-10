@@ -5,6 +5,13 @@
 - Improve documentation
 - Add more test function
 
+## 0.2.0
+
+### Fixed
+
+- fixed save_files_from_note_id error
+- fixed get_user_all_notes abnormal notes catch error
+
 ## 0.1.9
 
 ### Fixed
