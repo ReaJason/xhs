@@ -238,11 +238,11 @@ class XhsClient:
             os.mkdir(new_dir_path)
 
         if note["type"] == NoteType.VIDEO.value:
-            video_url = self._get_video_url_from_note(note)
-            video_filename = os.path.join(new_dir_path, f"{title}.mov")
+            video_url = get_video_url_from_note(note)
+            video_filename = os.path.join(new_dir_path, f"{title}.mp4")
             download_file(video_url, video_filename)
         else:
-            img_urls = self._get_img_urls_from_note(note)
+            img_urls = get_imgs_url_from_note(note)
             for index, img_url in enumerate(img_urls):
                 img_file_name = os.path.join(new_dir_path, f"{title}{index}.png")
                 download_file(img_url, img_file_name)
