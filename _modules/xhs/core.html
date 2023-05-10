@@ -5,7 +5,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>xhs.core &#8212; xhs 0.1.9 文档</title>
+    <title>xhs.core &#8212; xhs 0.2.0 文档</title>
     <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/alabaster.css" />
     <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
@@ -143,11 +143,13 @@
         <span class="p">}</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">IP_ERROR_STR</span> <span class="o">=</span> <span class="s2">&quot;网络连接异常，请检查网络设置或重启试试&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">IP_ERROR_CODE</span> <span class="o">=</span> <span class="mi">300012</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">NOTE_ABNORMAL_STR</span> <span class="o">=</span> <span class="s2">&quot;笔记状态异常，请稍后查看&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">NOTE_ABNORMAL_CODE</span> <span class="o">=</span> <span class="o">-</span><span class="mi">510001</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">cookie</span> <span class="o">=</span> <span class="n">cookie</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">cookie</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="n">cookie_jar_to_cookie_str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__session</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">cookie_jar_to_cookie_str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__session</span><span class="o">.</span><span class="n">cookies</span><span class="p">)</span>
 
     <span class="nd">@cookie</span><span class="o">.</span><span class="n">setter</span>
     <span class="k">def</span> <span class="nf">cookie</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cookie</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
@@ -272,11 +274,11 @@
             <span class="n">os</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">new_dir_path</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">note</span><span class="p">[</span><span class="s2">&quot;type&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="n">NoteType</span><span class="o">.</span><span class="n">VIDEO</span><span class="o">.</span><span class="n">value</span><span class="p">:</span>
-            <span class="n">video_url</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_video_url_from_note</span><span class="p">(</span><span class="n">note</span><span class="p">)</span>
-            <span class="n">video_filename</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">new_dir_path</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{title}</span><span class="s2">.mov&quot;</span><span class="p">)</span>
+            <span class="n">video_url</span> <span class="o">=</span> <span class="n">get_video_url_from_note</span><span class="p">(</span><span class="n">note</span><span class="p">)</span>
+            <span class="n">video_filename</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">new_dir_path</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{title}</span><span class="s2">.mp4&quot;</span><span class="p">)</span>
             <span class="n">download_file</span><span class="p">(</span><span class="n">video_url</span><span class="p">,</span> <span class="n">video_filename</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">img_urls</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_img_urls_from_note</span><span class="p">(</span><span class="n">note</span><span class="p">)</span>
+            <span class="n">img_urls</span> <span class="o">=</span> <span class="n">get_imgs_url_from_note</span><span class="p">(</span><span class="n">note</span><span class="p">)</span>
             <span class="k">for</span> <span class="n">index</span><span class="p">,</span> <span class="n">img_url</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">img_urls</span><span class="p">):</span>
                 <span class="n">img_file_name</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">new_dir_path</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{title}{index}</span><span class="s2">.png&quot;</span><span class="p">)</span>
                 <span class="n">download_file</span><span class="p">(</span><span class="n">img_url</span><span class="p">,</span> <span class="n">img_file_name</span><span class="p">)</span></div>
@@ -362,7 +364,7 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">uri</span><span class="p">,</span> <span class="n">params</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="XhsClient.get_user_all_notes"><a class="viewcode-back" href="../../source/xhs.html#xhs.XhsClient.get_user_all_notes">[文档]</a>    <span class="k">def</span> <span class="nf">get_user_all_notes</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">user_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">crawl_interval</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;get user all notes with more info</span>
+        <span class="sd">&quot;&quot;&quot;get user all notes with more info, abnormal notes will be ignored</span>
 
 <span class="sd">        :param user_id: user_id you want to fetch</span>
 <span class="sd">        :type user_id: str</span>
@@ -381,7 +383,13 @@
             <span class="n">note_ids</span> <span class="o">=</span> <span class="nb">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">note</span><span class="p">:</span> <span class="n">note</span><span class="p">[</span><span class="s2">&quot;note_id&quot;</span><span class="p">],</span> <span class="n">res</span><span class="p">[</span><span class="s2">&quot;notes&quot;</span><span class="p">])</span>
 
             <span class="k">for</span> <span class="n">note_id</span> <span class="ow">in</span> <span class="n">note_ids</span><span class="p">:</span>
-                <span class="n">note</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_note_by_id</span><span class="p">(</span><span class="n">note_id</span><span class="p">)</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">note</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_note_by_id</span><span class="p">(</span><span class="n">note_id</span><span class="p">)</span>
+                <span class="k">except</span> <span class="n">DataFetchError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">NOTE_ABNORMAL_STR</span> <span class="ow">in</span> <span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">):</span>
+                        <span class="k">continue</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="k">raise</span>
                 <span class="n">interact_info</span> <span class="o">=</span> <span class="n">note</span><span class="p">[</span><span class="s2">&quot;interact_info&quot;</span><span class="p">]</span>
                 <span class="n">note_info</span> <span class="o">=</span> <span class="n">Note</span><span class="p">(</span>
                     <span class="n">note_id</span><span class="o">=</span><span class="n">note</span><span class="p">[</span><span class="s2">&quot;note_id&quot;</span><span class="p">],</span>
