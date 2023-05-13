@@ -204,7 +204,7 @@ class XhsClient:
                     new_dict[new_key] = transform_json_keys(json.dumps(value))
                 elif isinstance(value, list):
                     new_dict[new_key] = [transform_json_keys(json.dumps(
-                        item)) if item else item for item in value]
+                        item)) if (item and isinstance(item, dict)) else item for item in value]
                 else:
                     new_dict[new_key] = value
             return new_dict

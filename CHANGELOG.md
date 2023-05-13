@@ -5,6 +5,12 @@
 - Improve documentation
 - Add more test function
 
+## 0.2.1
+
+### Fixed
+
+- fixed get_note_by_id_from_html with video note parse error
+
 ## 0.2.0
 
 ### Fixed

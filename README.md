@@ -15,6 +15,8 @@
 
 > **Warning**
 >
+> I sincerely apologize for informing you that the sign is not functioning properly, indicating that certain APIs are experiencing issues. To address the anti-aliasing of the sign, I will devote time to further learning. 👋
+>
 > This is in expriemental, so the api is not stable, every update should be cautious
 
 **xhs** is a crawling tool designed to extract data from [xiaohongshu website](https://www.xiaohongshu.com/explore)

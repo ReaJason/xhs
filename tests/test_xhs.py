@@ -33,9 +33,12 @@ def test_get_note_by_id(xhs_client: XhsClient):
 def test_get_note_by_id_from_html(xhs_client: XhsClient):
     note_id = "6413cf6b00000000270115b5"
     data = xhs_client.get_note_by_id_from_html(note_id)
-    # pre_data = xhs_client.get_note_by_id(note_id)
     beauty_print(data)
-    # assert pre_data == data
+    assert data["note_id"] == note_id
+
+    note_id = "64426c3d000000001303eb83"
+    data = xhs_client.get_note_by_id_from_html(note_id)
+    beauty_print(data)
     assert data["note_id"] == note_id
 
 
