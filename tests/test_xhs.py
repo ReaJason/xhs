@@ -1,6 +1,6 @@
 import pytest
 
-from xhs import FeedType, IPBlockError, XhsClient
+from xhs import DataFetchError, FeedType, IPBlockError, XhsClient
 
 from . import test_cookie
 from .utils import beauty_print
@@ -21,6 +21,17 @@ def test_cookie_setter_getter():
     cd = xhs_client.cookie_dict
     beauty_print(cd)
     assert "web_session" in cd
+
+
+def test_external_sign_func():
+
+    def sign(url, data: None):
+        """signature url and data in here"""
+        return {}
+
+    with pytest.raises(DataFetchError):
+        xhs_client = XhsClient(sign=sign)
+        xhs_client.get_qrcode()
 
 
 def test_get_note_by_id(xhs_client: XhsClient):

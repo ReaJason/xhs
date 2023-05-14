@@ -91,11 +91,13 @@ class XhsClient:
                  cookie=None,
                  user_agent=None,
                  timeout=10,
-                 proxies=None):
+                 proxies=None,
+                 sign=None):
         """constructor"""
         self.proxies = proxies
         self.__session: requests.Session = requests.session()
         self.timeout = timeout
+        self.sign = sign
         self._host = "https://edith.xiaohongshu.com"
         self.home = "https://www.xiaohongshu.com"
         user_agent = user_agent or ("Mozilla/5.0 "
@@ -140,10 +142,13 @@ class XhsClient:
         self.__session.headers.update({"user-agent": user_agent})
 
     def _pre_headers(self, url: str, data=None):
-        signs = sign(url, data)
-        self.__session.headers.update({"x-s": signs["x-s"]})
-        self.__session.headers.update({"x-t": signs["x-t"]})
-        self.__session.headers.update({"x-s-common": signs["x-s-common"]})
+        if self.sign:
+            self.__session.headers.update(self.sign(url, data))
+        else:
+            signs = sign(url, data)
+            self.__session.headers.update({"x-s": signs["x-s"]})
+            self.__session.headers.update({"x-t": signs["x-t"]})
+            self.__session.headers.update({"x-s-common": signs["x-s-common"]})
 
     def request(self, method, url, **kwargs):
         response = self.__session.request(
