@@ -15,9 +15,7 @@
 
 > **Warning**
 >
-> I sincerely apologize for informing you that the sign is not functioning properly, indicating that certain APIs are experiencing issues. To address the anti-aliasing of the sign, I will devote time to further learning. 👋
->
-> This is in expriemental, so the api is not stable, every update should be cautious
+> The primary purpose of this repository is to practice my Python skills. It is important to note that web crawling may be considered illegal, and therefore, it is crucial to refrain from exerting any pressure or engaging in unauthorized activities on websites.
 
 **xhs** is a crawling tool designed to extract data from [xiaohongshu website](https://www.xiaohongshu.com/explore)
 
@@ -32,10 +30,20 @@ $ python -m pip install xhs
 basic usage:
 
 ```python
+import requests
 from xhs import FeedType, XhsClient
 
 cookie = "please get cookie in website"
-xhs_client = XhsClient(cookie)
+def sign(uri, data=None, a1=""):
+    """You can implement this sign function on your own."""
+    res = requests.post("http://127.0.0.1:5000/xhs/sign", json={
+        "uri": uri,
+        "data": data,
+        "a1": a1
+    })
+    return res.json()
+
+xhs_client = XhsClient(cookie, sign=sign)
 
 # get note info
 note_info = xhs_client.get_note_by_id("63db8819000000001a01ead1")
@@ -65,7 +73,7 @@ notes = xhs_client.get_user_all_notes("5c2766b500000000050283f1")
 
 Please refer to the [document(WIP)](https://reajason.github.io/xhs/) for more API references.
 
-use signature function:
+~~use signature function~~( it's useless ):
 
 ```python
 # sign get request
@@ -88,7 +96,3 @@ APAGhw/DhPeLMHjIj2eqjwjHlJbL9qFQDpLR8+p4yn/pNq9qEzAm84AGIyd4s/9lBpMkx+pqIyDF3q9l
 >>> help.get_search_id()
 '2BHU39J8HCTIW665YHFCW'
 ```
-
-## Donate
-
-[![](https://afdian.net/static/img/logo/logo.png)](https://afdian.net/a/reajason)
