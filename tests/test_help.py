@@ -27,7 +27,8 @@ def test_sign():
 def test_sign_get(header):
     uri = ("/api/sns/web/v1/user/otherinfo?"
            "target_user_id=5ff0e6410000000001008400")
-    sign = help.sign(uri=uri)
+    cookie_dict = help.cookie_str_to_cookie_dict(header["cookie"])
+    sign = help.sign(uri=uri, a1=cookie_dict.get("a1"))
 
     url = f"https://edith.xiaohongshu.com{uri}"
 
@@ -48,7 +49,8 @@ def test_sign_get(header):
 def test_sign_post(header):
     uri = "/api/sns/web/v1/feed"
     data = {"source_note_id": "63db8819000000001a01ead1"}
-    sign = help.sign(uri=uri, data=data)
+    cookie_dict = help.cookie_str_to_cookie_dict(header["cookie"])
+    sign = help.sign(uri=uri, data=data, a1=cookie_dict.get("a1"))
 
     url = f"https://edith.xiaohongshu.com{uri}"
 

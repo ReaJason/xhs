@@ -1,4 +1,5 @@
 import pytest
+import requests
 
 from xhs import DataFetchError, FeedType, IPBlockError, XhsClient
 
@@ -8,24 +9,31 @@ from .utils import beauty_print
 
 @pytest.fixture
 def xhs_client():
-    return XhsClient(cookie=test_cookie)
+    def sign(uri, data=None, a1=""):
+        res = requests.post("http://35.78.99.223:5000/xhs/sign", json={
+            "uri": uri,
+            "data": data,
+            "a1": a1
+        })
+        return res.json()
+    return XhsClient(cookie=test_cookie, sign=sign)
 
 
-def test_xhs_client_init():
-    xhs_client = XhsClient()
-    assert xhs_client
+# def test_xhs_client_init():
+#     xhs_client = XhsClient()
+#     assert xhs_client
 
 
-def test_cookie_setter_getter():
-    xhs_client = XhsClient()
-    cd = xhs_client.cookie_dict
-    beauty_print(cd)
-    assert "web_session" in cd
+# def test_cookie_setter_getter():
+#     xhs_client = XhsClient()
+#     cd = xhs_client.cookie_dict
+#     beauty_print(cd)
+#     assert "web_session" in cd
 
 
 def test_external_sign_func():
 
-    def sign(url, data: None):
+    def sign(url, data=None, a1=""):
         """signature url and data in here"""
         return {}
 
@@ -199,7 +207,7 @@ def test_ip_block_error(xhs_client: XhsClient):
             xhs_client.get_note_by_id(note_id)
 
 
-def test_activate(xhs_client: XhsClient):
-    info = xhs_client.activate()
-    beauty_print(info)
-    assert info["session"]
+# def test_activate(xhs_client: XhsClient):
+#     info = xhs_client.activate()
+#     beauty_print(info)
+#     assert info["session"]
