@@ -5,6 +5,12 @@
 - Improve documentation
 - Add more test function
 
+## 0.2.2
+
+### Added
+
+- add a custom sign func to constructor
+
 ## 0.2.1
 
 ### Fixed
