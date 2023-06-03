@@ -205,3 +205,7 @@ def test_ip_block_error(xhs_client: XhsClient):
 #     info = xhs_client.activate()
 #     beauty_print(info)
 #     assert info["session"]
+
+def test_get_emojis(xhs_client: XhsClient):
+    emojis = xhs_client.get_emojis()
+    beauty_print(emojis)

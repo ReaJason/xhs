@@ -143,7 +143,8 @@ class XhsClient:
 
     def _pre_headers(self, url: str, data=None):
         if self.sign:
-            self.__session.headers.update(self.sign(url, data, a1=self.cookie_dict.get("a1")))
+            self.__session.headers.update(
+                self.sign(url, data, a1=self.cookie_dict.get("a1")))
         else:
             signs = sign(url, data, a1=self.cookie_dict.get("a1"))
             self.__session.headers.update({"x-s": signs["x-s"]})
@@ -152,8 +153,8 @@ class XhsClient:
 
     def request(self, method, url, **kwargs):
         response = self.__session.request(
-                        method, url, timeout=self.timeout,
-                        proxies=self.proxies, **kwargs)
+            method, url, timeout=self.timeout,
+            proxies=self.proxies, **kwargs)
         data = response.json()
         if data["success"]:
             return data.get("data", data.get("success"))
@@ -217,7 +218,8 @@ class XhsClient:
         url = "https://www.xiaohongshu.com/explore/" + note_id
         res = self.session.get(url, headers={"user-agent": self.user_agent})
         html = res.text
-        state = re.findall(r'window.__INITIAL_STATE__=({.*})</script>', html)[0].replace("undefined", '""')
+        state = re.findall(
+            r'window.__INITIAL_STATE__=({.*})</script>', html)[0].replace("undefined", '""')
         if state != "{}":
             new_dict = transform_json_keys(state)
             return new_dict["note"]["note"]
@@ -251,7 +253,8 @@ class XhsClient:
         else:
             img_urls = get_imgs_url_from_note(note)
             for index, img_url in enumerate(img_urls):
-                img_file_name = os.path.join(new_dir_path, f"{title}{index}.png")
+                img_file_name = os.path.join(
+                    new_dir_path, f"{title}{index}.png")
                 download_file(img_url, img_file_name)
 
     def get_self_info(self):
@@ -444,13 +447,16 @@ class XhsClient:
                 cur_sub_comment_count = int(comment["sub_comment_count"])
                 cur_sub_comments = comment["sub_comments"]
                 result.extend(cur_sub_comments)
-                sub_comments_has_more = comment["sub_comment_has_more"] and len(cur_sub_comments) < cur_sub_comment_count
+                sub_comments_has_more = comment["sub_comment_has_more"] and len(
+                    cur_sub_comments) < cur_sub_comment_count
                 sub_comment_cursor = comment["sub_comment_cursor"]
                 while sub_comments_has_more:
                     page_num = 30
-                    sub_comments_res = self.get_note_sub_comments(note_id, comment["id"], num=page_num, cursor=sub_comment_cursor)
+                    sub_comments_res = self.get_note_sub_comments(
+                        note_id, comment["id"], num=page_num, cursor=sub_comment_cursor)
                     sub_comments = sub_comments_res["comments"]
-                    sub_comments_has_more = sub_comments_res["has_more"] and len(sub_comments) == page_num
+                    sub_comments_has_more = sub_comments_res["has_more"] and len(
+                        sub_comments) == page_num
                     sub_comment_cursor = sub_comments_res["cursor"]
                     result.extend(sub_comments)
                     time.sleep(crawl_interval)
@@ -589,3 +595,7 @@ class XhsClient:
             "cursor": cursor
         }
         return self.get(uri, params)
+
+    def get_emojis(self):
+        uri = "/api/im/redmoji/detail"
+        return self.get(uri)["emoji"]["tabs"][0]["collection"]
