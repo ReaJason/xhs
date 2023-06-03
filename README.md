@@ -28,6 +28,12 @@ xhs is available on PyPI:
 $ python -m pip install xhs
 ```
 
+if you want the latest version, you can install from git:
+
+```console
+$ python -m pip install git+https://github.com/ReaJason/xhs
+```
+
 basic usage:
 
 ```python
