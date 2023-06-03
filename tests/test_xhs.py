@@ -98,6 +98,12 @@ def test_get_home_feed(xhs_client: XhsClient):
     assert len(data["items"]) > 0
 
 
+def test_get_search_suggestion(xhs_client: XhsClient):
+    res = xhs_client.get_search_suggestion("jvm")
+    beauty_print(res)
+    assert len(res)
+
+
 def test_get_note_by_keyword(xhs_client: XhsClient):
     keyword = "小红书"
     data = xhs_client.get_note_by_keyword(keyword)

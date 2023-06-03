@@ -328,6 +328,13 @@ class XhsClient:
         }
         return self.post(uri, data)
 
+    def get_search_suggestion(self, keyword: str):
+        uri = "/api/sns/web/v1/sug/recommend"
+        params = {
+            "keyword": keyword
+        }
+        return [sug["text"] for sug in self.get(uri, params)["sug_items"]]
+
     def get_note_by_keyword(self, keyword: str,
                             page: int = 1, page_size: int = 20,
                             sort: SearchSortType = SearchSortType.GENERAL,
