@@ -259,8 +259,11 @@ class XhsClient:
 
     def get_self_info(self):
         uri = "/api/sns/web/v1/user/selfinfo"
-        res = self.get(uri)
-        return res
+        return self.get(uri)
+
+    def get_self_info2(self):
+        uri = "/api/sns/web/v2/user/me"
+        return self.get(uri)
 
     def get_user_info(self, user_id: str):
         """

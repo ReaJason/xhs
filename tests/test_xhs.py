@@ -60,6 +60,12 @@ def test_get_self_info(xhs_client: XhsClient):
     assert isinstance(data, dict)
 
 
+def test_get_self_info2(xhs_client: XhsClient):
+    data = xhs_client.get_self_info2()
+    beauty_print(data)
+    assert isinstance(data, dict)
+
+
 def test_get_user_info(xhs_client: XhsClient):
     user_id = "5ff0e6410000000001008400"
     data = xhs_client.get_user_info(user_id)
