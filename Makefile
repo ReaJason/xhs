@@ -7,9 +7,11 @@ test:
 		tox -p
 cov:
 		pytest --verbose --cov-report term --cov-report xml --cov=xhs tests/
+build_wheel:
+		python3 setup.py sdist bdist_wheel
+		rm -fr build .egg xhs.egg-info
 upload:
-		python setup.py sdist bdist_wheel
+		make build_wheel
 		twine upload dist/*
-		rm -fr build dist .egg xhs.egg-info
 docs:
 		cd docs && make clean html && start ./_build/html/index.html
