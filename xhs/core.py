@@ -278,6 +278,10 @@ class XhsClient:
         }
         return self.get(uri, params)
 
+    def get_home_feed_category(self):
+        uri = "/api/sns/web/v1/homefeed/category"
+        return self.get(uri)["categories"]
+
     def get_home_feed(self, feed_type: FeedType):
         uri = "/api/sns/web/v1/homefeed"
         data = {

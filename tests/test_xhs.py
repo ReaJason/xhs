@@ -75,6 +75,12 @@ def test_get_user_info(xhs_client: XhsClient):
             or basic_info["nickname"] == "小王不爱睡")
 
 
+def test_get_home_feed_category(xhs_client: XhsClient):
+    data = xhs_client.get_home_feed_category()
+    beauty_print(data)
+    assert len(data)
+
+
 def test_get_home_feed(xhs_client: XhsClient):
     recommend_type = FeedType.RECOMMEND
     data = xhs_client.get_home_feed(recommend_type)
@@ -215,3 +221,4 @@ def test_ip_block_error(xhs_client: XhsClient):
 def test_get_emojis(xhs_client: XhsClient):
     emojis = xhs_client.get_emojis()
     beauty_print(emojis)
+    assert len(emojis)
