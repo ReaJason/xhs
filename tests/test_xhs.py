@@ -1,6 +1,6 @@
 import pytest
 
-from xhs import DataFetchError, FeedType, IPBlockError, XhsClient
+from xhs import FeedType, IPBlockError, XhsClient
 from xhs.exception import SignError
 
 from . import test_cookie
@@ -52,6 +52,16 @@ def test_get_note_by_id_from_html(xhs_client: XhsClient):
     data = xhs_client.get_note_by_id_from_html(note_id)
     beauty_print(data)
     assert data["note_id"] == note_id
+
+
+def test_report_note_metrics(xhs_client: XhsClient):
+    res = xhs_client.report_note_metrics(
+        note_id="646837b9000000001300a4c3",
+        note_type=1,
+        note_user_id="6037a89b0000000001007e72",
+        viewer_user_id="63273a77000000002303cc9b")
+    beauty_print(res)
+    assert res["success"]
 
 
 def test_get_self_info(xhs_client: XhsClient):

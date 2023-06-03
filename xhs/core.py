@@ -225,6 +225,40 @@ class XhsClient:
             raise IPBlockError(self.IP_ERROR_STR)
         raise DataFetchError()
 
+    def report_note_metrics(self, note_id: str, note_type: int, note_user_id: str, viewer_user_id: str, followed_author=0, report_type=1, stay_seconds=0):
+        """report note stay seconds and other interaction info
+
+        :param note_id: note_id which you want to report
+        :type note_id: str
+        :param note_type: input value -> 1: note is images, 2: note is video
+        :type note_type: int
+        :param note_user_id: note author id
+        :type note_user_id: str
+        :param viewer_user_id: report user id
+        :type viewer_user_id: str
+        :param followed_author: 1: the viewer user follow note's author, 0: the viewer user don't follow note's author
+        :type followed_author: int
+        :param report_type: 1: the first report, 2: the second report, so you must report twice, defaults to 1
+        :type report_type: int, optional
+        :param stay_seconds: report metric -> note you stay seconds, defaults to 0
+        :type stay_seconds: int, optional
+        :return: same as api
+        :rtype: dict
+        """
+        uri = "/api/sns/web/v1/note/metrics_report"
+        data = {
+            "note_id": note_id,
+            "note_type": note_type,
+            "report_type": report_type,
+            "stress_test": False,
+            "viewer": {"user_id": viewer_user_id, "followed_author": followed_author},
+            "author": {"user_id": note_user_id},
+            "interaction": {"like": 0, "collect": 0, "comment": 0, "comment_read": 0},
+            "note": {"stay_seconds": stay_seconds},
+            "other": {"platform": "web"}
+        }
+        return self.post(uri, data)
+
     def save_files_from_note_id(self, note_id: str, dir_path: str):
         """this function will fetch note and save file in dir_path/note_title
 
