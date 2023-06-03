@@ -9,14 +9,7 @@ from .utils import beauty_print
 
 @pytest.fixture
 def xhs_client():
-    def sign(uri, data=None, a1=""):
-        res = requests.post("http://35.78.99.223:5000/xhs/sign", json={
-            "uri": uri,
-            "data": data,
-            "a1": a1
-        })
-        return res.json()
-    return XhsClient(cookie=test_cookie, sign=sign)
+    return XhsClient(cookie=test_cookie)
 
 
 # def test_xhs_client_init():
@@ -136,10 +129,11 @@ def test_get_qrcode(xhs_client: XhsClient):
     assert data["url"].startswith("xhsdiscover://")
 
 
-@pytest.mark.skip()
 def test_check_qrcode(xhs_client: XhsClient):
-    data = xhs_client.check_qrcode("901061680834121471", "658742")
-    assert data.get("code_status")
+    qrcode = xhs_client.get_qrcode()
+    data = xhs_client.check_qrcode(qr_id=qrcode["qr_id"], code=qrcode["code"])
+    beauty_print(data)
+    assert "code_status" in data
 
 
 @pytest.mark.skip()
@@ -166,9 +160,9 @@ def test_delete_comment(xhs_client: XhsClient):
 
 
 @pytest.mark.parametrize("note_id", [
-        "6413cf6b00000000270115b5",
-        "641718a200000000130143f2"
-    ])
+    "6413cf6b00000000270115b5",
+    "641718a200000000130143f2"
+])
 @pytest.mark.skip()
 def test_save_files_from_note_id(xhs_client: XhsClient, note_id: str):
     xhs_client.save_files_from_note_id(note_id, r"C:\Users\ReaJason\Desktop")
