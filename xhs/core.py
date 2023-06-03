@@ -7,7 +7,7 @@ from typing import NamedTuple
 
 import requests
 
-from xhs.exception import DataFetchError, IPBlockError
+from xhs.exception import DataFetchError, IPBlockError, SignError, ErrorEnum
 
 from .help import (cookie_jar_to_cookie_str, download_file,
                    get_imgs_url_from_note, get_search_id, get_valid_path_name,
@@ -109,10 +109,6 @@ class XhsClient:
             "user-agent": user_agent,
             "Content-Type": "application/json"
         }
-        self.IP_ERROR_STR = "网络连接异常，请检查网络设置或重启试试"
-        self.IP_ERROR_CODE = 300012
-        self.NOTE_ABNORMAL_STR = "笔记状态异常，请稍后查看"
-        self.NOTE_ABNORMAL_CODE = -510001
         self.cookie = cookie
 
     @property
@@ -158,8 +154,10 @@ class XhsClient:
         data = response.json()
         if data["success"]:
             return data.get("data", data.get("success"))
-        elif data["code"] == self.IP_ERROR_CODE:
-            raise IPBlockError(self.IP_ERROR_STR)
+        elif data["code"] == ErrorEnum.IP_BLOCK.value.code:
+            raise IPBlockError(ErrorEnum.IP_BLOCK.value.msg)
+        elif data["code"] == ErrorEnum.SIGN_FAULT.value.code:
+            raise SignError(ErrorEnum.SIGN_FAULT.value.msg)
         else:
             raise DataFetchError(data.get("msg", None))
 
@@ -367,7 +365,7 @@ class XhsClient:
                 try:
                     note = self.get_note_by_id(note_id)
                 except DataFetchError as e:
-                    if self.NOTE_ABNORMAL_STR in str(e):
+                    if ErrorEnum.NOTE_ABNORMAL.value.msg in str(e):
                         continue
                     else:
                         raise

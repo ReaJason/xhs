@@ -1,7 +1,7 @@
 import pytest
-import requests
 
 from xhs import DataFetchError, FeedType, IPBlockError, XhsClient
+from xhs.exception import SignError
 
 from . import test_cookie
 from .utils import beauty_print
@@ -30,7 +30,7 @@ def test_external_sign_func():
         """signature url and data in here"""
         return {}
 
-    with pytest.raises(DataFetchError):
+    with pytest.raises(SignError):
         xhs_client = XhsClient(sign=sign)
         xhs_client.get_qrcode()
 
