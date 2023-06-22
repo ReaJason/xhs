@@ -5,6 +5,17 @@
 - Improve documentation
 - Add more test function
 
+## 0.2.3
+
+### Added
+
+- add get self info v2 api
+- add get home feed categories api
+
+### Fixed
+
+- fix basic usage is not work
+
 ## 0.2.2
 
 ### Added
