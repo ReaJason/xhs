@@ -5,7 +5,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>xhs.core &#8212; xhs 0.2.2 文档</title>
+    <title>xhs.core &#8212; xhs 0.2.3 文档</title>
     <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/alabaster.css" />
     <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
@@ -41,7 +41,7 @@
 
 <span class="kn">import</span> <span class="nn">requests</span>
 
-<span class="kn">from</span> <span class="nn">xhs.exception</span> <span class="kn">import</span> <span class="n">DataFetchError</span><span class="p">,</span> <span class="n">IPBlockError</span>
+<span class="kn">from</span> <span class="nn">xhs.exception</span> <span class="kn">import</span> <span class="n">DataFetchError</span><span class="p">,</span> <span class="n">IPBlockError</span><span class="p">,</span> <span class="n">SignError</span><span class="p">,</span> <span class="n">ErrorEnum</span>
 
 <span class="kn">from</span> <span class="nn">.help</span> <span class="kn">import</span> <span class="p">(</span><span class="n">cookie_jar_to_cookie_str</span><span class="p">,</span> <span class="n">download_file</span><span class="p">,</span>
                    <span class="n">get_imgs_url_from_note</span><span class="p">,</span> <span class="n">get_search_id</span><span class="p">,</span> <span class="n">get_valid_path_name</span><span class="p">,</span>
@@ -143,10 +143,6 @@
             <span class="s2">&quot;user-agent&quot;</span><span class="p">:</span> <span class="n">user_agent</span><span class="p">,</span>
             <span class="s2">&quot;Content-Type&quot;</span><span class="p">:</span> <span class="s2">&quot;application/json&quot;</span>
         <span class="p">}</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">IP_ERROR_STR</span> <span class="o">=</span> <span class="s2">&quot;网络连接异常，请检查网络设置或重启试试&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">IP_ERROR_CODE</span> <span class="o">=</span> <span class="mi">300012</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">NOTE_ABNORMAL_STR</span> <span class="o">=</span> <span class="s2">&quot;笔记状态异常，请稍后查看&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">NOTE_ABNORMAL_CODE</span> <span class="o">=</span> <span class="o">-</span><span class="mi">510001</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">cookie</span> <span class="o">=</span> <span class="n">cookie</span>
 
     <span class="nd">@property</span>
@@ -177,7 +173,9 @@
 
     <span class="k">def</span> <span class="nf">_pre_headers</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">url</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">sign</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">__session</span><span class="o">.</span><span class="n">headers</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sign</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">a1</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">cookie_dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;a1&quot;</span><span class="p">)))</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__session</span><span class="o">.</span><span class="n">headers</span><span class="o">.</span><span class="n">update</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">sign</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">a1</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">cookie_dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;a1&quot;</span><span class="p">),</span>
+                          <span class="n">web_session</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">cookie_dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;web_session&quot;</span><span class="p">)))</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">signs</span> <span class="o">=</span> <span class="n">sign</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">a1</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">cookie_dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;a1&quot;</span><span class="p">))</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">__session</span><span class="o">.</span><span class="n">headers</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s2">&quot;x-s&quot;</span><span class="p">:</span> <span class="n">signs</span><span class="p">[</span><span class="s2">&quot;x-s&quot;</span><span class="p">]})</span>
@@ -186,13 +184,15 @@
 
 <div class="viewcode-block" id="XhsClient.request"><a class="viewcode-back" href="../../source/xhs.html#xhs.XhsClient.request">[文档]</a>    <span class="k">def</span> <span class="nf">request</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">method</span><span class="p">,</span> <span class="n">url</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__session</span><span class="o">.</span><span class="n">request</span><span class="p">(</span>
-                        <span class="n">method</span><span class="p">,</span> <span class="n">url</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">timeout</span><span class="p">,</span>
-                        <span class="n">proxies</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">proxies</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+            <span class="n">method</span><span class="p">,</span> <span class="n">url</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">timeout</span><span class="p">,</span>
+            <span class="n">proxies</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">proxies</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
         <span class="n">data</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
         <span class="k">if</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;success&quot;</span><span class="p">]:</span>
             <span class="k">return</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;data&quot;</span><span class="p">,</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;success&quot;</span><span class="p">))</span>
-        <span class="k">elif</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;code&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">IP_ERROR_CODE</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="n">IPBlockError</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">IP_ERROR_STR</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;code&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="n">ErrorEnum</span><span class="o">.</span><span class="n">IP_BLOCK</span><span class="o">.</span><span class="n">value</span><span class="o">.</span><span class="n">code</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">IPBlockError</span><span class="p">(</span><span class="n">ErrorEnum</span><span class="o">.</span><span class="n">IP_BLOCK</span><span class="o">.</span><span class="n">value</span><span class="o">.</span><span class="n">msg</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;code&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="n">ErrorEnum</span><span class="o">.</span><span class="n">SIGN_FAULT</span><span class="o">.</span><span class="n">value</span><span class="o">.</span><span class="n">code</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">SignError</span><span class="p">(</span><span class="n">ErrorEnum</span><span class="o">.</span><span class="n">SIGN_FAULT</span><span class="o">.</span><span class="n">value</span><span class="o">.</span><span class="n">msg</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">raise</span> <span class="n">DataFetchError</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;msg&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">))</span></div>
 
@@ -251,13 +251,48 @@
         <span class="n">url</span> <span class="o">=</span> <span class="s2">&quot;https://www.xiaohongshu.com/explore/&quot;</span> <span class="o">+</span> <span class="n">note_id</span>
         <span class="n">res</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;user-agent&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">user_agent</span><span class="p">})</span>
         <span class="n">html</span> <span class="o">=</span> <span class="n">res</span><span class="o">.</span><span class="n">text</span>
-        <span class="n">state</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;window.__INITIAL_STATE__=({.*})&lt;/script&gt;&#39;</span><span class="p">,</span> <span class="n">html</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;undefined&quot;</span><span class="p">,</span> <span class="s1">&#39;&quot;&quot;&#39;</span><span class="p">)</span>
+        <span class="n">state</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span>
+            <span class="sa">r</span><span class="s1">&#39;window.__INITIAL_STATE__=({.*})&lt;/script&gt;&#39;</span><span class="p">,</span> <span class="n">html</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;undefined&quot;</span><span class="p">,</span> <span class="s1">&#39;&quot;&quot;&#39;</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">state</span> <span class="o">!=</span> <span class="s2">&quot;</span><span class="si">{}</span><span class="s2">&quot;</span><span class="p">:</span>
             <span class="n">new_dict</span> <span class="o">=</span> <span class="n">transform_json_keys</span><span class="p">(</span><span class="n">state</span><span class="p">)</span>
             <span class="k">return</span> <span class="n">new_dict</span><span class="p">[</span><span class="s2">&quot;note&quot;</span><span class="p">][</span><span class="s2">&quot;note&quot;</span><span class="p">]</span>
         <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">IP_ERROR_STR</span> <span class="ow">in</span> <span class="n">html</span><span class="p">:</span>
             <span class="k">raise</span> <span class="n">IPBlockError</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">IP_ERROR_STR</span><span class="p">)</span>
         <span class="k">raise</span> <span class="n">DataFetchError</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="XhsClient.report_note_metrics"><a class="viewcode-back" href="../../source/xhs.html#xhs.XhsClient.report_note_metrics">[文档]</a>    <span class="k">def</span> <span class="nf">report_note_metrics</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">note_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">note_type</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">note_user_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">viewer_user_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">followed_author</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">report_type</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">stay_seconds</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;report note stay seconds and other interaction info</span>
+
+<span class="sd">        :param note_id: note_id which you want to report</span>
+<span class="sd">        :type note_id: str</span>
+<span class="sd">        :param note_type: input value -&gt; 1: note is images, 2: note is video</span>
+<span class="sd">        :type note_type: int</span>
+<span class="sd">        :param note_user_id: note author id</span>
+<span class="sd">        :type note_user_id: str</span>
+<span class="sd">        :param viewer_user_id: report user id</span>
+<span class="sd">        :type viewer_user_id: str</span>
+<span class="sd">        :param followed_author: 1: the viewer user follow note&#39;s author, 0: the viewer user don&#39;t follow note&#39;s author</span>
+<span class="sd">        :type followed_author: int</span>
+<span class="sd">        :param report_type: 1: the first report, 2: the second report, so you must report twice, defaults to 1</span>
+<span class="sd">        :type report_type: int, optional</span>
+<span class="sd">        :param stay_seconds: report metric -&gt; note you stay seconds, defaults to 0</span>
+<span class="sd">        :type stay_seconds: int, optional</span>
+<span class="sd">        :return: same as api</span>
+<span class="sd">        :rtype: dict</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">uri</span> <span class="o">=</span> <span class="s2">&quot;/api/sns/web/v1/note/metrics_report&quot;</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;note_id&quot;</span><span class="p">:</span> <span class="n">note_id</span><span class="p">,</span>
+            <span class="s2">&quot;note_type&quot;</span><span class="p">:</span> <span class="n">note_type</span><span class="p">,</span>
+            <span class="s2">&quot;report_type&quot;</span><span class="p">:</span> <span class="n">report_type</span><span class="p">,</span>
+            <span class="s2">&quot;stress_test&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+            <span class="s2">&quot;viewer&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;user_id&quot;</span><span class="p">:</span> <span class="n">viewer_user_id</span><span class="p">,</span> <span class="s2">&quot;followed_author&quot;</span><span class="p">:</span> <span class="n">followed_author</span><span class="p">},</span>
+            <span class="s2">&quot;author&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;user_id&quot;</span><span class="p">:</span> <span class="n">note_user_id</span><span class="p">},</span>
+            <span class="s2">&quot;interaction&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;like&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;collect&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;comment&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;comment_read&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">},</span>
+            <span class="s2">&quot;note&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;stay_seconds&quot;</span><span class="p">:</span> <span class="n">stay_seconds</span><span class="p">},</span>
+            <span class="s2">&quot;other&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;platform&quot;</span><span class="p">:</span> <span class="s2">&quot;web&quot;</span><span class="p">}</span>
+        <span class="p">}</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="n">uri</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="XhsClient.save_files_from_note_id"><a class="viewcode-back" href="../../source/xhs.html#xhs.XhsClient.save_files_from_note_id">[文档]</a>    <span class="k">def</span> <span class="nf">save_files_from_note_id</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">note_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">dir_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;this function will fetch note and save file in dir_path/note_title</span>
@@ -285,13 +320,17 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="n">img_urls</span> <span class="o">=</span> <span class="n">get_imgs_url_from_note</span><span class="p">(</span><span class="n">note</span><span class="p">)</span>
             <span class="k">for</span> <span class="n">index</span><span class="p">,</span> <span class="n">img_url</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">img_urls</span><span class="p">):</span>
-                <span class="n">img_file_name</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">new_dir_path</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{title}{index}</span><span class="s2">.png&quot;</span><span class="p">)</span>
+                <span class="n">img_file_name</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+                    <span class="n">new_dir_path</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{title}{index}</span><span class="s2">.png&quot;</span><span class="p">)</span>
                 <span class="n">download_file</span><span class="p">(</span><span class="n">img_url</span><span class="p">,</span> <span class="n">img_file_name</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="XhsClient.get_self_info"><a class="viewcode-back" href="../../source/xhs.html#xhs.XhsClient.get_self_info">[文档]</a>    <span class="k">def</span> <span class="nf">get_self_info</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">uri</span> <span class="o">=</span> <span class="s2">&quot;/api/sns/web/v1/user/selfinfo&quot;</span>
-        <span class="n">res</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">uri</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">res</span></div>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">uri</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="XhsClient.get_self_info2"><a class="viewcode-back" href="../../source/xhs.html#xhs.XhsClient.get_self_info2">[文档]</a>    <span class="k">def</span> <span class="nf">get_self_info2</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">uri</span> <span class="o">=</span> <span class="s2">&quot;/api/sns/web/v2/user/me&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">uri</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="XhsClient.get_user_info"><a class="viewcode-back" href="../../source/xhs.html#xhs.XhsClient.get_user_info">[文档]</a>    <span class="k">def</span> <span class="nf">get_user_info</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">user_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -306,6 +345,10 @@
         <span class="p">}</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">uri</span><span class="p">,</span> <span class="n">params</span><span class="p">)</span></div>
 
+<div class="viewcode-block" id="XhsClient.get_home_feed_category"><a class="viewcode-back" href="../../source/xhs.html#xhs.XhsClient.get_home_feed_category">[文档]</a>    <span class="k">def</span> <span class="nf">get_home_feed_category</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">uri</span> <span class="o">=</span> <span class="s2">&quot;/api/sns/web/v1/homefeed/category&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">uri</span><span class="p">)[</span><span class="s2">&quot;categories&quot;</span><span class="p">]</span></div>
+
 <div class="viewcode-block" id="XhsClient.get_home_feed"><a class="viewcode-back" href="../../source/xhs.html#xhs.XhsClient.get_home_feed">[文档]</a>    <span class="k">def</span> <span class="nf">get_home_feed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">feed_type</span><span class="p">:</span> <span class="n">FeedType</span><span class="p">):</span>
         <span class="n">uri</span> <span class="o">=</span> <span class="s2">&quot;/api/sns/web/v1/homefeed&quot;</span>
         <span class="n">data</span> <span class="o">=</span> <span class="p">{</span>
@@ -319,6 +362,13 @@
             <span class="s2">&quot;category&quot;</span><span class="p">:</span> <span class="n">feed_type</span><span class="o">.</span><span class="n">value</span>
         <span class="p">}</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="n">uri</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="XhsClient.get_search_suggestion"><a class="viewcode-back" href="../../source/xhs.html#xhs.XhsClient.get_search_suggestion">[文档]</a>    <span class="k">def</span> <span class="nf">get_search_suggestion</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">keyword</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="n">uri</span> <span class="o">=</span> <span class="s2">&quot;/api/sns/web/v1/sug/recommend&quot;</span>
+        <span class="n">params</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;keyword&quot;</span><span class="p">:</span> <span class="n">keyword</span>
+        <span class="p">}</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">sug</span><span class="p">[</span><span class="s2">&quot;text&quot;</span><span class="p">]</span> <span class="k">for</span> <span class="n">sug</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">uri</span><span class="p">,</span> <span class="n">params</span><span class="p">)[</span><span class="s2">&quot;sug_items&quot;</span><span class="p">]]</span></div>
 
 <div class="viewcode-block" id="XhsClient.get_note_by_keyword"><a class="viewcode-back" href="../../source/xhs.html#xhs.XhsClient.get_note_by_keyword">[文档]</a>    <span class="k">def</span> <span class="nf">get_note_by_keyword</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">keyword</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
                             <span class="n">page</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">page_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">20</span><span class="p">,</span>
@@ -391,7 +441,7 @@
                 <span class="k">try</span><span class="p">:</span>
                     <span class="n">note</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_note_by_id</span><span class="p">(</span><span class="n">note_id</span><span class="p">)</span>
                 <span class="k">except</span> <span class="n">DataFetchError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-                    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">NOTE_ABNORMAL_STR</span> <span class="ow">in</span> <span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">):</span>
+                    <span class="k">if</span> <span class="n">ErrorEnum</span><span class="o">.</span><span class="n">NOTE_ABNORMAL</span><span class="o">.</span><span class="n">value</span><span class="o">.</span><span class="n">msg</span> <span class="ow">in</span> <span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">):</span>
                         <span class="k">continue</span>
                     <span class="k">else</span><span class="p">:</span>
                         <span class="k">raise</span>
@@ -478,13 +528,16 @@
                 <span class="n">cur_sub_comment_count</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">comment</span><span class="p">[</span><span class="s2">&quot;sub_comment_count&quot;</span><span class="p">])</span>
                 <span class="n">cur_sub_comments</span> <span class="o">=</span> <span class="n">comment</span><span class="p">[</span><span class="s2">&quot;sub_comments&quot;</span><span class="p">]</span>
                 <span class="n">result</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">cur_sub_comments</span><span class="p">)</span>
-                <span class="n">sub_comments_has_more</span> <span class="o">=</span> <span class="n">comment</span><span class="p">[</span><span class="s2">&quot;sub_comment_has_more&quot;</span><span class="p">]</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">cur_sub_comments</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">cur_sub_comment_count</span>
+                <span class="n">sub_comments_has_more</span> <span class="o">=</span> <span class="n">comment</span><span class="p">[</span><span class="s2">&quot;sub_comment_has_more&quot;</span><span class="p">]</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span>
+                    <span class="n">cur_sub_comments</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">cur_sub_comment_count</span>
                 <span class="n">sub_comment_cursor</span> <span class="o">=</span> <span class="n">comment</span><span class="p">[</span><span class="s2">&quot;sub_comment_cursor&quot;</span><span class="p">]</span>
                 <span class="k">while</span> <span class="n">sub_comments_has_more</span><span class="p">:</span>
                     <span class="n">page_num</span> <span class="o">=</span> <span class="mi">30</span>
-                    <span class="n">sub_comments_res</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_note_sub_comments</span><span class="p">(</span><span class="n">note_id</span><span class="p">,</span> <span class="n">comment</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">],</span> <span class="n">num</span><span class="o">=</span><span class="n">page_num</span><span class="p">,</span> <span class="n">cursor</span><span class="o">=</span><span class="n">sub_comment_cursor</span><span class="p">)</span>
+                    <span class="n">sub_comments_res</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_note_sub_comments</span><span class="p">(</span>
+                        <span class="n">note_id</span><span class="p">,</span> <span class="n">comment</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">],</span> <span class="n">num</span><span class="o">=</span><span class="n">page_num</span><span class="p">,</span> <span class="n">cursor</span><span class="o">=</span><span class="n">sub_comment_cursor</span><span class="p">)</span>
                     <span class="n">sub_comments</span> <span class="o">=</span> <span class="n">sub_comments_res</span><span class="p">[</span><span class="s2">&quot;comments&quot;</span><span class="p">]</span>
-                    <span class="n">sub_comments_has_more</span> <span class="o">=</span> <span class="n">sub_comments_res</span><span class="p">[</span><span class="s2">&quot;has_more&quot;</span><span class="p">]</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">sub_comments</span><span class="p">)</span> <span class="o">==</span> <span class="n">page_num</span>
+                    <span class="n">sub_comments_has_more</span> <span class="o">=</span> <span class="n">sub_comments_res</span><span class="p">[</span><span class="s2">&quot;has_more&quot;</span><span class="p">]</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span>
+                        <span class="n">sub_comments</span><span class="p">)</span> <span class="o">==</span> <span class="n">page_num</span>
                     <span class="n">sub_comment_cursor</span> <span class="o">=</span> <span class="n">sub_comments_res</span><span class="p">[</span><span class="s2">&quot;cursor&quot;</span><span class="p">]</span>
                     <span class="n">result</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">sub_comments</span><span class="p">)</span>
                     <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="n">crawl_interval</span><span class="p">)</span>
@@ -622,7 +675,11 @@
             <span class="s2">&quot;num&quot;</span><span class="p">:</span> <span class="n">num</span><span class="p">,</span>
             <span class="s2">&quot;cursor&quot;</span><span class="p">:</span> <span class="n">cursor</span>
         <span class="p">}</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">uri</span><span class="p">,</span> <span class="n">params</span><span class="p">)</span></div></div>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">uri</span><span class="p">,</span> <span class="n">params</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="XhsClient.get_emojis"><a class="viewcode-back" href="../../source/xhs.html#xhs.XhsClient.get_emojis">[文档]</a>    <span class="k">def</span> <span class="nf">get_emojis</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">uri</span> <span class="o">=</span> <span class="s2">&quot;/api/im/redmoji/detail&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">uri</span><span class="p">)[</span><span class="s2">&quot;emoji&quot;</span><span class="p">][</span><span class="s2">&quot;tabs&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;collection&quot;</span><span class="p">]</span></div></div>
 </pre></div>
 
           </div>
