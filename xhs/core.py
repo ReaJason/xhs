@@ -140,7 +140,8 @@ class XhsClient:
     def _pre_headers(self, url: str, data=None):
         if self.sign:
             self.__session.headers.update(
-                self.sign(url, data, a1=self.cookie_dict.get("a1")))
+                self.sign(url, data, a1=self.cookie_dict.get("a1"),
+                          web_session=self.cookie_dict.get("web_session")))
         else:
             signs = sign(url, data, a1=self.cookie_dict.get("a1"))
             self.__session.headers.update({"x-s": signs["x-s"]})
