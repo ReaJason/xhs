@@ -1,15 +1,49 @@
+from time import sleep
+
 import pytest
+from playwright.sync_api import sync_playwright
 
 from xhs import FeedType, IPBlockError, XhsClient
 from xhs.exception import SignError
-
 from . import test_cookie
 from .utils import beauty_print
 
 
+def get_context_page(playwright):
+    chromium = playwright.chromium
+    browser = chromium.launch(headless=True)
+    browser_context = browser.new_context(
+        viewport={"width": 1920, "height": 1080},
+        user_agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36"
+    )
+    browser_context.add_init_script(path="stealth.min.js")
+    context_page = browser_context.new_page()
+    return browser_context, context_page
+
+
+playwright = sync_playwright().start()
+browser_context, context_page = get_context_page(playwright)
+
+
 @pytest.fixture
 def xhs_client():
-    return XhsClient(cookie=test_cookie)
+    def sign(uri, data, a1="", web_session=""):
+        context_page.goto("https://www.xiaohongshu.com")
+        cookie_list = browser_context.cookies()
+        web_session_cookie = list(filter(lambda cookie: cookie["name"] == "web_session", cookie_list))
+        if not web_session_cookie:
+            browser_context.add_cookies([
+                {'name': 'web_session', 'value': web_session, 'domain': ".xiaohongshu.com", 'path': "/"},
+                {'name': 'a1', 'value': a1, 'domain': ".xiaohongshu.com", 'path': "/"}]
+            )
+            sleep(1)
+        encrypt_params = context_page.evaluate("([url, data]) => window._webmsxyw(url, data)", [uri, data])
+        return {
+            "x-s": encrypt_params["X-s"],
+            "x-t": str(encrypt_params["X-t"])
+        }
+
+    return XhsClient(cookie=test_cookie, sign=sign)
 
 
 # def test_xhs_client_init():
@@ -25,7 +59,6 @@ def xhs_client():
 
 
 def test_external_sign_func():
-
     def sign(url, data=None, a1=""):
         """signature url and data in here"""
         return {}
