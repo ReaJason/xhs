@@ -166,7 +166,7 @@ class XhsClient:
         final_uri = uri
         if isinstance(params, dict):
             final_uri = (f"{uri}?"
-                         f"{'&'.join([f'{k}={v}'for k,v in params.items()])}")
+                         f"{'&'.join([f'{k}={v}' for k, v in params.items()])}")
         self._pre_headers(final_uri)
         return self.request(method="GET", url=f"{self._host}{final_uri}")
 
@@ -226,7 +226,8 @@ class XhsClient:
             raise IPBlockError(self.IP_ERROR_STR)
         raise DataFetchError()
 
-    def report_note_metrics(self, note_id: str, note_type: int, note_user_id: str, viewer_user_id: str, followed_author=0, report_type=1, stay_seconds=0):
+    def report_note_metrics(self, note_id: str, note_type: int, note_user_id: str, viewer_user_id: str,
+                            followed_author=0, report_type=1, stay_seconds=0):
         """report note stay seconds and other interaction info
 
         :param note_id: note_id which you want to report
@@ -646,3 +647,14 @@ class XhsClient:
     def get_emojis(self):
         uri = "/api/im/redmoji/detail"
         return self.get(uri)["emoji"]["tabs"][0]["collection"]
+
+    def get_upload_image_ids(self, count):
+        uri = "/api/media/v1/upload/web/permit"
+        params = {
+            "biz_name": "spectrum",
+            "scene": "image",
+            "file_count": count,
+            "version": "1",
+            "source": "web",
+        }
+        return self.get(uri, params)["uploadTempPermits"]

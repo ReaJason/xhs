@@ -16,7 +16,7 @@ def get_context_page(playwright):
         viewport={"width": 1920, "height": 1080},
         user_agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36"
     )
-    browser_context.add_init_script(path="stealth.min.js")
+    browser_context.add_init_script(path="/Users/reajason/ReaJason/xhs/tests/stealth.min.js")
     context_page = browser_context.new_page()
     return browser_context, context_page
 
@@ -272,3 +272,10 @@ def test_get_emojis(xhs_client: XhsClient):
     emojis = xhs_client.get_emojis()
     beauty_print(emojis)
     assert len(emojis)
+
+
+def test_get_upload_image_ids(xhs_client: XhsClient):
+    count = 5
+    ids = xhs_client.get_upload_image_ids(count)
+    beauty_print(ids)
+    assert len(ids[0]["fileIds"]) == count
