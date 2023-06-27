@@ -299,3 +299,10 @@ def test_get_suggest_topic(xhs_client: XhsClient):
     topics = xhs_client.get_suggest_topic(topic_keyword)
     beauty_print(topics)
     assert topic_keyword.upper() in topics[0]["name"].upper()
+
+
+def test_get_suggest_ats(xhs_client: XhsClient):
+    ats_keyword = "ReaJason"
+    ats = xhs_client.get_suggest_ats(ats_keyword)
+    beauty_print(ats)
+    assert ats_keyword.upper() in ats[0]["user_base_dto"]["user_nickname"].upper()

@@ -675,4 +675,9 @@ class XhsClient:
                 "suggest_topic_request": {"title": "", "desc": ""},
                 "page": {"page_size": 20, "page": 1}
                 }
-        return self.post(uri, data=data)["topic_info_dtos"]
+        return self.post(uri, data)["topic_info_dtos"]
+
+    def get_suggest_ats(self, keyword=""):
+        uri = "/web_api/sns/v1/search/user_info"
+        data = {"keyword": keyword, "search_id": str(time.time() * 1000), "page": {"page_size": 20, "page": 1}}
+        return self.post(uri, data)["user_info_dtos"]
