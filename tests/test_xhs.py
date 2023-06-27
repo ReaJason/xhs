@@ -4,7 +4,7 @@ import pytest
 from playwright.sync_api import sync_playwright
 
 from xhs import FeedType, IPBlockError, XhsClient
-from xhs.exception import SignError
+from xhs.exception import SignError, DataFetchError
 from . import test_cookie
 from .utils import beauty_print
 
@@ -279,3 +279,16 @@ def test_get_upload_image_ids(xhs_client: XhsClient):
     ids = xhs_client.get_upload_image_ids(count)
     beauty_print(ids)
     assert len(ids[0]["fileIds"]) == count
+
+
+def test_upload_image(xhs_client: XhsClient):
+    ids = xhs_client.get_upload_image_ids(1)
+    file_info = ids[0]
+    file_id = file_info["fileIds"][0]
+    file_token = file_info["token"]
+    file_path = "/Users/reajason/Downloads/4538306CF3BDC215721FCC0532AF4D3D.jpg"
+    res = xhs_client.upload_image(file_id, file_token, file_path)
+    assert res.status_code == 200
+
+    with pytest.raises(DataFetchError, match="file already exists"):
+        xhs_client.upload_image(file_id, file_token, file_path)

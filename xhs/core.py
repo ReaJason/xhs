@@ -152,8 +152,10 @@ class XhsClient:
         response = self.__session.request(
             method, url, timeout=self.timeout,
             proxies=self.proxies, **kwargs)
+        if not len(response.text):
+            return response
         data = response.json()
-        if data["success"]:
+        if data.get("success"):
             return data.get("data", data.get("success"))
         elif data["code"] == ErrorEnum.IP_BLOCK.value.code:
             raise IPBlockError(ErrorEnum.IP_BLOCK.value.msg)
@@ -658,3 +660,11 @@ class XhsClient:
             "source": "web",
         }
         return self.get(uri, params)["uploadTempPermits"]
+
+    def upload_image(self, image_id: str, token: str, file_path: str):
+        url = "https://ros-upload.xiaohongshu.com/spectrum/" + image_id
+        headers = {
+            "X-Cos-Security-Token": token
+        }
+        with open(file_path, "rb") as f:
+            return self.request("PUT", url, data=f, headers=headers)
