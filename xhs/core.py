@@ -137,16 +137,16 @@ class XhsClient:
     def user_agent(self, user_agent: str):
         self.__session.headers.update({"user-agent": user_agent})
 
-    def _pre_headers(self, url: str, data=None):
-        if self.sign:
-            self.__session.headers.update(
-                self.sign(url, data, a1=self.cookie_dict.get("a1"),
-                          web_session=self.cookie_dict.get("web_session")))
-        else:
+    def _pre_headers(self, url: str, data=None, is_creator: bool = False):
+        if is_creator:
             signs = sign(url, data, a1=self.cookie_dict.get("a1"))
             self.__session.headers.update({"x-s": signs["x-s"]})
             self.__session.headers.update({"x-t": signs["x-t"]})
             self.__session.headers.update({"x-s-common": signs["x-s-common"]})
+        else:
+            self.__session.headers.update(
+                self.sign(url, data, a1=self.cookie_dict.get("a1"),
+                          web_session=self.cookie_dict.get("web_session")))
 
     def request(self, method, url, **kwargs):
         response = self.__session.request(
@@ -164,16 +164,16 @@ class XhsClient:
         else:
             raise DataFetchError(data.get("msg", None))
 
-    def get(self, uri: str, params=None):
+    def get(self, uri: str, params=None, is_creator: bool = False):
         final_uri = uri
         if isinstance(params, dict):
             final_uri = (f"{uri}?"
                          f"{'&'.join([f'{k}={v}' for k, v in params.items()])}")
-        self._pre_headers(final_uri)
+        self._pre_headers(final_uri, is_creator=is_creator)
         return self.request(method="GET", url=f"{self._host}{final_uri}")
 
-    def post(self, uri: str, data: dict):
-        self._pre_headers(uri, data)
+    def post(self, uri: str, data: dict, is_creator: bool = False):
+        self._pre_headers(uri, data, is_creator=is_creator)
         json_str = json.dumps(data, separators=(',', ':'), ensure_ascii=False)
         return self.request(method="POST", url=f"{self._host}{uri}",
                             data=json_str.encode("utf-8"))
@@ -668,3 +668,11 @@ class XhsClient:
         }
         with open(file_path, "rb") as f:
             return self.request("PUT", url, data=f, headers=headers)
+
+    def get_suggest_topic(self, keyword=""):
+        uri = "/web_api/sns/v1/search/topic"
+        data = {"keyword": keyword,
+                "suggest_topic_request": {"title": "", "desc": ""},
+                "page": {"page_size": 20, "page": 1}
+                }
+        return self.post(uri, data=data)["topic_info_dtos"]

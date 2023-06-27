@@ -292,3 +292,10 @@ def test_upload_image(xhs_client: XhsClient):
 
     with pytest.raises(DataFetchError, match="file already exists"):
         xhs_client.upload_image(file_id, file_token, file_path)
+
+
+def test_get_suggest_topic(xhs_client: XhsClient):
+    topic_keyword = "Python"
+    topics = xhs_client.get_suggest_topic(topic_keyword)
+    beauty_print(topics)
+    assert topic_keyword.upper() in topics[0]["name"].upper()
