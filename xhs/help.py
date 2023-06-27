@@ -15,13 +15,14 @@ def sign(uri, data=None, ctime=None, a1="", b1=""):
     """
     takes in a URI (uniform resource identifier), an optional data dictionary, and an optional ctime parameter. It returns a dictionary containing two keys: "x-s" and "x-t".
     """
+
     def h(n):
         m = ""
         d = "A4NjFqYu5wPHsO0XTdDgMa2r1ZQocVte9UJBvk6/7=yRnhISGKblCWi+LpfE8xzm3"
         for i in range(0, 32, 3):
             o = ord(n[i])
-            g = ord(n[i+1]) if i+1 < 32 else 0
-            h = ord(n[i+2]) if i+2 < 32 else 0
+            g = ord(n[i + 1]) if i + 1 < 32 else 0
+            h = ord(n[i + 2]) if i + 2 < 32 else 0
             x = ((o & 3) << 4) | (g >> 4)
             p = ((15 & g) << 2) | (h >> 6)
             v = o >> 2
@@ -66,6 +67,7 @@ def get_a1_and_web_id():
 
     for example: a1, web_id = get_a1_and_web_id()
     """
+
     def random_str(length):
         alphabet = string.ascii_letters + string.digits
         return ''.join(random.choice(alphabet) for _ in range(length))
@@ -270,10 +272,10 @@ lookup = [
 
 def tripletToBase64(e):
     return (
-        lookup[63 & (e >> 18)] +
-        lookup[63 & (e >> 12)] +
-        lookup[(e >> 6) & 63] +
-        lookup[e & 63]
+            lookup[63 & (e >> 18)] +
+            lookup[63 & (e >> 12)] +
+            lookup[(e >> 6) & 63] +
+            lookup[e & 63]
     )
 
 
@@ -358,7 +360,7 @@ def get_search_id():
 def cookie_str_to_cookie_dict(cookie_str: str):
     cookie_blocks = [cookie_block.split("=")
                      for cookie_block in cookie_str.split(";") if cookie_block]
-    return {cookie[0]: cookie[1] for cookie in cookie_blocks}
+    return {cookie[0].strip(): cookie[1].strip() for cookie in cookie_blocks}
 
 
 def cookie_jar_to_cookie_str(cookie_jar):
