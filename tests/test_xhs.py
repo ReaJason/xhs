@@ -289,6 +289,7 @@ def test_upload_image(xhs_client: XhsClient):
     file_path = "/Users/reajason/Downloads/4538306CF3BDC215721FCC0532AF4D3D.jpg"
     res = xhs_client.upload_image(file_id, file_token, file_path)
     assert res.status_code == 200
+    print(res.headers["X-Ros-Preview-Url"])
 
     with pytest.raises(DataFetchError, match="file already exists"):
         xhs_client.upload_image(file_id, file_token, file_path)
@@ -306,3 +307,14 @@ def test_get_suggest_ats(xhs_client: XhsClient):
     ats = xhs_client.get_suggest_ats(ats_keyword)
     beauty_print(ats)
     assert ats_keyword.upper() in ats[0]["user_base_dto"]["user_nickname"].upper()
+
+
+def test_create_note_with_simple_desc(xhs_client: XhsClient):
+    title = "我是通过自动发布脚本发送的笔记"
+    desc = "deployed by GitHub xhs"
+    files = [
+        "/Users/reajason/Downloads/221686462282_.pic.png",
+        "/Users/reajason/Downloads/221686462282_.pic.jpg",
+    ]
+    note = xhs_client.create_note(title, desc, files)
+    beauty_print(note)

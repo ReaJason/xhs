@@ -664,7 +664,8 @@ class XhsClient:
     def upload_image(self, image_id: str, token: str, file_path: str):
         url = "https://ros-upload.xiaohongshu.com/spectrum/" + image_id
         headers = {
-            "X-Cos-Security-Token": token
+            "X-Cos-Security-Token": token,
+            "Content-Type": "image/jpeg"
         }
         with open(file_path, "rb") as f:
             return self.request("PUT", url, data=f, headers=headers)
@@ -681,3 +682,33 @@ class XhsClient:
         uri = "/web_api/sns/v1/search/user_info"
         data = {"keyword": keyword, "search_id": str(time.time() * 1000), "page": {"page_size": 20, "page": 1}}
         return self.post(uri, data)["user_info_dtos"]
+
+    def create_note(self, title, desc, files: list, ats: list = None, topics: list = None, is_private: bool = False):
+        if ats is None:
+            ats = []
+        if topics is None:
+            topics = []
+
+        image_info = []
+        for file in files:
+            images_ids_res = self.get_upload_image_ids(1)
+            image_id = images_ids_res[0]["fileIds"][0]
+            token = images_ids_res[0]["token"]
+            res = self.upload_image(image_id, token, file)
+            # print(res.headers["X-Ros-Preview-Url"])
+            image_info.append({
+                "file_id": image_id,
+                "width": 1003,
+                "height": 1000,
+                "metadata": {"source": -1}, "stickers": {"version": 2, "floating": []},
+                "extra_info_json": "{\"mimeType\":\"image/jpeg\"}"
+            })
+
+        uri = "/web_api/sns/v2/note"
+        data = {"common": {"type": "normal", "title": title, "note_id": "", "desc": desc,
+                           "source": "{\"type\":\"web\",\"ids\":\"\",\"extraInfo\":\"{\\\"subType\\\":\\\"official\\\"}\"}",
+                           "business_binds": "{\"version\":1,\"noteId\":0,\"bizType\":0,\"noteOrderBind\":{},\"notePostTiming\":{\"postTime\":\"\"},\"noteCollectionBind\":{\"id\":\"\"}}",
+                           "ats": ats, "hash_tag": topics, "post_loc": {},
+                           "privacy_info": {"op_type": 1, "type": int(is_private)}},
+                "image_info": {"images": image_info}, "video_info": None}
+        return self.post(uri, data)
