@@ -162,7 +162,7 @@ class XhsClient:
         elif data["code"] == ErrorEnum.SIGN_FAULT.value.code:
             raise SignError(ErrorEnum.SIGN_FAULT.value.msg)
         else:
-            raise DataFetchError(data.get("msg", None))
+            raise DataFetchError(data.get("msg", data))
 
     def get(self, uri: str, params=None, is_creator: bool = False):
         final_uri = uri
