@@ -34,8 +34,7 @@ def sign(uri, data=None, a1="", web_session=""):
 
 
 if __name__ == '__main__':
-    cookie = "a1=1886132f6cav7mfdpcid2mnbahv45uuvea5z3lvji30000329042; webId=b360cce06e1bcad5e48dafb7b612265e; " \
-             "web_session=040069b253793fdd9ccd5842a2364b86586515;"
+    cookie = "please get cookie from your website"
     stealth_js_path = "/Users/reajason/ReaJason/xhs/tests/stealth.min.js"
     playwright = sync_playwright().start()
     browser_context, context_page = get_context_page(playwright, stealth_js_path)
