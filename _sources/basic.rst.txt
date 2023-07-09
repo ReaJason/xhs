@@ -81,6 +81,15 @@
 
 环境安装
 ^^^^^^^^^^^^^^^^^^^^^^
+
+可以直接使用 Docker 来起下面的 Flask 服务，然后使用 XhsClient 即可，注意端口变成了 8080
+
+.. code-block:: bash
+
+    docker run -it -d -p 8080:8080 reajason/xhs-sign:latest
+
+如果在本机启动 Flask 需要安装如下依赖：
+
 .. code-block:: bash
 
     pip install flask, gevent, requests
