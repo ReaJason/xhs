@@ -51,8 +51,5 @@ html_theme_options = {
     "extra_nav_links": {
         "ReaJason": "https://reajason.eu.org"
     },
-    "collapse_navigation": True,
-    "navigation_depth": 6
+    "sidebar_collapse": True,
 }
-
-html_static_path = ['_static']
