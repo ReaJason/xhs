@@ -5,7 +5,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>xhs 用户文档 &#8212; xhs 0.2.4 文档</title>
+    <title>介绍 &#8212; xhs 0.2.4 文档</title>
     <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="_static/alabaster.css" />
     <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
@@ -15,6 +15,7 @@
     <script src="_static/translations.js"></script>
     <link rel="index" title="索引" href="genindex.html" />
     <link rel="search" title="搜索" href="search.html" />
+    <link rel="next" title="快速入门" href="basic.html" />
    
   <link rel="stylesheet" href="_static/custom.css" type="text/css" />
   
@@ -31,148 +32,55 @@
 
           <div class="body" role="main">
             
-  <div class="section" id="xhs">
-<h1>xhs 用户文档<a class="headerlink" href="#xhs" title="永久链接至标题">¶</a></h1>
-<a class="reference external image-reference" href="https://pypi.org/project/xhs/"><img alt="PyPI - Downloads" src="https://img.shields.io/pypi/dm/xhs?style=for-the-badge" /></a>
-<a class="reference external image-reference" href="https://pypi.org/project/xhs/"><img alt="PyPI" src="https://img.shields.io/pypi/v/xhs?style=for-the-badge" /></a>
-<a class="reference external image-reference" href="https://pypi.org/project/xhs/"><img alt="PyPI - Python Version" src="https://img.shields.io/pypi/pyversions/xhs?style=for-the-badge" /></a>
-<a class="reference external image-reference" href="https://pypi.org/project/xhs/"><img alt="PyPI - License" src="https://img.shields.io/pypi/l/xhs?style=for-the-badge" /></a>
-<p><strong>xhs</strong> 是一个封装小红书网页端的请求工具</p>
-<p><strong>安装</strong>:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ pip install xhs
-</pre></div>
-</div>
-<p><strong>基础使用</strong>:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">xhs</span> <span class="kn">import</span> <span class="n">XhsClient</span>
-
-<span class="n">cookie</span> <span class="o">=</span> <span class="s2">&quot;请从网页端获取你的 cookie&quot;</span>
-<span class="n">xhs_client</span> <span class="o">=</span> <span class="n">XhsClient</span><span class="p">(</span><span class="n">cookie</span><span class="p">)</span>
-
-<span class="c1"># 获取笔记内容</span>
-<span class="n">xhs_client</span><span class="o">.</span><span class="n">get_note_by_id</span><span class="p">(</span><span class="s2">&quot;63db8819000000001a01ead1&quot;</span><span class="p">)</span>
-
-<span class="c1"># 获取用户信息</span>
-<span class="n">xhs_client</span><span class="o">.</span><span class="n">get_user_info</span><span class="p">(</span><span class="s2">&quot;5ff0e6410000000001008400&quot;</span><span class="p">)</span>
-
-<span class="c1"># 获取用户全部的笔记</span>
-<span class="n">xhs_client</span><span class="o">.</span><span class="n">get_user_all_notes</span><span class="p">(</span><span class="s2">&quot;63273a77000000002303cc9b&quot;</span><span class="p">)</span>
-
-<span class="c1"># 获取笔记全部的评论</span>
-<span class="n">xhs_client</span><span class="o">.</span><span class="n">get_note_all_comments</span><span class="p">(</span><span class="s2">&quot;63db8819000000001a01ead1&quot;</span><span class="p">)</span>
-
-<span class="c1"># 搜索笔记</span>
-<span class="n">xhs_client</span><span class="o">.</span><span class="n">get_note_by_keyword</span><span class="p">(</span><span class="s2">&quot;小红书&quot;</span><span class="p">)</span>
-
-<span class="c1"># 下载笔记图片或视频到指定路径下</span>
-<span class="c1"># 实际会下载到以笔记标题为文件夹名下</span>
-<span class="c1"># 例如：C:\Users\User\Desktop\笔记标题\图片.png</span>
-<span class="n">xhs_client</span><span class="o">.</span><span class="n">save_files_from_note_id</span><span class="p">(</span><span class="s2">&quot;63db8819000000001a01ead1&quot;</span><span class="p">,</span>
-                                    <span class="sa">r</span><span class="s2">&quot;C:\Users\User\Desktop&quot;</span><span class="p">)</span>
-</pre></div>
-</div>
-<div class="section" id="id1">
-<h2>接口文档<a class="headerlink" href="#id1" title="永久链接至标题">¶</a></h2>
-<div class="section" id="id2">
-<h3>初始化<a class="headerlink" href="#id2" title="永久链接至标题">¶</a></h3>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">xhs_client</span> <span class="o">=</span> <span class="n">XhsClient</span><span class="p">(</span><span class="n">cookie</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="c1"># 用户 cookie</span>
-                       <span class="n">user_agent</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="c1"># 自定义用户代理</span>
-                       <span class="n">timeout</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="c1"># 自定义超时</span>
-                       <span class="n">proxies</span><span class="o">=</span><span class="p">{})</span> <span class="c1"># 自定义代理</span>
-</pre></div>
-</div>
-</div>
-<div class="section" id="id3">
-<h3>获取笔记信息<a class="headerlink" href="#id3" title="永久链接至标题">¶</a></h3>
-<p><code class="docutils literal notranslate"><span class="pre">xhs_client.get_note_by_id(&quot;笔记ID&quot;)</span></code></p>
-</div>
-<div class="section" id="id4">
-<h3>获取当前用户信息<a class="headerlink" href="#id4" title="永久链接至标题">¶</a></h3>
-<p><code class="docutils literal notranslate"><span class="pre">xhs_client.get_self_info()</span></code></p>
-</div>
-<div class="section" id="id5">
-<h3>获取用户信息<a class="headerlink" href="#id5" title="永久链接至标题">¶</a></h3>
-<p><code class="docutils literal notranslate"><span class="pre">xhs_client.get_user_info(&quot;用户ID&quot;)</span></code></p>
-</div>
-<div class="section" id="id6">
-<h3>获取主页推荐<a class="headerlink" href="#id6" title="永久链接至标题">¶</a></h3>
-<p><code class="docutils literal notranslate"><span class="pre">xhs_client.get_home_feed(xhs.FeedType.RECOMMEND)</span></code></p>
-</div>
-<div class="section" id="id7">
-<h3>搜索笔记<a class="headerlink" href="#id7" title="永久链接至标题">¶</a></h3>
-<p><code class="docutils literal notranslate"><span class="pre">xhs_client.get_note_by_keyword(&quot;搜索关键字&quot;)</span></code></p>
-</div>
-<div class="section" id="id8">
-<h3>获取用户笔记<a class="headerlink" href="#id8" title="永久链接至标题">¶</a></h3>
-<p><code class="docutils literal notranslate"><span class="pre">xhs_client.get_user_notes(&quot;用户ID&quot;)</span></code></p>
-</div>
-<div class="section" id="id9">
-<h3>获取用户收藏笔记<a class="headerlink" href="#id9" title="永久链接至标题">¶</a></h3>
-<p><code class="docutils literal notranslate"><span class="pre">xhs_client.get_user_collect_notes(&quot;用户ID&quot;)</span></code></p>
-</div>
-<div class="section" id="id10">
-<h3>获取用户点赞笔记<a class="headerlink" href="#id10" title="永久链接至标题">¶</a></h3>
-<p><code class="docutils literal notranslate"><span class="pre">xhs_client.get_user_like_notes(&quot;用户ID&quot;)</span></code></p>
-</div>
-<div class="section" id="id11">
-<h3>获取笔记评论<a class="headerlink" href="#id11" title="永久链接至标题">¶</a></h3>
-<p><code class="docutils literal notranslate"><span class="pre">xhs_client.get_note_comments(&quot;笔记ID&quot;)</span></code></p>
-</div>
-<div class="section" id="id12">
-<h3>获取笔记子评论<a class="headerlink" href="#id12" title="永久链接至标题">¶</a></h3>
-<p><code class="docutils literal notranslate"><span class="pre">xhs_client.get_note_sub_comments(&quot;笔记ID&quot;,</span> <span class="pre">&quot;父评论ID&quot;)</span></code></p>
-</div>
-<div class="section" id="id13">
-<h3>评论笔记<a class="headerlink" href="#id13" title="永久链接至标题">¶</a></h3>
-<p><code class="docutils literal notranslate"><span class="pre">xhs_client.comment_note(&quot;笔记ID&quot;,</span> <span class="pre">&quot;评论内容&quot;)</span></code></p>
-</div>
-<div class="section" id="id14">
-<h3>删除笔记评论<a class="headerlink" href="#id14" title="永久链接至标题">¶</a></h3>
-<p><code class="docutils literal notranslate"><span class="pre">xhs_client.delete_note_comment(&quot;笔记ID&quot;,</span> <span class="pre">&quot;评论ID&quot;)</span></code></p>
-</div>
-<div class="section" id="id15">
-<h3>评论用户<a class="headerlink" href="#id15" title="永久链接至标题">¶</a></h3>
-<p><code class="docutils literal notranslate"><span class="pre">xhs_client.delete_note_comment(&quot;笔记ID&quot;,</span> <span class="pre">&quot;评论ID&quot;,</span> <span class="pre">&quot;评论内容&quot;)</span></code></p>
-</div>
-<div class="section" id="id16">
-<h3>关注用户<a class="headerlink" href="#id16" title="永久链接至标题">¶</a></h3>
-<p><code class="docutils literal notranslate"><span class="pre">xhs_client.follow_user(&quot;用户ID&quot;)</span></code></p>
-</div>
-<div class="section" id="id17">
-<h3>取关用户<a class="headerlink" href="#id17" title="永久链接至标题">¶</a></h3>
-<p><code class="docutils literal notranslate"><span class="pre">xhs_client.unfollow_user(&quot;用户ID&quot;)</span></code></p>
-</div>
-<div class="section" id="id18">
-<h3>收藏笔记<a class="headerlink" href="#id18" title="永久链接至标题">¶</a></h3>
-<p><code class="docutils literal notranslate"><span class="pre">xhs_client.collect_note(&quot;笔记ID&quot;)</span></code></p>
-</div>
-<div class="section" id="id19">
-<h3>取消收藏笔记<a class="headerlink" href="#id19" title="永久链接至标题">¶</a></h3>
-<p><code class="docutils literal notranslate"><span class="pre">xhs_client.uncollect_note(&quot;笔记ID&quot;)</span></code></p>
-</div>
-<div class="section" id="id20">
-<h3>点赞笔记<a class="headerlink" href="#id20" title="永久链接至标题">¶</a></h3>
-<p><code class="docutils literal notranslate"><span class="pre">xhs_client.like_note(&quot;笔记ID&quot;)</span></code></p>
-</div>
-<div class="section" id="id21">
-<h3>取消点赞笔记<a class="headerlink" href="#id21" title="永久链接至标题">¶</a></h3>
-<p><code class="docutils literal notranslate"><span class="pre">xhs_client.dislike_note(&quot;笔记ID&quot;)</span></code></p>
-</div>
-<div class="section" id="id22">
-<h3>点赞评论<a class="headerlink" href="#id22" title="永久链接至标题">¶</a></h3>
-<p><code class="docutils literal notranslate"><span class="pre">xhs_client.like_comment(&quot;笔记ID&quot;,</span> <span class="pre">&quot;评论ID&quot;)</span></code></p>
-</div>
-<div class="section" id="id23">
-<h3>取消点赞评论<a class="headerlink" href="#id23" title="永久链接至标题">¶</a></h3>
-<p><code class="docutils literal notranslate"><span class="pre">xhs_client.dislike_comment(&quot;评论ID&quot;)</span></code></p>
-</div>
-<div class="section" id="id24">
-<h3>获取二维码<a class="headerlink" href="#id24" title="永久链接至标题">¶</a></h3>
-<p><code class="docutils literal notranslate"><span class="pre">xhs_client.get_qrcode()</span></code></p>
-</div>
-<div class="section" id="id25">
-<h3>检查二维码状态<a class="headerlink" href="#id25" title="永久链接至标题">¶</a></h3>
-<p><code class="docutils literal notranslate"><span class="pre">xhs_client.check_qrcode(&quot;二维码ID&quot;,</span> <span class="pre">&quot;二维码编码&quot;)</span></code></p>
-</div>
+  <div class="section" id="id1">
+<h1>介绍<a class="headerlink" href="#id1" title="永久链接至标题">¶</a></h1>
+<a class="reference external image-reference" href="https://pypi.org/project/xhs/"><img alt="PyPI" src="https://img.shields.io/pypi/v/xhs" /></a>
+<a class="reference external image-reference" href="https://pypi.org/project/xhs/"><img alt="PyPI - License" src="https://img.shields.io/pypi/l/xhs" /></a>
+<a class="reference external image-reference" href="https://pypi.org/project/xhs/"><img alt="PyPI - Downloads" src="https://img.shields.io/pypi/dm/xhs" /></a>
+<a class="reference external image-reference" href="https://pypi.org/project/xhs/"><img alt="PyPI - Python Version" src="https://img.shields.io/pypi/pyversions/xhs" /></a>
+<p><strong>xhs</strong> 是一个封装小红书网页端的请求工具，既包含 <a class="reference external" href="https://www.xiaohongshu.com/">小红书（www.xiaohongshu.com）</a> 也包含 <a class="reference external" href="https://creator.xiaohongshu.com/">创作服务页（creator.xiaohongshu.com）</a>。</p>
+<div class="toctree-wrapper compound">
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">介绍</a></li>
+<li class="toctree-l1"><a class="reference internal" href="basic.html">快速入门</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="basic.html#id2">基础使用</a></li>
+<li class="toctree-l2"><a class="reference internal" href="basic.html#id3">进阶使用</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="basic.html#id4">环境安装</a></li>
+<li class="toctree-l3"><a class="reference internal" href="basic.html#flask">开启 Flask 签名服务</a></li>
+<li class="toctree-l3"><a class="reference internal" href="basic.html#xhsclient">使用 XhsClient</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="crawl.html">主页爬取</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="crawl.html#id2">初始化</a></li>
+<li class="toctree-l2"><a class="reference internal" href="crawl.html#id3">获取笔记信息</a></li>
+<li class="toctree-l2"><a class="reference internal" href="crawl.html#id4">获取当前用户信息</a></li>
+<li class="toctree-l2"><a class="reference internal" href="crawl.html#id5">获取用户信息</a></li>
+<li class="toctree-l2"><a class="reference internal" href="crawl.html#id6">获取主页推荐</a></li>
+<li class="toctree-l2"><a class="reference internal" href="crawl.html#id7">搜索笔记</a></li>
+<li class="toctree-l2"><a class="reference internal" href="crawl.html#id8">获取用户笔记</a></li>
+<li class="toctree-l2"><a class="reference internal" href="crawl.html#id9">获取用户收藏笔记</a></li>
+<li class="toctree-l2"><a class="reference internal" href="crawl.html#id10">获取用户点赞笔记</a></li>
+<li class="toctree-l2"><a class="reference internal" href="crawl.html#id11">获取笔记评论</a></li>
+<li class="toctree-l2"><a class="reference internal" href="crawl.html#id12">获取笔记子评论</a></li>
+<li class="toctree-l2"><a class="reference internal" href="crawl.html#id13">评论笔记</a></li>
+<li class="toctree-l2"><a class="reference internal" href="crawl.html#id14">删除笔记评论</a></li>
+<li class="toctree-l2"><a class="reference internal" href="crawl.html#id15">评论用户</a></li>
+<li class="toctree-l2"><a class="reference internal" href="crawl.html#id16">关注用户</a></li>
+<li class="toctree-l2"><a class="reference internal" href="crawl.html#id17">取关用户</a></li>
+<li class="toctree-l2"><a class="reference internal" href="crawl.html#id18">收藏笔记</a></li>
+<li class="toctree-l2"><a class="reference internal" href="crawl.html#id19">取消收藏笔记</a></li>
+<li class="toctree-l2"><a class="reference internal" href="crawl.html#id20">点赞笔记</a></li>
+<li class="toctree-l2"><a class="reference internal" href="crawl.html#id21">取消点赞笔记</a></li>
+<li class="toctree-l2"><a class="reference internal" href="crawl.html#id22">点赞评论</a></li>
+<li class="toctree-l2"><a class="reference internal" href="crawl.html#id23">取消点赞评论</a></li>
+<li class="toctree-l2"><a class="reference internal" href="crawl.html#id24">获取二维码</a></li>
+<li class="toctree-l2"><a class="reference internal" href="crawl.html#id25">检查二维码状态</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="creator.html">笔记发布</a></li>
+</ul>
 </div>
 </div>
 
@@ -200,6 +108,12 @@
 
 
 <h3>导航</h3>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">介绍</a></li>
+<li class="toctree-l1"><a class="reference internal" href="basic.html">快速入门</a></li>
+<li class="toctree-l1"><a class="reference internal" href="crawl.html">主页爬取</a></li>
+<li class="toctree-l1"><a class="reference internal" href="creator.html">笔记发布</a></li>
+</ul>
 
 
 <hr />
@@ -212,6 +126,7 @@
 <h3>Related Topics</h3>
 <ul>
   <li><a href="#">Documentation overview</a><ul>
+      <li>Next: <a href="basic.html" title="下一章">快速入门</a></li>
   </ul></li>
 </ul>
 </div>
