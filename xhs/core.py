@@ -662,7 +662,7 @@ class XhsClient:
         return self.get(uri, params)["uploadTempPermits"]
 
     def upload_image(self, image_id: str, token: str, file_path: str):
-        url = "https://ros-upload.xiaohongshu.com/spectrum/" + image_id
+        url = "https://ros-upload.xiaohongshu.com/" + image_id
         headers = {
             "X-Cos-Security-Token": token,
             "Content-Type": "image/jpeg"
