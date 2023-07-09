@@ -129,4 +129,5 @@ dmypy.json
 .pyre/
 
 .vscode/
+.idea/
 report.xml
