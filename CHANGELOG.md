@@ -5,6 +5,16 @@
 - Improve documentation
 - Add more test function
 
+## 0.2.4
+
+### Added
+
+- add create note api
+
+### Fixed
+
+- fix cookie key with white space error
+
 ## 0.2.3
 
 ### Added
