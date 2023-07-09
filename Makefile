@@ -14,4 +14,4 @@ upload:
 		make build_wheel
 		twine upload dist/*
 docs:
-		cd docs && make clean html && start ./_build/html/index.html
+		cd docs && make clean html && open ./_build/html/index.html
