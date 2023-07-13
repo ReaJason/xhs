@@ -131,3 +131,10 @@ dmypy.json
 .vscode/
 .idea/
 report.xml
+
+
+# development test files
+dev_test/
+xhs_sam.js
+xhs_sam.py
+xhs_sam.jpg

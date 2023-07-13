@@ -9,10 +9,16 @@ import requests
 
 from xhs.exception import DataFetchError, IPBlockError, SignError, ErrorEnum
 
-from .help import (cookie_jar_to_cookie_str, download_file,
-                   get_imgs_url_from_note, get_search_id, get_valid_path_name,
-                   get_video_url_from_note, sign,
-                   update_session_cookies_from_cookie)
+from .help import (
+    cookie_jar_to_cookie_str,
+    download_file,
+    get_imgs_url_from_note,
+    get_search_id,
+    get_valid_path_name,
+    get_video_url_from_note,
+    sign,
+    update_session_cookies_from_cookie,
+)
 
 
 class FeedType(Enum):
@@ -46,8 +52,8 @@ class NoteType(Enum):
 
 
 class SearchSortType(Enum):
-    """serach sort type
-    """
+    """serach sort type"""
+
     # default
     GENERAL = "general"
     # most popular
@@ -57,8 +63,8 @@ class SearchSortType(Enum):
 
 
 class SearchNoteType(Enum):
-    """search note type
-    """
+    """search note type"""
+
     # default
     ALL = 0
     # only video
@@ -69,6 +75,7 @@ class SearchNoteType(Enum):
 
 class Note(NamedTuple):
     """note typle"""
+
     note_id: str
     title: str
     desc: str
@@ -87,12 +94,9 @@ class Note(NamedTuple):
 
 
 class XhsClient:
-    def __init__(self,
-                 cookie=None,
-                 user_agent=None,
-                 timeout=10,
-                 proxies=None,
-                 sign=None):
+    def __init__(
+        self, cookie=None, user_agent=None, timeout=10, proxies=None, sign=None
+    ):
         """constructor"""
         self.proxies = proxies
         self.__session: requests.Session = requests.session()
@@ -100,14 +104,16 @@ class XhsClient:
         self.sign = sign
         self._host = "https://edith.xiaohongshu.com"
         self.home = "https://www.xiaohongshu.com"
-        user_agent = user_agent or ("Mozilla/5.0 "
-                                    "(Windows NT 10.0; Win64; x64) "
-                                    "AppleWebKit/537.36 "
-                                    "(KHTML, like Gecko) "
-                                    "Chrome/111.0.0.0 Safari/537.36")
+        user_agent = user_agent or (
+            "Mozilla/5.0 "
+            "(Windows NT 10.0; Win64; x64) "
+            "AppleWebKit/537.36 "
+            "(KHTML, like Gecko) "
+            "Chrome/111.0.0.0 Safari/537.36"
+        )
         self.__session.headers = {
             "user-agent": user_agent,
-            "Content-Type": "application/json"
+            "Content-Type": "application/json",
         }
         self.cookie = cookie
 
@@ -145,13 +151,18 @@ class XhsClient:
             self.__session.headers.update({"x-s-common": signs["x-s-common"]})
         else:
             self.__session.headers.update(
-                self.sign(url, data, a1=self.cookie_dict.get("a1"),
-                          web_session=self.cookie_dict.get("web_session")))
+                self.sign(
+                    url,
+                    data,
+                    a1=self.cookie_dict.get("a1"),
+                    web_session=self.cookie_dict.get("web_session"),
+                )
+            )
 
     def request(self, method, url, **kwargs):
         response = self.__session.request(
-            method, url, timeout=self.timeout,
-            proxies=self.proxies, **kwargs)
+            method, url, timeout=self.timeout, proxies=self.proxies, **kwargs
+        )
         if not len(response.text):
             return response
         data = response.json()
@@ -167,16 +178,16 @@ class XhsClient:
     def get(self, uri: str, params=None, is_creator: bool = False):
         final_uri = uri
         if isinstance(params, dict):
-            final_uri = (f"{uri}?"
-                         f"{'&'.join([f'{k}={v}' for k, v in params.items()])}")
+            final_uri = f"{uri}?" f"{'&'.join([f'{k}={v}' for k, v in params.items()])}"
         self._pre_headers(final_uri, is_creator=is_creator)
         return self.request(method="GET", url=f"{self._host}{final_uri}")
 
     def post(self, uri: str, data: dict, is_creator: bool = False):
         self._pre_headers(uri, data, is_creator=is_creator)
-        json_str = json.dumps(data, separators=(',', ':'), ensure_ascii=False)
-        return self.request(method="POST", url=f"{self._host}{uri}",
-                            data=json_str.encode("utf-8"))
+        json_str = json.dumps(data, separators=(",", ":"), ensure_ascii=False)
+        return self.request(
+            method="POST", url=f"{self._host}{uri}", data=json_str.encode("utf-8")
+        )
 
     def get_note_by_id(self, note_id: str):
         """
@@ -198,7 +209,7 @@ class XhsClient:
         """
 
         def camel_to_underscore(key):
-            return re.sub(r'(?<!^)(?=[A-Z])', '_', key).lower()
+            return re.sub(r"(?<!^)(?=[A-Z])", "_", key).lower()
 
         def transform_json_keys(json_data):
             data_dict = json.loads(json_data)
@@ -210,8 +221,12 @@ class XhsClient:
                 elif isinstance(value, dict):
                     new_dict[new_key] = transform_json_keys(json.dumps(value))
                 elif isinstance(value, list):
-                    new_dict[new_key] = [transform_json_keys(json.dumps(
-                        item)) if (item and isinstance(item, dict)) else item for item in value]
+                    new_dict[new_key] = [
+                        transform_json_keys(json.dumps(item))
+                        if (item and isinstance(item, dict))
+                        else item
+                        for item in value
+                    ]
                 else:
                     new_dict[new_key] = value
             return new_dict
@@ -219,8 +234,9 @@ class XhsClient:
         url = "https://www.xiaohongshu.com/explore/" + note_id
         res = self.session.get(url, headers={"user-agent": self.user_agent})
         html = res.text
-        state = re.findall(
-            r'window.__INITIAL_STATE__=({.*})</script>', html)[0].replace("undefined", '""')
+        state = re.findall(r"window.__INITIAL_STATE__=({.*})</script>", html)[
+            0
+        ].replace("undefined", '""')
         if state != "{}":
             new_dict = transform_json_keys(state)
             return new_dict["note"]["note"]
@@ -228,8 +244,16 @@ class XhsClient:
             raise IPBlockError(self.IP_ERROR_STR)
         raise DataFetchError()
 
-    def report_note_metrics(self, note_id: str, note_type: int, note_user_id: str, viewer_user_id: str,
-                            followed_author=0, report_type=1, stay_seconds=0):
+    def report_note_metrics(
+        self,
+        note_id: str,
+        note_type: int,
+        note_user_id: str,
+        viewer_user_id: str,
+        followed_author=0,
+        report_type=1,
+        stay_seconds=0,
+    ):
         """report note stay seconds and other interaction info
 
         :param note_id: note_id which you want to report
@@ -259,7 +283,7 @@ class XhsClient:
             "author": {"user_id": note_user_id},
             "interaction": {"like": 0, "collect": 0, "comment": 0, "comment_read": 0},
             "note": {"stay_seconds": stay_seconds},
-            "other": {"platform": "web"}
+            "other": {"platform": "web"},
         }
         return self.post(uri, data)
 
@@ -289,8 +313,7 @@ class XhsClient:
         else:
             img_urls = get_imgs_url_from_note(note)
             for index, img_url in enumerate(img_urls):
-                img_file_name = os.path.join(
-                    new_dir_path, f"{title}{index}.png")
+                img_file_name = os.path.join(new_dir_path, f"{title}{index}.png")
                 download_file(img_url, img_file_name)
 
     def get_self_info(self):
@@ -309,9 +332,7 @@ class XhsClient:
         :rtype: dict
         """
         uri = "/api/sns/web/v1/user/otherinfo"
-        params = {
-            "target_user_id": user_id
-        }
+        params = {"target_user_id": user_id}
         return self.get(uri, params)
 
     def get_home_feed_category(self):
@@ -328,21 +349,23 @@ class XhsClient:
             "unread_begin_note_id": "",
             "unread_end_note_id": "",
             "unread_note_count": 0,
-            "category": feed_type.value
+            "category": feed_type.value,
         }
         return self.post(uri, data)
 
     def get_search_suggestion(self, keyword: str):
         uri = "/api/sns/web/v1/sug/recommend"
-        params = {
-            "keyword": keyword
-        }
+        params = {"keyword": keyword}
         return [sug["text"] for sug in self.get(uri, params)["sug_items"]]
 
-    def get_note_by_keyword(self, keyword: str,
-                            page: int = 1, page_size: int = 20,
-                            sort: SearchSortType = SearchSortType.GENERAL,
-                            note_type: SearchNoteType = SearchNoteType.ALL):
+    def get_note_by_keyword(
+        self,
+        keyword: str,
+        page: int = 1,
+        page_size: int = 20,
+        sort: SearchSortType = SearchSortType.GENERAL,
+        note_type: SearchNoteType = SearchNoteType.ALL,
+    ):
         """search note by keyword
 
         :param keyword: what notes you want to search
@@ -365,7 +388,7 @@ class XhsClient:
             "page_size": page_size,
             "search_id": get_search_id(),
             "sort": sort.value,
-            "note_type": note_type.value
+            "note_type": note_type.value,
         }
         return self.post(uri, data)
 
@@ -380,11 +403,7 @@ class XhsClient:
         :rtype: dict
         """
         uri = "/api/sns/web/v1/user_posted"
-        params = {
-            "num": 30,
-            "cursor": cursor,
-            "user_id": user_id
-        }
+        params = {"num": 30, "cursor": cursor, "user_id": user_id}
         return self.get(uri, params)
 
     def get_user_all_notes(self, user_id: str, crawl_interval: int = 1):
@@ -447,15 +466,12 @@ class XhsClient:
         :rtype: dict
         """
         uri = "/api/sns/web/v2/comment/page"
-        params = {
-            "note_id": note_id,
-            "cursor": cursor
-        }
+        params = {"note_id": note_id, "cursor": cursor}
         return self.get(uri, params)
 
-    def get_note_sub_comments(self, note_id: str,
-                              root_comment_id: str,
-                              num: int = 30, cursor: str = ""):
+    def get_note_sub_comments(
+        self, note_id: str, root_comment_id: str, num: int = 30, cursor: str = ""
+    ):
         """get note sub comments
 
         :param note_id: note id you want to fetch
@@ -497,16 +513,20 @@ class XhsClient:
                 cur_sub_comment_count = int(comment["sub_comment_count"])
                 cur_sub_comments = comment["sub_comments"]
                 result.extend(cur_sub_comments)
-                sub_comments_has_more = comment["sub_comment_has_more"] and len(
-                    cur_sub_comments) < cur_sub_comment_count
+                sub_comments_has_more = (
+                    comment["sub_comment_has_more"]
+                    and len(cur_sub_comments) < cur_sub_comment_count
+                )
                 sub_comment_cursor = comment["sub_comment_cursor"]
                 while sub_comments_has_more:
                     page_num = 30
                     sub_comments_res = self.get_note_sub_comments(
-                        note_id, comment["id"], num=page_num, cursor=sub_comment_cursor)
+                        note_id, comment["id"], num=page_num, cursor=sub_comment_cursor
+                    )
                     sub_comments = sub_comments_res["comments"]
-                    sub_comments_has_more = sub_comments_res["has_more"] and len(
-                        sub_comments) == page_num
+                    sub_comments_has_more = (
+                        sub_comments_res["has_more"] and len(sub_comments) == page_num
+                    )
                     sub_comment_cursor = sub_comments_res["cursor"]
                     result.extend(sub_comments)
                     time.sleep(crawl_interval)
@@ -520,19 +540,12 @@ class XhsClient:
         :rtype: dict
         """
         uri = "/api/sns/web/v1/comment/post"
-        data = {
-            "note_id": note_id,
-            "content": content,
-            "at_users": []
-        }
+        data = {"note_id": note_id, "content": content, "at_users": []}
         return self.post(uri, data)
 
     def delete_note_comment(self, note_id: str, comment_id: str):
         uri = "/api/sns/web/v1/comment/delete"
-        data = {
-            "note_id": note_id,
-            "comment_id": comment_id
-        }
+        data = {"note_id": note_id, "comment_id": comment_id}
         return self.post(uri, data)
 
     def comment_user(self, note_id: str, comment_id: str, content: str):
@@ -545,65 +558,48 @@ class XhsClient:
             "note_id": note_id,
             "content": content,
             "target_comment_id": comment_id,
-            "at_users": []
+            "at_users": [],
         }
         return self.post(uri, data)
 
     def follow_user(self, user_id: str):
         uri = "/api/sns/web/v1/user/follow"
-        data = {
-            "target_user_id": user_id
-        }
+        data = {"target_user_id": user_id}
         return self.post(uri, data)
 
     def unfollow_user(self, user_id: str):
         uri = "/api/sns/web/v1/user/unfollow"
-        data = {
-            "target_user_id": user_id
-        }
+        data = {"target_user_id": user_id}
         return self.post(uri, data)
 
     def collect_note(self, note_id: str):
         uri = "/api/sns/web/v1/note/collect"
-        data = {
-            "note_id": note_id
-        }
+        data = {"note_id": note_id}
         return self.post(uri, data)
 
     def uncollect_note(self, note_id: str):
         uri = "/api/sns/web/v1/note/uncollect"
-        data = {
-            "note_ids": note_id
-        }
+        data = {"note_ids": note_id}
         return self.post(uri, data)
 
     def like_note(self, note_id: str):
         uri = "/api/sns/web/v1/note/like"
-        data = {
-            "note_oid": note_id
-        }
+        data = {"note_oid": note_id}
         return self.post(uri, data)
 
     def like_comment(self, note_id: str, comment_id: str):
         uri = "/api/sns/web/v1/comment/like"
-        data = {
-            "note_id": note_id,
-            "comment_id": comment_id
-        }
+        data = {"note_id": note_id, "comment_id": comment_id}
         return self.post(uri, data)
 
     def dislike_note(self, note_id: str):
         uri = "/api/sns/web/v1/note/dislike"
-        data = {
-            "note_oid": note_id
-        }
+        data = {"note_oid": note_id}
         return self.post(uri, data)
 
     def dislike_comment(self, comment_id: str):
         uri = "/api/sns/web/v1/comment/dislike"
-        data = {
-            "note_oid": comment_id
-        }
+        data = {"note_oid": comment_id}
         return self.post(uri, data)
 
     def get_qrcode(self):
@@ -618,10 +614,7 @@ class XhsClient:
 
     def check_qrcode(self, qr_id: str, code: str):
         uri = "/api/sns/web/v1/login/qrcode/status"
-        params = {
-            "qr_id": qr_id,
-            "code": code
-        }
+        params = {"qr_id": qr_id, "code": code}
         return self.get(uri, params)
 
     def activate(self):
@@ -630,60 +623,96 @@ class XhsClient:
 
     def get_user_collect_notes(self, user_id: str, num: int = 30, cursor: str = ""):
         uri = "/api/sns/web/v2/note/collect/page"
-        params = {
-            "user_id": user_id,
-            "num": num,
-            "cursor": cursor
-        }
+        params = {"user_id": user_id, "num": num, "cursor": cursor}
         return self.get(uri, params)
 
     def get_user_like_notes(self, user_id: str, num: int = 30, cursor: str = ""):
         uri = "/api/sns/web/v1/note/like/page"
-        params = {
-            "user_id": user_id,
-            "num": num,
-            "cursor": cursor
-        }
+        params = {"user_id": user_id, "num": num, "cursor": cursor}
         return self.get(uri, params)
 
     def get_emojis(self):
         uri = "/api/im/redmoji/detail"
         return self.get(uri)["emoji"]["tabs"][0]["collection"]
 
-    def get_upload_image_ids(self, count):
+    def get_upload_files_permit(self, type: str = "image", count: int = 1) -> dict:
+        """_summary_
+
+        Args:
+            type (str, optional): "image" or "video". Defaults to "image".
+            count (int, optional): files num. Defaults to 1.
+
+        Returns:
+            dict: upload_files_permit json info.
+        """
+        type = "image" if type not in ["image", "video"] else type
         uri = "/api/media/v1/upload/web/permit"
         params = {
             "biz_name": "spectrum",
-            "scene": "image",
+            "scene": type,
             "file_count": count,
             "version": "1",
             "source": "web",
         }
         return self.get(uri, params)["uploadTempPermits"]
 
-    def upload_image(self, image_id: str, token: str, file_path: str):
+    def upload_file(
+        self,
+        file_id: str,
+        token: str,
+        file_path: str,
+        content_type: str = "image/jpeg",
+    ):
+        """_summary_
+
+        Args:
+            file_id (str): _description_
+            token (str): _description_
+            file_path (str): _description_
+            content_type (str, optional):
+            ["video/mp4","image/jpeg","image/png"]. Defaults to "image/jpeg".
+
+        Returns:
+            __type__ : Response
+        """
+        url = "https://ros-upload.xiaohongshu.com/" + file_id
+        headers = {"X-Cos-Security-Token": token, "Content-Type": content_type}
+        with open(file_path, "rb") as f:
+            return self.request("PUT", url, data=f, headers=headers)
+
+    def upload_video(self, image_id: str, token: str, file_path: str):
         url = "https://ros-upload.xiaohongshu.com/" + image_id
-        headers = {
-            "X-Cos-Security-Token": token,
-            "Content-Type": "image/jpeg"
-        }
+        headers = {"X-Cos-Security-Token": token, "Content-Type": "image/jpeg"}
         with open(file_path, "rb") as f:
             return self.request("PUT", url, data=f, headers=headers)
 
     def get_suggest_topic(self, keyword=""):
         uri = "/web_api/sns/v1/search/topic"
-        data = {"keyword": keyword,
-                "suggest_topic_request": {"title": "", "desc": ""},
-                "page": {"page_size": 20, "page": 1}
-                }
+        data = {
+            "keyword": keyword,
+            "suggest_topic_request": {"title": "", "desc": ""},
+            "page": {"page_size": 20, "page": 1},
+        }
         return self.post(uri, data)["topic_info_dtos"]
 
     def get_suggest_ats(self, keyword=""):
         uri = "/web_api/sns/v1/search/user_info"
-        data = {"keyword": keyword, "search_id": str(time.time() * 1000), "page": {"page_size": 20, "page": 1}}
+        data = {
+            "keyword": keyword,
+            "search_id": str(time.time() * 1000),
+            "page": {"page_size": 20, "page": 1},
+        }
         return self.post(uri, data)["user_info_dtos"]
 
-    def create_note(self, title, desc, files: list, ats: list = None, topics: list = None, is_private: bool = False):
+    def create_note(
+        self,
+        title,
+        desc,
+        files: list,
+        ats: list = None,
+        topics: list = None,
+        is_private: bool = False,
+    ):
         if ats is None:
             ats = []
         if topics is None:
@@ -691,24 +720,141 @@ class XhsClient:
 
         image_info = []
         for file in files:
-            images_ids_res = self.get_upload_image_ids(1)
+            images_ids_res = self.get_upload_files_permit("image", 1)
             image_id = images_ids_res[0]["fileIds"][0]
             token = images_ids_res[0]["token"]
-            res = self.upload_image(image_id, token, file)
-            # print(res.headers["X-Ros-Preview-Url"])
-            image_info.append({
-                "file_id": image_id,
-                "width": 1003,
-                "height": 1000,
-                "metadata": {"source": -1}, "stickers": {"version": 2, "floating": []},
-                "extra_info_json": "{\"mimeType\":\"image/jpeg\"}"
-            })
+            res = self.upload_file(image_id, token, file)
+            image_info.append(
+                {
+                    "file_id": image_id,
+                    "width": 1003,
+                    "height": 1000,
+                    "metadata": {"source": -1},
+                    "stickers": {"version": 2, "floating": []},
+                    "extra_info_json": '{"mimeType":"image/jpeg"}',
+                }
+            )
 
         uri = "/web_api/sns/v2/note"
-        data = {"common": {"type": "normal", "title": title, "note_id": "", "desc": desc,
-                           "source": "{\"type\":\"web\",\"ids\":\"\",\"extraInfo\":\"{\\\"subType\\\":\\\"official\\\"}\"}",
-                           "business_binds": "{\"version\":1,\"noteId\":0,\"bizType\":0,\"noteOrderBind\":{},\"notePostTiming\":{\"postTime\":\"\"},\"noteCollectionBind\":{\"id\":\"\"}}",
-                           "ats": ats, "hash_tag": topics, "post_loc": {},
-                           "privacy_info": {"op_type": 1, "type": int(is_private)}},
-                "image_info": {"images": image_info}, "video_info": None}
+        data = {
+            "common": {
+                "type": "normal",
+                "title": title,
+                "note_id": "",
+                "desc": desc,
+                "source": '{"type":"web","ids":"","extraInfo":"{\\"subType\\":\\"official\\"}"}',
+                "business_binds": '{"version":1,"noteId":0,"bizType":0,"noteOrderBind":{},"notePostTiming":{"postTime":""},"noteCollectionBind":{"id":""}}',
+                "ats": ats,
+                "hash_tag": topics,
+                "post_loc": {},
+                "privacy_info": {"op_type": 1, "type": int(is_private)},
+            },
+            "image_info": {"images": image_info},
+            "video_info": None,
+        }
+        return self.post(uri, data)
+
+    def get_x_sign(self):
+        pass
+
+    def query_transcode(self, video_id: str):
+        headers = {
+            "content-type": "application/json;charset=UTF-8",
+            "referer": "https://creator.xiaohongshu.com/",
+            # TODO X-SIGN
+            "x-sign": self.get_x_sign(),
+        }
+
+        json_data = {"videoId": video_id}
+
+        response = self.session.post(
+            "https://www.xiaohongshu.com/fe_api/burdock/v2/note/query_transcode",
+            # cookies=cookies,
+            headers=headers,
+            json=json_data,
+        )
+
+        return response.json()
+
+    def create_video_note(
+        self,
+        title,
+        viedo_path: str,
+        cover_path: str = None,
+        desc: str = "",
+        wait_transocde_time: int = 30,
+        ats: list = None,
+        topics: list = None,
+        is_private: bool = False,
+    ):
+        #
+        if cover_path is None:
+            # TODO 计算x-sign实现
+            raise NotImplementedError("请添加视频封面路径，自动获得封面需要x-sign,请自行实现")
+        if ats is None:
+            ats = []
+        if topics is None:
+            topics = []
+        # POST video
+        video_upload_permit = self.get_upload_files_permit(type="video")[0]
+        viedo_id = video_upload_permit["fileIds"][0]
+        upload_token = video_upload_permit["token"]
+        res = self.upload_file(
+            viedo_id,
+            upload_token,
+            viedo_path,
+            content_type="video/mp4",
+        )
+        # GET video cover
+        XRosVideoId, is_upload = res.headers["X-Ros-Video-Id"], False
+        if cover_path is None:
+            # raise NotImplementedError("请添加视频封面路径，自动获得封面需要x-sign,请自行实现")
+            for _ in range(10):
+                time.sleep(wait_transocde_time / 10)
+                res = self.query_transcode(XRosVideoId)
+                print(res.content)
+                if res["data"]["hasTranscodeVideo"]:
+                    image_id = res["data"]["firstFrameFileId"]
+                    break
+
+        if cover_path:
+            is_upload = True
+            images_ids_res = self.get_upload_files_permit("image", 1)
+            image_id = images_ids_res[0]["fileIds"][0]
+            token = images_ids_res[0]["token"]
+            res = self.upload_file(image_id, token, cover_path)
+
+        cover_info = {
+            "file_id": image_id,
+            "height": 1000,
+            "width": 1003,
+            "frame": {"ts": 0, "is_user_select": False, "is_upload": is_upload},
+        }
+        # POST note
+        uri = "/web_api/sns/v2/note"
+        data = {
+            "common": {
+                "type": "video",
+                "title": title,
+                "note_id": "",
+                "desc": desc,
+                "source": '{"type":"web","ids":"","extraInfo":"{\\"subType\\":\\"official\\"}"}',
+                "business_binds": '{"version":1,"noteId":0,"bizType":0,"noteOrderBind":{},"notePostTiming":{"postTime":""},"noteCollectionBind":{"id":""}}',
+                "ats": ats,
+                "hash_tag": topics,
+                "post_loc": {},
+                "privacy_info": {"op_type": 1, "type": int(is_private)},
+            },
+            "image_info": None,
+            "video_info": {
+                "file_id": viedo_id,
+                "format_width": 1000,
+                "format_height": 1003,
+                "timelines": [],
+                "cover": cover_info,
+                "chapters": [],
+                "chapter_sync_text": False,
+                "entrance": "web",
+            },
+        }
         return self.post(uri, data)
