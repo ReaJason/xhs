@@ -680,12 +680,6 @@ class XhsClient:
         with open(file_path, "rb") as f:
             return self.request("PUT", url, data=f, headers=headers)
 
-    def upload_video(self, image_id: str, token: str, file_path: str):
-        url = "https://ros-upload.xiaohongshu.com/" + image_id
-        headers = {"X-Cos-Security-Token": token, "Content-Type": "image/jpeg"}
-        with open(file_path, "rb") as f:
-            return self.request("PUT", url, data=f, headers=headers)
-
     def get_suggest_topic(self, keyword=""):
         uri = "/web_api/sns/v1/search/topic"
         data = {
@@ -709,6 +703,7 @@ class XhsClient:
         title,
         desc,
         files: list,
+        post_time:int = None,
         ats: list = None,
         topics: list = None,
         is_private: bool = False,
@@ -752,16 +747,20 @@ class XhsClient:
             "image_info": {"images": image_info},
             "video_info": None,
         }
+        if post_time:
+            if post_time < 1_6800_0000_0000:
+                post_time = post_time * 1000
+            post_time = f'"postTime":"{str(post_time)}"'
+            data["common"]["business_binds"] = data["common"]["business_binds"].replace('"postTime":""', post_time)        
         return self.post(uri, data)
 
     def get_x_sign(self):
-        pass
+        return "X2d2ea70d804b4f98d20cc70f5643bc26"
 
     def query_transcode(self, video_id: str):
         headers = {
             "content-type": "application/json;charset=UTF-8",
             "referer": "https://creator.xiaohongshu.com/",
-            # TODO X-SIGN
             "x-sign": self.get_x_sign(),
         }
 
@@ -780,17 +779,14 @@ class XhsClient:
         self,
         title,
         viedo_path: str,
-        cover_path: str = None,
         desc: str = "",
+        cover_path: str = None,
         wait_transocde_time: int = 30,
         ats: list = None,
+        post_time: int = None,
         topics: list = None,
         is_private: bool = False,
     ):
-        #
-        if cover_path is None:
-            # TODO 计算x-sign实现
-            raise NotImplementedError("请添加视频封面路径，自动获得封面需要x-sign,请自行实现")
         if ats is None:
             ats = []
         if topics is None:
@@ -808,12 +804,10 @@ class XhsClient:
         # GET video cover
         XRosVideoId, is_upload = res.headers["X-Ros-Video-Id"], False
         if cover_path is None:
-            # raise NotImplementedError("请添加视频封面路径，自动获得封面需要x-sign,请自行实现")
             for _ in range(10):
                 time.sleep(wait_transocde_time / 10)
                 res = self.query_transcode(XRosVideoId)
-                print(res.content)
-                if res["data"]["hasTranscodeVideo"]:
+                if res["data"]["hasFirstFrame"]:
                     image_id = res["data"]["firstFrameFileId"]
                     break
 
@@ -826,8 +820,8 @@ class XhsClient:
 
         cover_info = {
             "file_id": image_id,
-            "height": 1000,
-            "width": 1003,
+            "height": 1080,
+            "width": 1920,
             "frame": {"ts": 0, "is_user_select": False, "is_upload": is_upload},
         }
         # POST note
@@ -848,8 +842,8 @@ class XhsClient:
             "image_info": None,
             "video_info": {
                 "file_id": viedo_id,
-                "format_width": 1000,
-                "format_height": 1003,
+                "format_width": 1080,
+                "format_height": 1920,
                 "timelines": [],
                 "cover": cover_info,
                 "chapters": [],
@@ -857,4 +851,9 @@ class XhsClient:
                 "entrance": "web",
             },
         }
+        if post_time:
+            if post_time < 1_6800_0000_0000:
+                post_time = post_time * 1000
+            post_time = f'"postTime":"{str(post_time)}"'
+            data["common"]["business_binds"] = data["common"]["business_binds"].replace('"postTime":""', post_time)
         return self.post(uri, data)
