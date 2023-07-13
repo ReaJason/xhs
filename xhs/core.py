@@ -820,8 +820,8 @@ class XhsClient:
 
         cover_info = {
             "file_id": image_id,
-            "height": 1080,
-            "width": 1920,
+            "height": 1000,
+            "width": 1003,
             "frame": {"ts": 0, "is_user_select": False, "is_upload": is_upload},
         }
         # POST note
@@ -842,8 +842,8 @@ class XhsClient:
             "image_info": None,
             "video_info": {
                 "file_id": viedo_id,
-                "format_width": 1080,
-                "format_height": 1920,
+                "format_width": 1003,
+                "format_height": 1000,
                 "timelines": [],
                 "cover": cover_info,
                 "chapters": [],
