@@ -318,3 +318,15 @@ def test_create_note_with_simple_desc(xhs_client: XhsClient):
     ]
     note = xhs_client.create_note(title, desc, files)
     beauty_print(note)
+
+def test_create_video_note_with_cover(xhs_client: XhsClient):
+    note = xhs_client.create_video_note(
+        title="シナモロール「ときめきレインボー」",
+        desc="",
+        viedo_path=r"C:\Users\Sam\Videos\TubeGet\シナモロール「ときめきレインボー」Official Music Video.mp4",
+        # viedo_path=r"C:\Users\Sam\Downloads\mm.mp4"
+        # viedo_path=
+        cover_path=r"C:\Users\Sam\Videos\TubeGet\シナモロール「ときめきレインボー」Official Music Video.jpg",
+        
+    )
+    beauty_print(note)
