@@ -162,7 +162,7 @@ class XhsClient:
         elif data["code"] == ErrorEnum.SIGN_FAULT.value.code:
             raise SignError(ErrorEnum.SIGN_FAULT.value.msg)
         else:
-            raise DataFetchError(data.get("msg", data))
+            raise DataFetchError(data)
 
     def get(self, uri: str, params=None, is_creator: bool = False):
         final_uri = uri
@@ -226,7 +226,7 @@ class XhsClient:
             return new_dict["note"]["note"]
         elif self.IP_ERROR_STR in html:
             raise IPBlockError(self.IP_ERROR_STR)
-        raise DataFetchError()
+        raise DataFetchError(html)
 
     def report_note_metrics(self, note_id: str, note_type: int, note_user_id: str, viewer_user_id: str,
                             followed_author=0, report_type=1, stay_seconds=0):
@@ -410,7 +410,7 @@ class XhsClient:
                 try:
                     note = self.get_note_by_id(note_id)
                 except DataFetchError as e:
-                    if ErrorEnum.NOTE_ABNORMAL.value.msg in str(e):
+                    if ErrorEnum.NOTE_ABNORMAL.value.code == e.error.get("code"):
                         continue
                     else:
                         raise
