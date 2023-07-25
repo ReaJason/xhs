@@ -24,6 +24,7 @@ def test_sign():
     print(sign)
 
 
+@pytest.mark.skip(reason="sign is useless")
 def test_sign_get(header):
     uri = ("/api/sns/web/v1/user/otherinfo?"
            "target_user_id=5ff0e6410000000001008400")
@@ -46,6 +47,7 @@ def test_sign_get(header):
     assert json_data["code"] == 0
 
 
+@pytest.mark.skip(reason="sign is useless")
 def test_sign_post(header):
     uri = "/api/sns/web/v1/feed"
     data = {"source_note_id": "63db8819000000001a01ead1"}

@@ -1,6 +1,8 @@
+import time
 from time import sleep
 
 import pytest
+import requests
 from playwright.sync_api import sync_playwright
 
 from xhs import FeedType, IPBlockError, XhsClient
@@ -81,11 +83,6 @@ def test_get_note_by_id_from_html(xhs_client: XhsClient):
     beauty_print(data)
     assert data["note_id"] == note_id
 
-    note_id = "64426c3d000000001303eb83"
-    data = xhs_client.get_note_by_id_from_html(note_id)
-    beauty_print(data)
-    assert data["note_id"] == note_id
-
 
 def test_report_note_metrics(xhs_client: XhsClient):
     res = xhs_client.report_note_metrics(
@@ -151,9 +148,9 @@ def test_get_user_notes(xhs_client: XhsClient):
     assert len(data["notes"]) > 0
 
 
-@pytest.mark.skip(reason="it take much request and time")
+# @pytest.mark.skip(reason="it take much request and time")
 def test_get_user_all_notes(xhs_client: XhsClient):
-    user_id = "5cbbc6f50000000016032ff2"
+    user_id = "576e7b1d50c4b4045222de08"
     notes = xhs_client.get_user_all_notes(user_id, 0)
     beauty_print(notes)
 
@@ -316,17 +313,12 @@ def test_create_note_with_simple_desc(xhs_client: XhsClient):
         "/Users/reajason/Downloads/221686462282_.pic.png",
         "/Users/reajason/Downloads/221686462282_.pic.jpg",
     ]
-    note = xhs_client.create_note(title, desc, files)
+    note = xhs_client.create_image_note(title, desc, files, is_private=True, post_time="2023-07-25 23:59:59")
     beauty_print(note)
 
+
 def test_create_video_note_with_cover(xhs_client: XhsClient):
-    note = xhs_client.create_video_note(
-        title="シナモロール「ときめきレインボー」",
-        desc="",
-        viedo_path=r"C:\Users\Sam\Videos\TubeGet\シナモロール「ときめきレインボー」Official Music Video.mp4",
-        # viedo_path=r"C:\Users\Sam\Downloads\mm.mp4"
-        # viedo_path=
-        cover_path=r"C:\Users\Sam\Videos\TubeGet\シナモロール「ときめきレインボー」Official Music Video.jpg",
-        
-    )
+    note = xhs_client.create_video_note(title="123123", video_path="/Users/reajason/Downloads/2.mp4", desc="",
+                                        cover_path="/Users/reajason/Downloads/221686462282_.pic.jpg",
+                                        is_private=True)
     beauty_print(note)

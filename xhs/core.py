@@ -4,6 +4,7 @@ import re
 import time
 from enum import Enum
 from typing import NamedTuple
+from datetime import datetime
 
 import requests
 
@@ -47,7 +48,7 @@ class FeedType(Enum):
 
 
 class NoteType(Enum):
-    NOMAL = "nomal"
+    NORMAL = "normal"
     VIDEO = "video"
 
 
@@ -95,7 +96,7 @@ class Note(NamedTuple):
 
 class XhsClient:
     def __init__(
-        self, cookie=None, user_agent=None, timeout=10, proxies=None, sign=None
+            self, cookie=None, user_agent=None, timeout=10, proxies=None, sign=None
     ):
         """constructor"""
         self.proxies = proxies
@@ -175,25 +176,24 @@ class XhsClient:
         else:
             raise DataFetchError(data)
 
-    def get(self, uri: str, params=None, is_creator: bool = False):
+    def get(self, uri: str, params=None, is_creator: bool = False, **kwargs):
         final_uri = uri
         if isinstance(params, dict):
             final_uri = f"{uri}?" f"{'&'.join([f'{k}={v}' for k, v in params.items()])}"
         self._pre_headers(final_uri, is_creator=is_creator)
-        return self.request(method="GET", url=f"{self._host}{final_uri}")
+        return self.request(method="GET", url=f"{self._host}{final_uri}", **kwargs)
 
-    def post(self, uri: str, data: dict, is_creator: bool = False):
+    def post(self, uri: str, data: dict, is_creator: bool = False, **kwargs):
         self._pre_headers(uri, data, is_creator=is_creator)
         json_str = json.dumps(data, separators=(",", ":"), ensure_ascii=False)
         return self.request(
-            method="POST", url=f"{self._host}{uri}", data=json_str.encode("utf-8")
+            method="POST", url=f"{self._host}{uri}", data=json_str.encode("utf-8"), **kwargs
         )
 
     def get_note_by_id(self, note_id: str):
         """
         :param note_id: note_id you want to fetch
         :type note_id: str
-        :return: {"time":1679019883000,"user":{"nickname":"nickname","avatar":"avatar","user_id":"user_id"},"image_list":[{"url":"https://sns-img-qc.xhscdn.com/c8e505ca-4e5f-44be-fe1c-ca0205a38bad","trace_id":"1000g00826s57r6cfu0005ossb1e9gk8c65d0c80","file_id":"c8e505ca-4e5f-44be-fe1c-ca0205a38bad","height":1920,"width":1440}],"tag_list":[{"id":"5be78cdfdb601f000100d0bc","name":"jk","type":"topic"}],"desc":"裙裙","interact_info":{"followed":false,"liked":false,"liked_count":"1732","collected":false,"collected_count":"453","comment_count":"30","share_count":"41"},"at_user_list":[],"last_update_time":1679019884000,"note_id":"6413cf6b00000000270115b5","type":"normal","title":"title"}
         :rtype: dict
         """
         data = {"source_note_id": note_id}
@@ -202,7 +202,8 @@ class XhsClient:
         return res["items"][0]["note_card"]
 
     def get_note_by_id_from_html(self, note_id: str):
-        """get note info from "https://www.xiaohongshu.com/explore/" + note_id, and the return obj is equal to get_note_by_id
+        """get note info from "https://www.xiaohongshu.com/explore/" + note_id,
+        and the return obj is equal to get_note_by_id
 
         :param note_id: note_id you want to fetch
         :type note_id: str
@@ -213,23 +214,23 @@ class XhsClient:
 
         def transform_json_keys(json_data):
             data_dict = json.loads(json_data)
-            new_dict = {}
+            dict_new = {}
             for key, value in data_dict.items():
                 new_key = camel_to_underscore(key)
                 if not value:
-                    new_dict[new_key] = value
+                    dict_new[new_key] = value
                 elif isinstance(value, dict):
-                    new_dict[new_key] = transform_json_keys(json.dumps(value))
+                    dict_new[new_key] = transform_json_keys(json.dumps(value))
                 elif isinstance(value, list):
-                    new_dict[new_key] = [
+                    dict_new[new_key] = [
                         transform_json_keys(json.dumps(item))
                         if (item and isinstance(item, dict))
                         else item
                         for item in value
                     ]
                 else:
-                    new_dict[new_key] = value
-            return new_dict
+                    dict_new[new_key] = value
+            return dict_new
 
         url = "https://www.xiaohongshu.com/explore/" + note_id
         res = self.session.get(url, headers={"user-agent": self.user_agent})
@@ -238,21 +239,21 @@ class XhsClient:
             0
         ].replace("undefined", '""')
         if state != "{}":
-            new_dict = transform_json_keys(state)
-            return new_dict["note"]["note"]
-        elif self.IP_ERROR_STR in html:
-            raise IPBlockError(self.IP_ERROR_STR)
+            note_dict = transform_json_keys(state)
+            return note_dict["note"]["note"]
+        elif ErrorEnum.IP_BLOCK.value in html:
+            raise IPBlockError(ErrorEnum.IP_BLOCK.value)
         raise DataFetchError(html)
 
     def report_note_metrics(
-        self,
-        note_id: str,
-        note_type: int,
-        note_user_id: str,
-        viewer_user_id: str,
-        followed_author=0,
-        report_type=1,
-        stay_seconds=0,
+            self,
+            note_id: str,
+            note_type: int,
+            note_user_id: str,
+            viewer_user_id: str,
+            followed_author=0,
+            report_type=1,
+            stay_seconds=0,
     ):
         """report note stay seconds and other interaction info
 
@@ -328,7 +329,6 @@ class XhsClient:
         """
         :param user_id: user_id you want fetch
         :type user_id: str
-        :return: {"basic_info":{"imageb":"imageb","nickname":"nickname","images":"images","red_id":"red_id","gender":1,"ip_location":"ip_location","desc":"desc"},"interactions":[{"count":"5","type":"follows","name":"关注"},{"type":"fans","name":"粉丝","count":"16736"},{"type":"interaction","name":"获赞与收藏","count":"293043"}],"tags":[{"icon":"icon","tagType":"info"}],"tab_public":{"collection":false},"extra_info":{"fstatus":"none"},"result":{"success":true,"code":0,"message":"success"}}
         :rtype: dict
         """
         uri = "/api/sns/web/v1/user/otherinfo"
@@ -359,12 +359,12 @@ class XhsClient:
         return [sug["text"] for sug in self.get(uri, params)["sug_items"]]
 
     def get_note_by_keyword(
-        self,
-        keyword: str,
-        page: int = 1,
-        page_size: int = 20,
-        sort: SearchSortType = SearchSortType.GENERAL,
-        note_type: SearchNoteType = SearchNoteType.ALL,
+            self,
+            keyword: str,
+            page: int = 1,
+            page_size: int = 20,
+            sort: SearchSortType = SearchSortType.GENERAL,
+            note_type: SearchNoteType = SearchNoteType.ALL,
     ):
         """search note by keyword
 
@@ -374,9 +374,9 @@ class XhsClient:
         :type page: int, optional
         :param page_size: page size, defaults to 20
         :type page_size: int, optional
-        :param sort: sort ordering, defaults to SearchSortType.GENERAL
+        :param sort: sort ordering, defaults to SearchSortType.GENERAL.
         :type sort: SearchSortType, optional
-        :param note_type: note type, defaults to SearchNoteType.ALL
+        :param note_type: note type, defaults to SearchNoteType.ALL.
         :type note_type: SearchNoteType, optional
         :return: {has_more: true, items: []}
         :rtype: dict
@@ -413,7 +413,7 @@ class XhsClient:
         :type user_id: str
         :param crawl_interval: sleep seconds, defaults to 1
         :type crawl_interval: int, optional
-        :return: note info list
+        :return: note info
         :rtype: list[Note]
         """
         has_more = True
@@ -423,7 +423,7 @@ class XhsClient:
             res = self.get_user_notes(user_id, cursor)
             has_more = res["has_more"]
             cursor = res["cursor"]
-            note_ids = map(lambda note: note["note_id"], res["notes"])
+            note_ids = map(lambda item: item["note_id"], res["notes"])
 
             for note_id in note_ids:
                 try:
@@ -462,7 +462,6 @@ class XhsClient:
         :type note_id: str
         :param cursor: last you get cursor, defaults to ""
         :type cursor: str, optional
-        :return: {"has_more": true,"cursor": "6422442d000000000700dcdb",comments: [],"user_id": "63273a77000000002303cc9b","time": 1681566542930}
         :rtype: dict
         """
         uri = "/api/sns/web/v2/comment/page"
@@ -470,7 +469,7 @@ class XhsClient:
         return self.get(uri, params)
 
     def get_note_sub_comments(
-        self, note_id: str, root_comment_id: str, num: int = 30, cursor: str = ""
+            self, note_id: str, root_comment_id: str, num: int = 30, cursor: str = ""
     ):
         """get note sub comments
 
@@ -478,11 +477,10 @@ class XhsClient:
         :type note_id: str
         :param root_comment_id: parent comment id
         :type root_comment_id: str
-        :param num: recommend 30, if num greater 30, it only return 30 comments
+        :param num: recommend 30, if num greater 30, it only returns 30 comments
         :type num: int
         :param cursor: last you get cursor, defaults to ""
         :type cursor: str optional
-        :return: {"has_more": true,"cursor": "6422442d000000000700dcdb",comments: [],"user_id": "63273a77000000002303cc9b","time": 1681566542930}
         :rtype: dict
         """
         uri = "/api/sns/web/v2/comment/sub/page"
@@ -497,6 +495,7 @@ class XhsClient:
     def get_note_all_comments(self, note_id: str, crawl_interval: int = 1):
         """get note all comments include sub comments
 
+        :param crawl_interval: crawl interval for fetch
         :param note_id: note id you want to fetch
         :type note_id: str
         """
@@ -514,8 +513,8 @@ class XhsClient:
                 cur_sub_comments = comment["sub_comments"]
                 result.extend(cur_sub_comments)
                 sub_comments_has_more = (
-                    comment["sub_comment_has_more"]
-                    and len(cur_sub_comments) < cur_sub_comment_count
+                        comment["sub_comment_has_more"]
+                        and len(cur_sub_comments) < cur_sub_comment_count
                 )
                 sub_comment_cursor = comment["sub_comment_cursor"]
                 while sub_comments_has_more:
@@ -525,7 +524,7 @@ class XhsClient:
                     )
                     sub_comments = sub_comments_res["comments"]
                     sub_comments_has_more = (
-                        sub_comments_res["has_more"] and len(sub_comments) == page_num
+                            sub_comments_res["has_more"] and len(sub_comments) == page_num
                     )
                     sub_comment_cursor = sub_comments_res["cursor"]
                     result.extend(sub_comments)
@@ -536,7 +535,6 @@ class XhsClient:
     def comment_note(self, note_id: str, content: str):
         """comment a note
 
-        :return: {"time":1680834576180,"toast":"评论已发布","comment":{"id":"id","note_id":"note_id","status":2,"liked":false,"show_tags":["is_author"],"ip_location":"ip_location","content":"content","at_users":[],"like_count":"0","user_info":{"image":"**","user_id":"user_id","nickname":"nickname"},"create_time":create_time}}
         :rtype: dict
         """
         uri = "/api/sns/web/v1/comment/post"
@@ -550,7 +548,6 @@ class XhsClient:
 
     def comment_user(self, note_id: str, comment_id: str, content: str):
         """
-        :return: {"comment":{"like_count":"0","user_info":{"user_id":user_id"user_id":"user_id","image":"image"},"show_tags":["is_author"],"ip_location":"ip_location","id":"id","content":"content","at_users":[],"create_time":1680847204059,"target_comment":{"id":"id","user_info":{"user_id":"user_id","nickname":"nickname","image":"image"}},"note_id":"note_id","status":2,"liked":false},"time":1680847204089,"toast":"你的回复已发布"}
         :rtype: dict
         """
         uri = "/api/sns/web/v1/comment/post"
@@ -635,33 +632,26 @@ class XhsClient:
         uri = "/api/im/redmoji/detail"
         return self.get(uri)["emoji"]["tabs"][0]["collection"]
 
-    def get_upload_files_permit(self, type: str = "image", count: int = 1) -> dict:
-        """_summary_
-
-        Args:
-            type (str, optional): "image" or "video". Defaults to "image".
-            count (int, optional): files num. Defaults to 1.
-
-        Returns:
-            dict: upload_files_permit json info.
-        """
-        type = "image" if type not in ["image", "video"] else type
+    def get_upload_files_permit(self, file_type: str, count: int = 1) -> tuple:
         uri = "/api/media/v1/upload/web/permit"
         params = {
             "biz_name": "spectrum",
-            "scene": type,
+            "scene": file_type,
             "file_count": count,
             "version": "1",
             "source": "web",
         }
-        return self.get(uri, params)["uploadTempPermits"]
+        temp_permit = self.get(uri, params)["uploadTempPermits"][0]
+        file_id = temp_permit["fileIds"][0]
+        token = temp_permit["token"]
+        return file_id, token
 
     def upload_file(
-        self,
-        file_id: str,
-        token: str,
-        file_path: str,
-        content_type: str = "image/jpeg",
+            self,
+            file_id: str,
+            token: str,
+            file_path: str,
+            content_type: str = "image/jpeg",
     ):
         """_summary_
 
@@ -698,162 +688,152 @@ class XhsClient:
         }
         return self.post(uri, data)["user_info_dtos"]
 
-    def create_note(
-        self,
-        title,
-        desc,
-        files: list,
-        post_time:int = None,
-        ats: list = None,
-        topics: list = None,
-        is_private: bool = False,
+    def create_note(self, title, desc, note_type, ats: list = None, topics: list = None,
+                    image_info: dict = None,
+                    video_info: dict = None,
+                    post_time: str = None, is_private: bool = False):
+        if post_time:
+            post_date_time = datetime.strptime(post_time, "%Y-%m-%d %H:%M:%S")
+            post_time = round(int(post_date_time.timestamp()) * 1000)
+        uri = "/web_api/sns/v2/note"
+        business_binds = {
+            "version": 1,
+            "noteId": 0,
+            "noteOrderBind": {},
+            "notePostTiming": {
+                "postTime": post_time
+            },
+            "noteCollectionBind": {
+                "id": ""
+            }
+        }
+
+        data = {
+            "common": {
+                "type": note_type,
+                "title": title,
+                "note_id": "",
+                "desc": desc,
+                "source": '{"type":"web","ids":"","extraInfo":"{\\"subType\\":\\"official\\"}"}',
+                "business_binds": json.dumps(business_binds, separators=(",", ":")),
+                "ats": ats,
+                "hash_tag": topics,
+                "post_loc": {},
+                "privacy_info": {"op_type": 1, "type": int(is_private)},
+            },
+            "image_info": image_info,
+            "video_info": video_info,
+        }
+        headers = {
+            "Referer": "https://creator.xiaohongshu.com/"
+        }
+        print(data)
+        return self.post(uri, data, headers=headers)
+
+    def create_image_note(
+            self,
+            title,
+            desc,
+            files: list,
+            post_time: str = None,
+            ats: list = None,
+            topics: list = None,
+            is_private: bool = False,
     ):
         if ats is None:
             ats = []
         if topics is None:
             topics = []
 
-        image_info = []
+        images = []
         for file in files:
-            images_ids_res = self.get_upload_files_permit("image", 1)
-            image_id = images_ids_res[0]["fileIds"][0]
-            token = images_ids_res[0]["token"]
-            res = self.upload_file(image_id, token, file)
-            image_info.append(
+            image_id, token = self.get_upload_files_permit("image")
+            self.upload_file(image_id, token, file)
+            images.append(
                 {
                     "file_id": image_id,
-                    "width": 1003,
-                    "height": 1000,
                     "metadata": {"source": -1},
                     "stickers": {"version": 2, "floating": []},
                     "extra_info_json": '{"mimeType":"image/jpeg"}',
                 }
             )
+        return self.create_note(title, desc, NoteType.NORMAL.value, ats=ats, topics=topics,
+                                image_info={"images": images}, is_private=is_private,
+                                post_time=post_time)
 
-        uri = "/web_api/sns/v2/note"
-        data = {
-            "common": {
-                "type": "normal",
-                "title": title,
-                "note_id": "",
-                "desc": desc,
-                "source": '{"type":"web","ids":"","extraInfo":"{\\"subType\\":\\"official\\"}"}',
-                "business_binds": '{"version":1,"noteId":0,"bizType":0,"noteOrderBind":{},"notePostTiming":{"postTime":""},"noteCollectionBind":{"id":""}}',
-                "ats": ats,
-                "hash_tag": topics,
-                "post_loc": {},
-                "privacy_info": {"op_type": 1, "type": int(is_private)},
-            },
-            "image_info": {"images": image_info},
-            "video_info": None,
-        }
-        if post_time:
-            if post_time < 1_6800_0000_0000:
-                post_time = post_time * 1000
-            post_time = f'"postTime":"{str(post_time)}"'
-            data["common"]["business_binds"] = data["common"]["business_binds"].replace('"postTime":""', post_time)        
-        return self.post(uri, data)
-
-    def get_x_sign(self):
-        return "X2d2ea70d804b4f98d20cc70f5643bc26"
-
-    def query_transcode(self, video_id: str):
+    def get_video_first_frame_image_id(self, video_id: str):
         headers = {
             "content-type": "application/json;charset=UTF-8",
             "referer": "https://creator.xiaohongshu.com/",
-            "x-sign": self.get_x_sign(),
+            "x-sign": "X2d2ea70d804b4f98d20cc70f5643bc26",
         }
 
         json_data = {"videoId": video_id}
 
-        response = self.session.post(
+        response = self.__session.post(
             "https://www.xiaohongshu.com/fe_api/burdock/v2/note/query_transcode",
-            # cookies=cookies,
             headers=headers,
             json=json_data,
         )
 
-        return response.json()
+        res = response.json()
+        print(res)
+        if res["data"]["hasFirstFrame"]:
+            image_id = res["data"]["firstFrameFileId"]
+            return image_id
+        return None
 
     def create_video_note(
-        self,
-        title,
-        viedo_path: str,
-        desc: str = "",
-        cover_path: str = None,
-        wait_transocde_time: int = 30,
-        ats: list = None,
-        post_time: int = None,
-        topics: list = None,
-        is_private: bool = False,
+            self,
+            title,
+            video_path: str,
+            desc: str,
+            cover_path: str = None,
+            ats: list = None,
+            post_time: str = None,
+            topics: list = None,
+            is_private: bool = False,
+            wait_time: int = 3,
     ):
         if ats is None:
             ats = []
         if topics is None:
             topics = []
-        # POST video
-        video_upload_permit = self.get_upload_files_permit(type="video")[0]
-        viedo_id = video_upload_permit["fileIds"][0]
-        upload_token = video_upload_permit["token"]
+
+        file_id, token = self.get_upload_files_permit("video")
         res = self.upload_file(
-            viedo_id,
-            upload_token,
-            viedo_path,
+            file_id,
+            token,
+            video_path,
             content_type="video/mp4",
         )
-        # GET video cover
-        XRosVideoId, is_upload = res.headers["X-Ros-Video-Id"], False
+        video_id, is_upload = res.headers["X-Ros-Video-Id"], False
+
+        image_id = None
         if cover_path is None:
             for _ in range(10):
-                time.sleep(wait_transocde_time / 10)
-                res = self.query_transcode(XRosVideoId)
-                if res["data"]["hasFirstFrame"]:
-                    image_id = res["data"]["firstFrameFileId"]
+                time.sleep(wait_time)
+                image_id = self.get_video_first_frame_image_id(video_id)
+                if image_id:
                     break
 
         if cover_path:
             is_upload = True
-            images_ids_res = self.get_upload_files_permit("image", 1)
-            image_id = images_ids_res[0]["fileIds"][0]
-            token = images_ids_res[0]["token"]
-            res = self.upload_file(image_id, token, cover_path)
+            image_id, token = self.get_upload_files_permit("image")
+            self.upload_file(image_id, token, cover_path)
 
         cover_info = {
             "file_id": image_id,
-            "height": 1000,
-            "width": 1003,
             "frame": {"ts": 0, "is_user_select": False, "is_upload": is_upload},
         }
-        # POST note
-        uri = "/web_api/sns/v2/note"
-        data = {
-            "common": {
-                "type": "video",
-                "title": title,
-                "note_id": "",
-                "desc": desc,
-                "source": '{"type":"web","ids":"","extraInfo":"{\\"subType\\":\\"official\\"}"}',
-                "business_binds": '{"version":1,"noteId":0,"bizType":0,"noteOrderBind":{},"notePostTiming":{"postTime":""},"noteCollectionBind":{"id":""}}',
-                "ats": ats,
-                "hash_tag": topics,
-                "post_loc": {},
-                "privacy_info": {"op_type": 1, "type": int(is_private)},
-            },
-            "image_info": None,
-            "video_info": {
-                "file_id": viedo_id,
-                "format_width": 1003,
-                "format_height": 1000,
-                "timelines": [],
-                "cover": cover_info,
-                "chapters": [],
-                "chapter_sync_text": False,
-                "entrance": "web",
-            },
+
+        video_info = {
+            "file_id": file_id,
+            "timelines": [],
+            "cover": cover_info,
+            "chapters": [],
+            "chapter_sync_text": False,
+            "entrance": "web",
         }
-        if post_time:
-            if post_time < 1_6800_0000_0000:
-                post_time = post_time * 1000
-            post_time = f'"postTime":"{str(post_time)}"'
-            data["common"]["business_binds"] = data["common"]["business_binds"].replace('"postTime":""', post_time)
-        return self.post(uri, data)
+        return self.create_note(title, desc, NoteType.VIDEO.value, ats=ats, topics=topics, video_info=video_info,
+                                post_time=post_time, is_private=is_private)
