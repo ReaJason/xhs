@@ -1,3 +1,5 @@
+import time
+
 from flask import Flask, request
 from playwright.sync_api import sync_playwright
 from gevent import monkey
@@ -15,6 +17,9 @@ def get_context_page(instance, stealth_js_path):
         user_agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 "
                    "Safari/537.36"
     )
+    context.add_cookies([
+        {'name': 'webId', 'value': "1", 'domain': ".xiaohongshu.com", 'path': "/"}
+    ])
     context.add_init_script(path=stealth_js_path)
     page = context.new_page()
     return context, page
@@ -50,4 +55,4 @@ def hello_world():
 
 
 if __name__ == '__main__':
-    app.run(host="0.0.0.0", port=5005)
+    app.run(host="0.0.0.0", port=5006)
