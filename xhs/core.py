@@ -633,6 +633,12 @@ class XhsClient:
         return self.get(uri)["emoji"]["tabs"][0]["collection"]
 
     def get_upload_files_permit(self, file_type: str, count: int = 1) -> tuple:
+        """获取文件上传的 id
+
+        :param file_type: 文件类型，["images", "video"]
+        :param count: 文件数量
+        :return:
+        """
         uri = "/api/media/v1/upload/web/permit"
         params = {
             "biz_name": "spectrum",
@@ -653,17 +659,13 @@ class XhsClient:
             file_path: str,
             content_type: str = "image/jpeg",
     ):
-        """_summary_
+        """ 将文件上传至指定文件 id 处
 
-        Args:
-            file_id (str): _description_
-            token (str): _description_
-            file_path (str): _description_
-            content_type (str, optional):
-            ["video/mp4","image/jpeg","image/png"]. Defaults to "image/jpeg".
-
-        Returns:
-            __type__ : Response
+        :param file_id: 上传文件 id
+        :param token: 上传授权验证 token
+        :param file_path: 文件路径，暂只支持本地文件路径
+        :param content_type:  【"video/mp4","image/jpeg","image/png"】
+        :return:
         """
         url = "https://ros-upload.xiaohongshu.com/" + file_id
         headers = {"X-Cos-Security-Token": token, "Content-Type": content_type}
@@ -671,6 +673,11 @@ class XhsClient:
             return self.request("PUT", url, data=f, headers=headers)
 
     def get_suggest_topic(self, keyword=""):
+        """通过关键词获取话题信息，发布笔记用
+
+        :param keyword: 话题关键词，如 Python
+        :return:
+        """
         uri = "/web_api/sns/v1/search/topic"
         data = {
             "keyword": keyword,
@@ -680,6 +687,11 @@ class XhsClient:
         return self.post(uri, data)["topic_info_dtos"]
 
     def get_suggest_ats(self, keyword=""):
+        """通过关键词获取用户信息，发布笔记用
+
+        :param keyword: 用户名关键词，如 ReaJason
+        :return:
+        """
         uri = "/web_api/sns/v1/search/user_info"
         data = {
             "keyword": keyword,
@@ -740,6 +752,17 @@ class XhsClient:
             topics: list = None,
             is_private: bool = False,
     ):
+        """发布图文笔记
+
+        :param title: 笔记标题
+        :param desc: 笔记详情
+        :param files: 文件路径列表，目前只支持本地路径
+        :param post_time: 可选，发布时间，例如 "2023-10-11 12:11:11"
+        :param ats: 可选，@用户信息
+        :param topics: 可选，话题信息
+        :param is_private: 可选，是否私密发布
+        :return:
+        """
         if ats is None:
             ats = []
         if topics is None:
@@ -795,6 +818,20 @@ class XhsClient:
             is_private: bool = False,
             wait_time: int = 3,
     ):
+        """发布视频笔记
+
+        :param title: 笔记标题
+        :param video_path: 视频文件路径，目前只支持本地路径
+        :param desc: 笔记详情
+        :param cover_path: 可选，封面文件路径
+        :param ats: 可选，@用户信息
+        :param post_time: 可选，发布时间
+        :param topics: 可选，话题信息
+        :param is_private: 可选，是否私密发布
+        :param wait_time: 可选，默认 3 s，循环等待获取视频第一帧为笔记封面
+        :return:
+        :rtype: object
+        """
         if ats is None:
             ats = []
         if topics is None:

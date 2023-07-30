@@ -300,20 +300,49 @@ def test_get_suggest_topic(xhs_client: XhsClient):
 
 
 def test_get_suggest_ats(xhs_client: XhsClient):
-    ats_keyword = "ReaJason"
+    ats_keyword = "星空的花"
     ats = xhs_client.get_suggest_ats(ats_keyword)
     beauty_print(ats)
     assert ats_keyword.upper() in ats[0]["user_base_dto"]["user_nickname"].upper()
 
 
-def test_create_note_with_simple_desc(xhs_client: XhsClient):
+def test_create_simple_note(xhs_client: XhsClient):
+    title = "我是标题"
+    desc = "下面我说两点 \n 1. 第一点 \n 2. 第二点"
+    images = [
+        "/Users/reajason/Downloads/221686462282_.pic.png",
+    ]
+    note = xhs_client.create_image_note(title, desc, images, is_private=True, post_time="2023-07-25 23:59:59")
+    beauty_print(note)
+
+
+def test_create_note_with_ats_topics(xhs_client: XhsClient):
     title = "我是通过自动发布脚本发送的笔记"
-    desc = "deployed by GitHub xhs"
+    desc = "deployed by GitHub xhs， #Python[话题]# @ReaJason"
     files = [
         "/Users/reajason/Downloads/221686462282_.pic.png",
-        "/Users/reajason/Downloads/221686462282_.pic.jpg",
     ]
-    note = xhs_client.create_image_note(title, desc, files, is_private=True, post_time="2023-07-25 23:59:59")
+
+    # 可以通过 xhs_client.get_suggest_ats(ats_keyword) 接口获取用户数据
+    ats = [
+        {"nickname": "ReaJason", "user_id": "63273a77000000002303cc9b", "name": "ReaJason"}
+    ]
+
+    # 可以通过 xhs_client.get_suggest_topic(topic_keyword) 接口获取标签数据
+    topics = [
+        {
+            "id": "5d35dd9b000000000e0088dc", "name": "Python", "type": "topic",
+            "link": "https://www.xiaohongshu.com/page/topics/5d35dd9ba059940001703e38?naviHidden=yes"
+        }
+    ]
+    note = xhs_client.create_image_note(title, desc, files, ats=ats, topics=topics, is_private=True,
+                                        post_time="2023-07-25 23:59:59")
+    beauty_print(note)
+
+
+def test_create_video_note(xhs_client: XhsClient):
+    note = xhs_client.create_video_note(title="123123", video_path="/Users/reajason/Downloads/2.mp4", desc="",
+                                        is_private=True)
     beauty_print(note)
 
 

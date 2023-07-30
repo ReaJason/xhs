@@ -5,6 +5,13 @@
 - Improve documentation
 - Add more test function
 
+## 0.2.5
+
+### Added
+
+- add create image note api
+- add create video note api
+
 ## 0.2.4
 
 ### Added
