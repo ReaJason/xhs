@@ -59,11 +59,8 @@
 <span class="sig-name descname"><span class="pre">comment_note</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">note_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">content</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xhs/core.html#XhsClient.comment_note"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#xhs.XhsClient.comment_note" title="永久链接至目标">¶</a></dt>
 <dd><p>comment a note</p>
 <dl class="field-list simple">
-<dt class="field-odd">返回</dt>
-<dd class="field-odd"><p>{“time”:1680834576180,”toast”:”评论已发布”,”comment”:{“id”:”id”,”note_id”:”note_id”,”status”:2,”liked”:false,”show_tags”:[“is_author”],”ip_location”:”ip_location”,”content”:”content”,”at_users”:[],”like_count”:”0”,”user_info”:{“image”:”**”,”user_id”:”user_id”,”nickname”:”nickname”},”create_time”:create_time}}</p>
-</dd>
-<dt class="field-even">返回类型</dt>
-<dd class="field-even"><p>dict</p>
+<dt class="field-odd">返回类型</dt>
+<dd class="field-odd"><p>dict</p>
 </dd>
 </dl>
 </dd></dl>
@@ -72,11 +69,8 @@
 <dt class="sig sig-object py" id="xhs.XhsClient.comment_user">
 <span class="sig-name descname"><span class="pre">comment_user</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">note_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">comment_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">content</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xhs/core.html#XhsClient.comment_user"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#xhs.XhsClient.comment_user" title="永久链接至目标">¶</a></dt>
 <dd><dl class="field-list simple">
-<dt class="field-odd">返回</dt>
-<dd class="field-odd"><p>{“comment”:{“like_count”:”0”,”user_info”:{“user_id”:user_id”user_id”:”user_id”,”image”:”image”},”show_tags”:[“is_author”],”ip_location”:”ip_location”,”id”:”id”,”content”:”content”,”at_users”:[],”create_time”:1680847204059,”target_comment”:{“id”:”id”,”user_info”:{“user_id”:”user_id”,”nickname”:”nickname”,”image”:”image”}},”note_id”:”note_id”,”status”:2,”liked”:false},”time”:1680847204089,”toast”:”你的回复已发布”}</p>
-</dd>
-<dt class="field-even">返回类型</dt>
-<dd class="field-even"><p>dict</p>
+<dt class="field-odd">返回类型</dt>
+<dd class="field-odd"><p>dict</p>
 </dd>
 </dl>
 </dd></dl>
@@ -92,9 +86,58 @@
 <dd></dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="xhs.XhsClient.create_image_note">
+<span class="sig-name descname"><span class="pre">create_image_note</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">title</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">desc</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">files</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">post_time</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ats</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">list</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">topics</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">list</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">is_private</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xhs/core.html#XhsClient.create_image_note"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#xhs.XhsClient.create_image_note" title="永久链接至目标">¶</a></dt>
+<dd><p>发布图文笔记</p>
+<dl class="field-list simple">
+<dt class="field-odd">参数</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>title</strong> – 笔记标题</p></li>
+<li><p><strong>desc</strong> – 笔记详情</p></li>
+<li><p><strong>files</strong> – 文件路径列表，目前只支持本地路径</p></li>
+<li><p><strong>post_time</strong> – 可选，发布时间，例如 “2023-10-11 12:11:11”</p></li>
+<li><p><strong>ats</strong> – 可选，&#64;用户信息</p></li>
+<li><p><strong>topics</strong> – 可选，话题信息</p></li>
+<li><p><strong>is_private</strong> – 可选，是否私密发布</p></li>
+</ul>
+</dd>
+<dt class="field-even">返回</dt>
+<dd class="field-even"><p></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="xhs.XhsClient.create_note">
-<span class="sig-name descname"><span class="pre">create_note</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">title</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">desc</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">files</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ats</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">list</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">topics</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">list</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">is_private</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xhs/core.html#XhsClient.create_note"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#xhs.XhsClient.create_note" title="永久链接至目标">¶</a></dt>
+<span class="sig-name descname"><span class="pre">create_note</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">title</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">desc</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">note_type</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ats</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">list</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">topics</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">list</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">image_info</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">video_info</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">post_time</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">is_private</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xhs/core.html#XhsClient.create_note"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#xhs.XhsClient.create_note" title="永久链接至目标">¶</a></dt>
 <dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="xhs.XhsClient.create_video_note">
+<span class="sig-name descname"><span class="pre">create_video_note</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">title</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">video_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">desc</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cover_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ats</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">list</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">post_time</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">topics</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">list</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">is_private</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wait_time</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">3</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xhs/core.html#XhsClient.create_video_note"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#xhs.XhsClient.create_video_note" title="永久链接至目标">¶</a></dt>
+<dd><p>发布视频笔记</p>
+<dl class="field-list simple">
+<dt class="field-odd">参数</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>title</strong> – 笔记标题</p></li>
+<li><p><strong>video_path</strong> – 视频文件路径，目前只支持本地路径</p></li>
+<li><p><strong>desc</strong> – 笔记详情</p></li>
+<li><p><strong>cover_path</strong> – 可选，封面文件路径</p></li>
+<li><p><strong>ats</strong> – 可选，&#64;用户信息</p></li>
+<li><p><strong>post_time</strong> – 可选，发布时间</p></li>
+<li><p><strong>topics</strong> – 可选，话题信息</p></li>
+<li><p><strong>is_private</strong> – 可选，是否私密发布</p></li>
+<li><p><strong>wait_time</strong> – 可选，默认 3 s，循环等待获取视频第一帧为笔记封面</p></li>
+</ul>
+</dd>
+<dt class="field-even">返回</dt>
+<dd class="field-even"><p></p>
+</dd>
+<dt class="field-odd">返回类型</dt>
+<dd class="field-odd"><p>object</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="xhs.XhsClient.delete_note_comment">
@@ -118,7 +161,7 @@
 
 <dl class="py method">
 <dt class="sig sig-object py" id="xhs.XhsClient.get">
-<span class="sig-name descname"><span class="pre">get</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">uri</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">params</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">is_creator</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xhs/core.html#XhsClient.get"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#xhs.XhsClient.get" title="永久链接至目标">¶</a></dt>
+<span class="sig-name descname"><span class="pre">get</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">uri</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">params</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">is_creator</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xhs/core.html#XhsClient.get"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#xhs.XhsClient.get" title="永久链接至目标">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
@@ -142,7 +185,10 @@
 <dd><p>get note all comments include sub comments</p>
 <dl class="field-list simple">
 <dt class="field-odd">参数</dt>
-<dd class="field-odd"><p><strong>note_id</strong> (<em>str</em>) – note id you want to fetch</p>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>crawl_interval</strong> – crawl interval for fetch</p></li>
+<li><p><strong>note_id</strong> (<em>str</em>) – note id you want to fetch</p></li>
+</ul>
 </dd>
 </dl>
 </dd></dl>
@@ -154,11 +200,8 @@
 <dt class="field-odd">参数</dt>
 <dd class="field-odd"><p><strong>note_id</strong> (<em>str</em>) – note_id you want to fetch</p>
 </dd>
-<dt class="field-even">返回</dt>
-<dd class="field-even"><p>{“time”:1679019883000,”user”:{“nickname”:”nickname”,”avatar”:”avatar”,”user_id”:”user_id”},”image_list”:[{“url”:”<a class="reference external" href="https://sns-img-qc.xhscdn.com/c8e505ca-4e5f-44be-fe1c-ca0205a38bad">https://sns-img-qc.xhscdn.com/c8e505ca-4e5f-44be-fe1c-ca0205a38bad</a>”,”trace_id”:”1000g00826s57r6cfu0005ossb1e9gk8c65d0c80”,”file_id”:”c8e505ca-4e5f-44be-fe1c-ca0205a38bad”,”height”:1920,”width”:1440}],”tag_list”:[{“id”:”5be78cdfdb601f000100d0bc”,”name”:”jk”,”type”:”topic”}],”desc”:”裙裙”,”interact_info”:{“followed”:false,”liked”:false,”liked_count”:”1732”,”collected”:false,”collected_count”:”453”,”comment_count”:”30”,”share_count”:”41”},”at_user_list”:[],”last_update_time”:1679019884000,”note_id”:”6413cf6b00000000270115b5”,”type”:”normal”,”title”:”title”}</p>
-</dd>
-<dt class="field-odd">返回类型</dt>
-<dd class="field-odd"><p>dict</p>
+<dt class="field-even">返回类型</dt>
+<dd class="field-even"><p>dict</p>
 </dd>
 </dl>
 </dd></dl>
@@ -166,7 +209,8 @@
 <dl class="py method">
 <dt class="sig sig-object py" id="xhs.XhsClient.get_note_by_id_from_html">
 <span class="sig-name descname"><span class="pre">get_note_by_id_from_html</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">note_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xhs/core.html#XhsClient.get_note_by_id_from_html"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#xhs.XhsClient.get_note_by_id_from_html" title="永久链接至目标">¶</a></dt>
-<dd><p>get note info from “<a class="reference external" href="https://www.xiaohongshu.com/explore/">https://www.xiaohongshu.com/explore/</a>” + note_id, and the return obj is equal to get_note_by_id</p>
+<dd><p>get note info from “<a class="reference external" href="https://www.xiaohongshu.com/explore/">https://www.xiaohongshu.com/explore/</a>” + note_id,
+and the return obj is equal to get_note_by_id</p>
 <dl class="field-list simple">
 <dt class="field-odd">参数</dt>
 <dd class="field-odd"><p><strong>note_id</strong> (<em>str</em>) – note_id you want to fetch</p>
@@ -184,8 +228,8 @@
 <li><p><strong>keyword</strong> (<em>str</em>) – what notes you want to search</p></li>
 <li><p><strong>page</strong> (<em>int</em><em>, </em><em>optional</em>) – page number, defaults to 1</p></li>
 <li><p><strong>page_size</strong> (<em>int</em><em>, </em><em>optional</em>) – page size, defaults to 20</p></li>
-<li><p><strong>sort</strong> (<em>SearchSortType</em><em>, </em><em>optional</em>) – sort ordering, defaults to SearchSortType.GENERAL</p></li>
-<li><p><strong>note_type</strong> (<em>SearchNoteType</em><em>, </em><em>optional</em>) – note type, defaults to SearchNoteType.ALL</p></li>
+<li><p><strong>sort</strong> (<em>SearchSortType</em><em>, </em><em>optional</em>) – sort ordering, defaults to SearchSortType.GENERAL.</p></li>
+<li><p><strong>note_type</strong> (<em>SearchNoteType</em><em>, </em><em>optional</em>) – note type, defaults to SearchNoteType.ALL.</p></li>
 </ul>
 </dd>
 <dt class="field-even">返回</dt>
@@ -208,11 +252,8 @@
 <li><p><strong>cursor</strong> (<em>str</em><em>, </em><em>optional</em>) – last you get cursor, defaults to “”</p></li>
 </ul>
 </dd>
-<dt class="field-even">返回</dt>
-<dd class="field-even"><p>{“has_more”: true,”cursor”: “6422442d000000000700dcdb”,comments: [],”user_id”: “63273a77000000002303cc9b”,”time”: 1681566542930}</p>
-</dd>
-<dt class="field-odd">返回类型</dt>
-<dd class="field-odd"><p>dict</p>
+<dt class="field-even">返回类型</dt>
+<dd class="field-even"><p>dict</p>
 </dd>
 </dl>
 </dd></dl>
@@ -226,15 +267,12 @@
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>note_id</strong> (<em>str</em>) – note id you want to fetch</p></li>
 <li><p><strong>root_comment_id</strong> (<em>str</em>) – parent comment id</p></li>
-<li><p><strong>num</strong> (<em>int</em>) – recommend 30, if num greater 30, it only return 30 comments</p></li>
+<li><p><strong>num</strong> (<em>int</em>) – recommend 30, if num greater 30, it only returns 30 comments</p></li>
 <li><p><strong>cursor</strong> (<em>str optional</em>) – last you get cursor, defaults to “”</p></li>
 </ul>
 </dd>
-<dt class="field-even">返回</dt>
-<dd class="field-even"><p>{“has_more”: true,”cursor”: “6422442d000000000700dcdb”,comments: [],”user_id”: “63273a77000000002303cc9b”,”time”: 1681566542930}</p>
-</dd>
-<dt class="field-odd">返回类型</dt>
-<dd class="field-odd"><p>dict</p>
+<dt class="field-even">返回类型</dt>
+<dd class="field-even"><p>dict</p>
 </dd>
 </dl>
 </dd></dl>
@@ -271,17 +309,47 @@
 <dl class="py method">
 <dt class="sig sig-object py" id="xhs.XhsClient.get_suggest_ats">
 <span class="sig-name descname"><span class="pre">get_suggest_ats</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">keyword</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xhs/core.html#XhsClient.get_suggest_ats"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#xhs.XhsClient.get_suggest_ats" title="永久链接至目标">¶</a></dt>
-<dd></dd></dl>
+<dd><p>通过关键词获取用户信息，发布笔记用</p>
+<dl class="field-list simple">
+<dt class="field-odd">参数</dt>
+<dd class="field-odd"><p><strong>keyword</strong> – 用户名关键词，如 ReaJason</p>
+</dd>
+<dt class="field-even">返回</dt>
+<dd class="field-even"><p></p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="xhs.XhsClient.get_suggest_topic">
 <span class="sig-name descname"><span class="pre">get_suggest_topic</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">keyword</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xhs/core.html#XhsClient.get_suggest_topic"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#xhs.XhsClient.get_suggest_topic" title="永久链接至目标">¶</a></dt>
-<dd></dd></dl>
+<dd><p>通过关键词获取话题信息，发布笔记用</p>
+<dl class="field-list simple">
+<dt class="field-odd">参数</dt>
+<dd class="field-odd"><p><strong>keyword</strong> – 话题关键词，如 Python</p>
+</dd>
+<dt class="field-even">返回</dt>
+<dd class="field-even"><p></p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="xhs.XhsClient.get_upload_image_ids">
-<span class="sig-name descname"><span class="pre">get_upload_image_ids</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">count</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xhs/core.html#XhsClient.get_upload_image_ids"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#xhs.XhsClient.get_upload_image_ids" title="永久链接至目标">¶</a></dt>
-<dd></dd></dl>
+<dt class="sig sig-object py" id="xhs.XhsClient.get_upload_files_permit">
+<span class="sig-name descname"><span class="pre">get_upload_files_permit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">count</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">tuple</span></span></span><a class="reference internal" href="../_modules/xhs/core.html#XhsClient.get_upload_files_permit"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#xhs.XhsClient.get_upload_files_permit" title="永久链接至目标">¶</a></dt>
+<dd><p>获取文件上传的 id</p>
+<dl class="field-list simple">
+<dt class="field-odd">参数</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>file_type</strong> – 文件类型，[“images”, “video”]</p></li>
+<li><p><strong>count</strong> – 文件数量</p></li>
+</ul>
+</dd>
+<dt class="field-even">返回</dt>
+<dd class="field-even"><p></p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="xhs.XhsClient.get_user_all_notes">
@@ -295,7 +363,7 @@
 </ul>
 </dd>
 <dt class="field-even">返回</dt>
-<dd class="field-even"><p>note info list</p>
+<dd class="field-even"><p>note info</p>
 </dd>
 <dt class="field-odd">返回类型</dt>
 <dd class="field-odd"><p>list[Note]</p>
@@ -315,11 +383,8 @@
 <dt class="field-odd">参数</dt>
 <dd class="field-odd"><p><strong>user_id</strong> (<em>str</em>) – user_id you want fetch</p>
 </dd>
-<dt class="field-even">返回</dt>
-<dd class="field-even"><p>{“basic_info”:{“imageb”:”imageb”,”nickname”:”nickname”,”images”:”images”,”red_id”:”red_id”,”gender”:1,”ip_location”:”ip_location”,”desc”:”desc”},”interactions”:[{“count”:”5”,”type”:”follows”,”name”:”关注”},{“type”:”fans”,”name”:”粉丝”,”count”:”16736”},{“type”:”interaction”,”name”:”获赞与收藏”,”count”:”293043”}],”tags”:[{“icon”:”icon”,”tagType”:”info”}],”tab_public”:{“collection”:false},”extra_info”:{“fstatus”:”none”},”result”:{“success”:true,”code”:0,”message”:”success”}}</p>
-</dd>
-<dt class="field-odd">返回类型</dt>
-<dd class="field-odd"><p>dict</p>
+<dt class="field-even">返回类型</dt>
+<dd class="field-even"><p>dict</p>
 </dd>
 </dl>
 </dd></dl>
@@ -350,6 +415,11 @@
 </dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="xhs.XhsClient.get_video_first_frame_image_id">
+<span class="sig-name descname"><span class="pre">get_video_first_frame_image_id</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">video_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xhs/core.html#XhsClient.get_video_first_frame_image_id"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#xhs.XhsClient.get_video_first_frame_image_id" title="永久链接至目标">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="xhs.XhsClient.like_comment">
 <span class="sig-name descname"><span class="pre">like_comment</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">note_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">comment_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xhs/core.html#XhsClient.like_comment"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#xhs.XhsClient.like_comment" title="永久链接至目标">¶</a></dt>
 <dd></dd></dl>
@@ -361,7 +431,7 @@
 
 <dl class="py method">
 <dt class="sig sig-object py" id="xhs.XhsClient.post">
-<span class="sig-name descname"><span class="pre">post</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">uri</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">is_creator</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xhs/core.html#XhsClient.post"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#xhs.XhsClient.post" title="永久链接至目标">¶</a></dt>
+<span class="sig-name descname"><span class="pre">post</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">uri</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">is_creator</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xhs/core.html#XhsClient.post"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#xhs.XhsClient.post" title="永久链接至目标">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
@@ -424,9 +494,23 @@
 <dd></dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="xhs.XhsClient.upload_image">
-<span class="sig-name descname"><span class="pre">upload_image</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">image_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">token</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">file_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xhs/core.html#XhsClient.upload_image"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#xhs.XhsClient.upload_image" title="永久链接至目标">¶</a></dt>
-<dd></dd></dl>
+<dt class="sig sig-object py" id="xhs.XhsClient.upload_file">
+<span class="sig-name descname"><span class="pre">upload_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">token</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">file_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">content_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'image/jpeg'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xhs/core.html#XhsClient.upload_file"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#xhs.XhsClient.upload_file" title="永久链接至目标">¶</a></dt>
+<dd><p>将文件上传至指定文件 id 处</p>
+<dl class="field-list simple">
+<dt class="field-odd">参数</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>file_id</strong> – 上传文件 id</p></li>
+<li><p><strong>token</strong> – 上传授权验证 token</p></li>
+<li><p><strong>file_path</strong> – 文件路径，暂只支持本地文件路径</p></li>
+<li><p><strong>content_type</strong> – 【”video/mp4”,”image/jpeg”,”image/png”】</p></li>
+</ul>
+</dd>
+<dt class="field-even">返回</dt>
+<dd class="field-even"><p></p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="xhs.XhsClient.user_agent">
