@@ -18,9 +18,6 @@ class ErrorEnum(Enum):
 class DataFetchError(RequestException):
     """something error when fetch"""
 
-    def __init__(self, error):
-        self.error = error
-
 
 class IPBlockError(RequestException):
     """fetch so fast that the server block us ip"""

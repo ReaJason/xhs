@@ -93,12 +93,16 @@ def get_img_urls_by_trace_id(trace_id: str, format: str = "png"):
     return [f"{cdn}/{trace_id}?imageView2/format/{format}" for cdn in img_cdns]
 
 
+def get_trace_id(img_url: str):
+    return img_url.split("/")[-1].split("!")[0]
+
+
 def get_imgs_url_from_note(note) -> list:
     """the return type is [img1_url, img2_url, ...]"""
     imgs = note["image_list"]
     if not len(imgs):
         return []
-    return [get_img_url_by_trace_id(img["trace_id"]) for img in imgs]
+    return [get_img_url_by_trace_id(get_trace_id(img["info_list"][0]["url"])) for img in imgs]
 
 
 def get_imgs_urls_from_note(note) -> list:

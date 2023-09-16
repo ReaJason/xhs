@@ -196,7 +196,7 @@ class XhsClient:
         :type note_id: str
         :rtype: dict
         """
-        data = {"source_note_id": note_id}
+        data = {"source_note_id": note_id, "image_scenes": ["CRD_WM_WEBP"]}
         uri = "/api/sns/web/v1/feed"
         res = self.post(uri, data)
         return res["items"][0]["note_card"]
@@ -403,7 +403,7 @@ class XhsClient:
         :rtype: dict
         """
         uri = "/api/sns/web/v1/user_posted"
-        params = {"num": 30, "cursor": cursor, "user_id": user_id}
+        params = {"num": 30, "cursor": cursor, "user_id": user_id, "image_scenes": "FD_WM_WEBP"}
         return self.get(uri, params)
 
     def get_user_all_notes(self, user_id: str, crawl_interval: int = 1):
@@ -429,7 +429,8 @@ class XhsClient:
                 try:
                     note = self.get_note_by_id(note_id)
                 except DataFetchError as e:
-                    if ErrorEnum.NOTE_ABNORMAL.value.code == e.error.get("code"):
+                    if (ErrorEnum.NOTE_ABNORMAL.value.msg in e.__repr__()
+                            or ErrorEnum.NOTE_SECRETE_FAULT.value.msg in e.__repr__()):
                         continue
                     else:
                         raise
