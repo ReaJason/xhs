@@ -1,7 +1,7 @@
 import datetime
 import json
 from time import sleep
-from xhs import XhsClient, DataFetchError
+from xhs import XhsClient, DataFetchError, help
 from playwright.sync_api import sync_playwright
 
 
@@ -20,7 +20,6 @@ def sign(uri, data=None, a1="", web_session=""):
                 context_page = browser_context.new_page()
                 context_page.goto("https://www.xiaohongshu.com")
                 browser_context.add_cookies([
-                    {'name': 'web_session', 'value': web_session, 'domain': ".xiaohongshu.com", 'path': "/"},
                     {'name': 'a1', 'value': a1, 'domain': ".xiaohongshu.com", 'path': "/"}]
                 )
 
@@ -46,7 +45,10 @@ if __name__ == '__main__':
     for _ in range(10):
         # 即便上面做了重试，还是有可能会遇到签名失败的情况，重试即可
         try:
-            print(json.dumps(xhs_client.get_self_info()["basic_info"], indent=4))
+            note = xhs_client.get_note_by_id("6505318c000000001f03c5a6")
+            print(json.dumps(note, indent=4))
+            print(help.get_imgs_url_from_note(note))
             break
         except DataFetchError as e:
+            print(e)
             print("失败重试一下下")
