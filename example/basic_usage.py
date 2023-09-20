@@ -22,7 +22,7 @@ def sign(uri, data=None, a1="", web_session=""):
                 browser_context.add_cookies([
                     {'name': 'a1', 'value': a1, 'domain': ".xiaohongshu.com", 'path': "/"}]
                 )
-
+                context_page.reload()
                 # 这个地方设置完浏览器 cookie 之后，如果这儿不 sleep 一下签名获取就失败了，如果经常失败请设置长一点试试
                 sleep(1)
                 encrypt_params = context_page.evaluate("([url, data]) => window._webmsxyw(url, data)", [uri, data])
