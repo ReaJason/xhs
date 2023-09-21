@@ -240,7 +240,7 @@ class XhsClient:
         ].replace("undefined", '""')
         if state != "{}":
             note_dict = transform_json_keys(state)
-            return note_dict["note"]["note"]
+            return note_dict['note']['note_detail_map'][note_id]['note']
         elif ErrorEnum.IP_BLOCK.value in html:
             raise IPBlockError(ErrorEnum.IP_BLOCK.value)
         raise DataFetchError(html)
