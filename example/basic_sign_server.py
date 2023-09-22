@@ -2,46 +2,38 @@ import time
 
 from flask import Flask, request
 from playwright.sync_api import sync_playwright
-from gevent import monkey
-
-monkey.patch_all()
 
 app = Flask(__name__)
 
+def sign(uri, data=None, a1="", web_session=""):
+    for _ in range(10):
+        try:
+            with sync_playwright() as playwright:
+                stealth_js_path = "/Users/reajason/ReaJason/xhs/tests/stealth.min.js"
+                chromium = playwright.chromium
 
-def get_context_page(instance, stealth_js_path):
-    chromium = instance.chromium
-    browser = chromium.launch(headless=True)
-    context = browser.new_context(
-        viewport={"width": 1920, "height": 1080},
-        user_agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 "
-                   "Safari/537.36"
-    )
-    context.add_cookies([
-        {'name': 'webId', 'value': "1", 'domain': ".xiaohongshu.com", 'path': "/"}
-    ])
-    context.add_init_script(path=stealth_js_path)
-    page = context.new_page()
-    return context, page
+                # 如果一直失败可尝试设置成 False 让其打开浏览器，适当添加 sleep 可查看浏览器状态
+                browser = chromium.launch(headless=True)
 
-
-# 如下更改为 stealth.min.js 文件路径地址
-stealth_js_path = "/Users/reajason/ReaJason/xhs/tests/stealth.min.js"
-playwright = sync_playwright().start()
-browser_context, context_page = get_context_page(playwright, stealth_js_path)
-context_page.goto("https://www.xiaohongshu.com")
-
-
-def sign(uri, data, a1, web_session):
-    browser_context.add_cookies([
-        {'name': 'web_session', 'value': web_session, 'domain': ".xiaohongshu.com", 'path': "/"},
-        {'name': 'a1', 'value': a1, 'domain': ".xiaohongshu.com", 'path': "/"}]
-    )
-    encrypt_params = context_page.evaluate("([url, data]) => window._webmsxyw(url, data)", [uri, data])
-    return {
-        "x-s": encrypt_params["X-s"],
-        "x-t": str(encrypt_params["X-t"])
-    }
+                browser_context = browser.new_context()
+                browser_context.add_init_script(path=stealth_js_path)
+                context_page = browser_context.new_page()
+                context_page.goto("https://www.xiaohongshu.com")
+                browser_context.add_cookies([
+                    {'name': 'a1', 'value': a1, 'domain': ".xiaohongshu.com", 'path': "/"}]
+                )
+                context_page.reload()
+                # 这个地方设置完浏览器 cookie 之后，如果这儿不 sleep 一下签名获取就失败了，如果经常失败请设置长一点试试
+                time.sleep(1)
+                encrypt_params = context_page.evaluate("([url, data]) => window._webmsxyw(url, data)", [uri, data])
+                return {
+                    "x-s": encrypt_params["X-s"],
+                    "x-t": str(encrypt_params["X-t"])
+                }
+        except Exception:
+            # 这儿有时会出现 window._webmsxyw is not a function 或未知跳转错误，因此加一个失败重试趴
+            pass
+    raise Exception("重试了这么多次还是无法签名成功，寄寄寄")
 
 
 @app.route("/", methods=["POST"])
