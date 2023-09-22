@@ -5,6 +5,12 @@
 - Improve documentation
 - Add more test function
 
+## 0.2.6
+
+### Fixed
+
+- fix no watermark image url error
+
 ## 0.2.5
 
 ### Added
