@@ -125,8 +125,6 @@ class XhsClient:
     @cookie.setter
     def cookie(self, cookie: str):
         update_session_cookies_from_cookie(self.__session, cookie)
-        if "web_session" not in self.cookie_dict:
-            self.activate()
 
     @property
     def cookie_dict(self):
@@ -240,7 +238,7 @@ class XhsClient:
         ].replace("undefined", '""')
         if state != "{}":
             note_dict = transform_json_keys(state)
-            return note_dict['note']['note_detail_map'][note_id]['note']
+            return note_dict["note"]["note_detail_map"][note_id]["note"]
         elif ErrorEnum.IP_BLOCK.value in html:
             raise IPBlockError(ErrorEnum.IP_BLOCK.value)
         raise DataFetchError(html)
@@ -350,7 +348,15 @@ class XhsClient:
             "unread_end_note_id": "",
             "unread_note_count": 0,
             "category": feed_type.value,
+            "search_key": "",
+            "need_num": 40,
+            "image_scenes": ["FD_PRV_WEBP", "FD_WM_WEBP"]
         }
+
+        # {"cursor_score": "", "num": 31, "refresh_type": 1, "note_index": 0,
+        #  "unread_begin_note_id": "64fa75a9000000001f0076bf", "unread_end_note_id": "64f179d9000000001e03fe81",
+        #  "unread_note_count": 53, "category": "homefeed_recommend", "search_key": "", "need_num": 6,
+        #  "image_scenes": ["FD_PRV_WEBP", "FD_WM_WEBP"]}
         return self.post(uri, data)
 
     def get_search_suggestion(self, keyword: str):
@@ -618,6 +624,21 @@ class XhsClient:
     def activate(self):
         uri = "/api/sns/web/v1/login/activate"
         return self.post(uri, data={})
+
+    def send_code(self, phone: str, zone: str = 86):
+        uri = "/api/sns/web/v1/login/send_code"
+        params = {"phone": phone, "zone": zone}
+        return self.get(uri, params)
+
+    def check_code(self, phone: str, code: str, zone: str = 86):
+        uri = "/api/sns/web/v1/login/check_code"
+        params = {"phone": phone, "zone": zone, "code": code}
+        return self.get(uri, params)
+
+    def login_code(self, phone: str, mobile_token: str, zone: str = 86):
+        uri = "/api/sns/web/v1/login/code"
+        data = {"mobile_token": mobile_token, "zone": zone, "phone": phone}
+        return self.post(uri, data)
 
     def get_user_collect_notes(self, user_id: str, num: int = 30, cursor: str = ""):
         uri = "/api/sns/web/v2/note/collect/page"
