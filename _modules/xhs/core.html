@@ -5,7 +5,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>xhs.core &#8212; xhs 0.2.6 文档</title>
+    <title>xhs.core &#8212; xhs 0.2.7 文档</title>
     <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/alabaster.css" />
     <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
@@ -159,8 +159,6 @@
     <span class="nd">@cookie</span><span class="o">.</span><span class="n">setter</span>
     <span class="k">def</span> <span class="nf">cookie</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cookie</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
         <span class="n">update_session_cookies_from_cookie</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__session</span><span class="p">,</span> <span class="n">cookie</span><span class="p">)</span>
-        <span class="k">if</span> <span class="s2">&quot;web_session&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">cookie_dict</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">activate</span><span class="p">()</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">cookie_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -274,7 +272,7 @@
         <span class="p">]</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;undefined&quot;</span><span class="p">,</span> <span class="s1">&#39;&quot;&quot;&#39;</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">state</span> <span class="o">!=</span> <span class="s2">&quot;</span><span class="si">{}</span><span class="s2">&quot;</span><span class="p">:</span>
             <span class="n">note_dict</span> <span class="o">=</span> <span class="n">transform_json_keys</span><span class="p">(</span><span class="n">state</span><span class="p">)</span>
-            <span class="k">return</span> <span class="n">note_dict</span><span class="p">[</span><span class="s2">&quot;note&quot;</span><span class="p">][</span><span class="s2">&quot;note&quot;</span><span class="p">]</span>
+            <span class="k">return</span> <span class="n">note_dict</span><span class="p">[</span><span class="s2">&quot;note&quot;</span><span class="p">][</span><span class="s2">&quot;note_detail_map&quot;</span><span class="p">][</span><span class="n">note_id</span><span class="p">][</span><span class="s2">&quot;note&quot;</span><span class="p">]</span>
         <span class="k">elif</span> <span class="n">ErrorEnum</span><span class="o">.</span><span class="n">IP_BLOCK</span><span class="o">.</span><span class="n">value</span> <span class="ow">in</span> <span class="n">html</span><span class="p">:</span>
             <span class="k">raise</span> <span class="n">IPBlockError</span><span class="p">(</span><span class="n">ErrorEnum</span><span class="o">.</span><span class="n">IP_BLOCK</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
         <span class="k">raise</span> <span class="n">DataFetchError</span><span class="p">(</span><span class="n">html</span><span class="p">)</span></div>
@@ -384,7 +382,15 @@
             <span class="s2">&quot;unread_end_note_id&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
             <span class="s2">&quot;unread_note_count&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
             <span class="s2">&quot;category&quot;</span><span class="p">:</span> <span class="n">feed_type</span><span class="o">.</span><span class="n">value</span><span class="p">,</span>
+            <span class="s2">&quot;search_key&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;need_num&quot;</span><span class="p">:</span> <span class="mi">40</span><span class="p">,</span>
+            <span class="s2">&quot;image_scenes&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;FD_PRV_WEBP&quot;</span><span class="p">,</span> <span class="s2">&quot;FD_WM_WEBP&quot;</span><span class="p">]</span>
         <span class="p">}</span>
+
+        <span class="c1"># {&quot;cursor_score&quot;: &quot;&quot;, &quot;num&quot;: 31, &quot;refresh_type&quot;: 1, &quot;note_index&quot;: 0,</span>
+        <span class="c1">#  &quot;unread_begin_note_id&quot;: &quot;64fa75a9000000001f0076bf&quot;, &quot;unread_end_note_id&quot;: &quot;64f179d9000000001e03fe81&quot;,</span>
+        <span class="c1">#  &quot;unread_note_count&quot;: 53, &quot;category&quot;: &quot;homefeed_recommend&quot;, &quot;search_key&quot;: &quot;&quot;, &quot;need_num&quot;: 6,</span>
+        <span class="c1">#  &quot;image_scenes&quot;: [&quot;FD_PRV_WEBP&quot;, &quot;FD_WM_WEBP&quot;]}</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="n">uri</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="XhsClient.get_search_suggestion"><a class="viewcode-back" href="../../source/xhs.html#xhs.XhsClient.get_search_suggestion">[文档]</a>    <span class="k">def</span> <span class="nf">get_search_suggestion</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">keyword</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
@@ -652,6 +658,21 @@
 <div class="viewcode-block" id="XhsClient.activate"><a class="viewcode-back" href="../../source/xhs.html#xhs.XhsClient.activate">[文档]</a>    <span class="k">def</span> <span class="nf">activate</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">uri</span> <span class="o">=</span> <span class="s2">&quot;/api/sns/web/v1/login/activate&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="n">uri</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="p">{})</span></div>
+
+<div class="viewcode-block" id="XhsClient.send_code"><a class="viewcode-back" href="../../source/xhs.html#xhs.XhsClient.send_code">[文档]</a>    <span class="k">def</span> <span class="nf">send_code</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">phone</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">zone</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="mi">86</span><span class="p">):</span>
+        <span class="n">uri</span> <span class="o">=</span> <span class="s2">&quot;/api/sns/web/v1/login/send_code&quot;</span>
+        <span class="n">params</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;phone&quot;</span><span class="p">:</span> <span class="n">phone</span><span class="p">,</span> <span class="s2">&quot;zone&quot;</span><span class="p">:</span> <span class="n">zone</span><span class="p">}</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">uri</span><span class="p">,</span> <span class="n">params</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="XhsClient.check_code"><a class="viewcode-back" href="../../source/xhs.html#xhs.XhsClient.check_code">[文档]</a>    <span class="k">def</span> <span class="nf">check_code</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">phone</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">code</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">zone</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="mi">86</span><span class="p">):</span>
+        <span class="n">uri</span> <span class="o">=</span> <span class="s2">&quot;/api/sns/web/v1/login/check_code&quot;</span>
+        <span class="n">params</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;phone&quot;</span><span class="p">:</span> <span class="n">phone</span><span class="p">,</span> <span class="s2">&quot;zone&quot;</span><span class="p">:</span> <span class="n">zone</span><span class="p">,</span> <span class="s2">&quot;code&quot;</span><span class="p">:</span> <span class="n">code</span><span class="p">}</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">uri</span><span class="p">,</span> <span class="n">params</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="XhsClient.login_code"><a class="viewcode-back" href="../../source/xhs.html#xhs.XhsClient.login_code">[文档]</a>    <span class="k">def</span> <span class="nf">login_code</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">phone</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">mobile_token</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">zone</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="mi">86</span><span class="p">):</span>
+        <span class="n">uri</span> <span class="o">=</span> <span class="s2">&quot;/api/sns/web/v1/login/code&quot;</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;mobile_token&quot;</span><span class="p">:</span> <span class="n">mobile_token</span><span class="p">,</span> <span class="s2">&quot;zone&quot;</span><span class="p">:</span> <span class="n">zone</span><span class="p">,</span> <span class="s2">&quot;phone&quot;</span><span class="p">:</span> <span class="n">phone</span><span class="p">}</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="n">uri</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="XhsClient.get_user_collect_notes"><a class="viewcode-back" href="../../source/xhs.html#xhs.XhsClient.get_user_collect_notes">[文档]</a>    <span class="k">def</span> <span class="nf">get_user_collect_notes</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">user_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">num</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">30</span><span class="p">,</span> <span class="n">cursor</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">):</span>
         <span class="n">uri</span> <span class="o">=</span> <span class="s2">&quot;/api/sns/web/v2/note/collect/page&quot;</span>

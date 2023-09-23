@@ -5,7 +5,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Documentation &#8212; xhs 0.2.6 文档</title>
+    <title>Documentation &#8212; xhs 0.2.7 文档</title>
     <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../_static/alabaster.css" />
     <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
@@ -42,6 +42,11 @@
 <dl class="py method">
 <dt class="sig sig-object py" id="xhs.XhsClient.activate">
 <span class="sig-name descname"><span class="pre">activate</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xhs/core.html#XhsClient.activate"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#xhs.XhsClient.activate" title="永久链接至目标">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="xhs.XhsClient.check_code">
+<span class="sig-name descname"><span class="pre">check_code</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">phone</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">code</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">zone</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">86</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xhs/core.html#XhsClient.check_code"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#xhs.XhsClient.check_code" title="永久链接至目标">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
@@ -430,6 +435,11 @@ and the return obj is equal to get_note_by_id</p>
 <dd></dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="xhs.XhsClient.login_code">
+<span class="sig-name descname"><span class="pre">login_code</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">phone</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mobile_token</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">zone</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">86</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xhs/core.html#XhsClient.login_code"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#xhs.XhsClient.login_code" title="永久链接至目标">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="xhs.XhsClient.post">
 <span class="sig-name descname"><span class="pre">post</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">uri</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">is_creator</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xhs/core.html#XhsClient.post"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#xhs.XhsClient.post" title="永久链接至目标">¶</a></dt>
 <dd></dd></dl>
@@ -477,6 +487,11 @@ and the return obj is equal to get_note_by_id</p>
 </dd>
 </dl>
 </dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="xhs.XhsClient.send_code">
+<span class="sig-name descname"><span class="pre">send_code</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">phone</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">zone</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">86</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xhs/core.html#XhsClient.send_code"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#xhs.XhsClient.send_code" title="永久链接至目标">¶</a></dt>
+<dd></dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="xhs.XhsClient.session">
