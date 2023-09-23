@@ -5,6 +5,12 @@
 - Improve documentation
 - Add more test function
 
+## 0.2.7
+
+### Added
+
+- add phone login api
+
 ## 0.2.6
 
 ### Fixed
