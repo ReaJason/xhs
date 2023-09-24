@@ -8,7 +8,7 @@ test:
 cov:
 		pytest --verbose --cov-report term --cov-report xml --cov=xhs tests/
 build_wheel:
-		python setup.py sdist bdist_wheel
+		python -m build
 		rm -fr build .egg xhs.egg-info
 upload:
 		make build_wheel
