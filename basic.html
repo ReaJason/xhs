@@ -54,11 +54,11 @@ curl -O https://cdn.jsdelivr.net/gh/requireCool/stealth.min.js/stealth.min.js <s
 </div>
 <div class="section" id="id3">
 <h2>进阶使用<a class="headerlink" href="#id3" title="永久链接至标题">¶</a></h2>
-<p>将 playwright 封装为服务端，主函数使用 requests 请求，获取签名。</p>
+<p>将 playwright 封装为服务端，主函数使用 requests 请求，获取签名，多账号使用统一签名服务请确保 cookie 中的 a1 字段统一，防止签名一直出现错误</p>
 <div class="section" id="id4">
 <h3>环境安装<a class="headerlink" href="#id4" title="永久链接至标题">¶</a></h3>
-<p>可以直接使用 Docker 来起下面的 Flask 服务，然后使用 XhsClient 即可，注意端口变成了 8080</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>docker run -it -d -p <span class="m">8080</span>:8080 reajason/xhs-sign:latest
+<p>可以直接使用 Docker 来起下面的 Flask 服务，然后使用 XhsClient 即可，服务启动会打印 a1，推荐将自己的 cookie 中的 a1 与服务端设置成一致</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>docker run -it -d -p <span class="m">5005</span>:5005 reajason/xhs-api:latest
 </pre></div>
 </div>
 <p>如果在本机启动 Flask 需要安装如下依赖：</p>
@@ -72,7 +72,6 @@ curl -O https://cdn.jsdelivr.net/gh/requireCool/stealth.min.js/stealth.min.js <s
 </div>
 <div class="section" id="xhsclient">
 <h3>使用 XhsClient<a class="headerlink" href="#xhsclient" title="永久链接至标题">¶</a></h3>
-<p>第一次请求会失败，但是之后的请求就正常了。</p>
 <p>具体代码参考： <a class="reference external" href="https://github.com/ReaJason/xhs/blob/master/example/basic_sign_usage.py">basic_sign_usage</a></p>
 </div>
 </div>

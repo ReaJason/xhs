@@ -25,17 +25,17 @@
 
 进阶使用
 ----------------
-将 playwright 封装为服务端，主函数使用 requests 请求，获取签名。
+将 playwright 封装为服务端，主函数使用 requests 请求，获取签名，多账号使用统一签名服务请确保 cookie 中的 a1 字段统一，防止签名一直出现错误
 
 
 环境安装
 ^^^^^^^^^^^^^^^^^^^^^^
 
-可以直接使用 Docker 来起下面的 Flask 服务，然后使用 XhsClient 即可，注意端口变成了 8080
+可以直接使用 Docker 来起下面的 Flask 服务，然后使用 XhsClient 即可，服务启动会打印 a1，推荐将自己的 cookie 中的 a1 与服务端设置成一致
 
 .. code-block:: bash
 
-    docker run -it -d -p 8080:8080 reajason/xhs-sign:latest
+    docker run -it -d -p 5005:5005 reajason/xhs-api:latest
 
 如果在本机启动 Flask 需要安装如下依赖：
 
@@ -50,6 +50,5 @@
 
 使用 XhsClient
 ^^^^^^^^^^^^^^^^^^^
-第一次请求会失败，但是之后的请求就正常了。
 
 具体代码参考： `basic_sign_usage <https://github.com/ReaJason/xhs/blob/master/example/basic_sign_usage.py>`_
