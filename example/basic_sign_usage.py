@@ -3,12 +3,13 @@ import json
 
 import requests
 
+import xhs.help
 from xhs import XhsClient
 
 
 def sign(uri, data=None, a1="", web_session=""):
     # 填写自己的 flask 签名服务端口地址
-    res = requests.post("http://localhost:5006",
+    res = requests.post("http://localhost:5005/sign",
                         json={"uri": uri, "data": data, "a1": a1, "web_session": web_session})
     signs = res.json()
     return {
@@ -24,3 +25,4 @@ if __name__ == '__main__':
     note_info = xhs_client.get_note_by_id("63db8819000000001a01ead1")
     print(datetime.datetime.now())
     print(json.dumps(note_info, indent=2))
+    print(xhs.help.get_imgs_url_from_note(note_info))

@@ -7,6 +7,8 @@ monkey.patch_all()
 
 app = Flask(__name__)
 
+global_a1 = ""
+
 
 def get_context_page(instance, stealth_js_path):
     chromium = instance.chromium
@@ -17,8 +19,7 @@ def get_context_page(instance, stealth_js_path):
     return context, page
 
 
-# 如下更改为 stealth.min.js 文件路径地址
-stealth_js_path = "/Users/reajason/ReaJason/xhs/tests/stealth.min.js"
+stealth_js_path = "stealth.min.js"
 print("正在启动 playwright")
 playwright = sync_playwright().start()
 browser_context, context_page = get_context_page(playwright, stealth_js_path)
@@ -30,11 +31,20 @@ time.sleep(1)
 cookies = browser_context.cookies()
 for cookie in cookies:
     if cookie["name"] == "a1":
-        print("当前浏览器 cookie 中 a1 值为：" + cookie["value"] + "，请将需要使用的 a1 设置成一样方可签名成功")
+        global_a1 = cookie["value"]
+        print("当前浏览器中 a1 值为：" + global_a1 + "，请将您的 cookie 中的 a1 也设置成一样，方可签名成功")
 print("跳转小红书首页成功，等待调用")
 
 
 def sign(uri, data, a1, web_session):
+    global global_a1
+    if a1 != global_a1:
+        browser_context.add_cookies([
+            {'name': 'a1', 'value': a1, 'domain': ".xiaohongshu.com", 'path': "/"}
+        ])
+        context_page.reload()
+        time.sleep(1)
+        global_a1 = a1
     encrypt_params = context_page.evaluate("([url, data]) => window._webmsxyw(url, data)", [uri, data])
     return {
         "x-s": encrypt_params["X-s"],
