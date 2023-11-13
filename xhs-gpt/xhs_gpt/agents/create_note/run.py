@@ -208,6 +208,14 @@ class CreateNote:
                 topics.append(xhs_client.get_suggest_topic(t)[0])
             except:
                 pass
+        topics = [
+            {
+                "id": i['id'],
+                "name": i['name'],
+                "type": "topic",
+                "link": i['link'],
+            } for i in topics
+        ]
         topic_descriptions = [f'''#{i["name"]}[话题]#''' for i in topics]
         note['description'] += '\n' + ' '.join(topic_descriptions)
         note = xhs_client.create_image_note(note['title'], note['description'], images, is_private=False, topics=topics,
