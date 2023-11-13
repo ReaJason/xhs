@@ -1,0 +1,21 @@
+[tool.poetry]
+name = "xhs-gpt"
+version = "0.1.0"
+description = ""
+authors = ["markyfsun <sunyunfei201@gmail.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.10"
+langchain = "^0.0.335"
+xhs = "^0.2.7"
+langserve = "^0.0.26"
+openai = "^1.2.3"
+langchain-cli = "^0.0.16"
+qrcode = "^7.4.2"
+pillow = "^10.1.0"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
