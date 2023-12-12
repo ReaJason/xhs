@@ -654,6 +654,21 @@ class XhsClient:
         uri = "/api/im/redmoji/detail"
         return self.get(uri)["emoji"]["tabs"][0]["collection"]
 
+    def get_mention_notifications(self, num: int = 20, cursor: str = ""):
+        uri = "/api/sns/web/v1/you/mentions"
+        params = {"num": num, "cursor": cursor}
+        return self.get(uri, params)
+
+    def get_like_notifications(self, num: int = 20, cursor: str = ""):
+        uri = "/api/sns/web/v1/you/likes"
+        params = {"num": num, "cursor": cursor}
+        return self.get(uri, params)
+
+    def get_follow_notifications(self, num: int = 20, cursor: str = ""):
+        uri = "/api/sns/web/v1/you/connections"
+        params = {"num": num, "cursor": cursor}
+        return self.get(uri, params)
+
     def get_upload_files_permit(self, file_type: str, count: int = 1) -> tuple:
         """获取文件上传的 id
 

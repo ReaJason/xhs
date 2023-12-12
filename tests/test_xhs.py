@@ -1,9 +1,5 @@
-import time
-from time import sleep
-
 import pytest
 import requests
-from playwright.sync_api import sync_playwright
 
 from xhs import FeedType, IPBlockError, XhsClient
 from xhs.exception import SignError, DataFetchError
@@ -11,38 +7,15 @@ from . import test_cookie
 from .utils import beauty_print
 
 
-def get_context_page(playwright):
-    chromium = playwright.chromium
-    browser = chromium.launch(headless=True)
-    browser_context = browser.new_context(
-        viewport={"width": 1920, "height": 1080},
-        user_agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36"
-    )
-    browser_context.add_init_script(path="/Users/reajason/ReaJason/xhs/tests/stealth.min.js")
-    context_page = browser_context.new_page()
-    return browser_context, context_page
-
-
-playwright = sync_playwright().start()
-browser_context, context_page = get_context_page(playwright)
-
-
 @pytest.fixture
 def xhs_client():
     def sign(uri, data, a1="", web_session=""):
-        context_page.goto("https://www.xiaohongshu.com")
-        cookie_list = browser_context.cookies()
-        web_session_cookie = list(filter(lambda cookie: cookie["name"] == "web_session", cookie_list))
-        if not web_session_cookie:
-            browser_context.add_cookies([
-                {'name': 'web_session', 'value': web_session, 'domain': ".xiaohongshu.com", 'path': "/"},
-                {'name': 'a1', 'value': a1, 'domain': ".xiaohongshu.com", 'path': "/"}]
-            )
-            sleep(1)
-        encrypt_params = context_page.evaluate("([url, data]) => window._webmsxyw(url, data)", [uri, data])
+        res = requests.post("http://localhost:5005/sign",
+                            json={"uri": uri, "data": data, "a1": a1, "web_session": web_session})
+        signs = res.json()
         return {
-            "x-s": encrypt_params["X-s"],
-            "x-t": str(encrypt_params["X-t"])
+            "x-s": signs["x-s"],
+            "x-t": signs["x-t"]
         }
 
     return XhsClient(cookie=test_cookie, sign=sign)
@@ -269,6 +242,24 @@ def test_get_emojis(xhs_client: XhsClient):
     emojis = xhs_client.get_emojis()
     beauty_print(emojis)
     assert len(emojis)
+
+
+def test_get_mention_notifications(xhs_client: XhsClient):
+    mentions = xhs_client.get_mention_notifications()
+    beauty_print(mentions)
+    assert len(mentions["message_list"])
+
+
+def test_get_like_notifications(xhs_client: XhsClient):
+    mentions = xhs_client.get_like_notifications()
+    beauty_print(mentions)
+    assert len(mentions["message_list"])
+
+
+def test_get_follow_notifications(xhs_client: XhsClient):
+    mentions = xhs_client.get_follow_notifications()
+    beauty_print(mentions)
+    assert len(mentions["message_list"])
 
 
 def test_get_upload_image_ids(xhs_client: XhsClient):
