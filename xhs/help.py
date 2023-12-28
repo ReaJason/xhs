@@ -7,6 +7,7 @@ import re
 import string
 import time
 import urllib.parse
+from xml.etree import ElementTree
 
 import requests
 
@@ -353,6 +354,28 @@ def base36encode(number, alphabet='0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ'):
 
 def base36decode(number):
     return int(number, 36)
+
+
+def xml_to_dict(element):
+    result = {}
+    for child in element:
+        if child:
+            child_dict = xml_to_dict(child)
+            if child.tag in result:
+                if type(result[child.tag]) is list:
+                    result[child.tag].append(child_dict)
+                else:
+                    result[child.tag] = [result[child.tag], child_dict]
+            else:
+                result[child.tag] = child_dict
+        else:
+            result[child.tag] = child.text
+    return result
+
+
+def parse_xml(xml_string):
+    root = ElementTree.fromstring(xml_string)
+    return xml_to_dict(root)
 
 
 def get_search_id():

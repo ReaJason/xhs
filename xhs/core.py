@@ -2,14 +2,14 @@ import json
 import os
 import re
 import time
+from datetime import datetime
 from enum import Enum
 from typing import NamedTuple
-from datetime import datetime
 
 import requests
+from lxml import etree
 
 from xhs.exception import DataFetchError, IPBlockError, SignError, ErrorEnum
-
 from .help import (
     cookie_jar_to_cookie_str,
     download_file,
@@ -18,7 +18,7 @@ from .help import (
     get_valid_path_name,
     get_video_url_from_note,
     sign,
-    update_session_cookies_from_cookie,
+    update_session_cookies_from_cookie, parse_xml,
 )
 
 
@@ -164,7 +164,10 @@ class XhsClient:
         )
         if not len(response.text):
             return response
-        data = response.json()
+        try:
+            data = response.json()
+        except json.decoder.JSONDecodeError:
+            return response
         if data.get("success"):
             return data.get("data", data.get("success"))
         elif data["code"] == ErrorEnum.IP_BLOCK.value.code:
@@ -684,10 +687,63 @@ class XhsClient:
             "version": "1",
             "source": "web",
         }
-        temp_permit = self.get(uri, params)["uploadTempPermits"][0]
+        res = self.get(uri, params)
+        temp_permit = res["uploadTempPermits"][0]
         file_id = temp_permit["fileIds"][0]
         token = temp_permit["token"]
         return file_id, token
+
+    def get_upload_id(self, file_id, token):
+        headers = {"X-Cos-Security-Token": token}
+        res = self.request("POST", f"https://ros-upload.xiaohongshu.com/{file_id}?uploads", headers=headers)
+        return parse_xml(res.text)["UploadId"]
+
+    def create_complete_multipart_upload(self, file_id: str, token: str, upload_id: str, parts: list):
+        root = etree.Element("CompleteMultipartUpload")
+        for part in parts:
+            part_elem = etree.Element("Part")
+            part_number_elem = etree.Element("PartNumber")
+            part_number_elem.text = str(part['PartNumber'])
+            part_elem.append(part_number_elem)
+
+            etag_elem = etree.Element("ETag")
+            etag_elem.text = part['ETag'].replace('"', '&quot;')
+            part_elem.append(etag_elem)
+            root.append(part_elem)
+        xml_string = ("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"
+                      + etree.tostring(root, encoding='UTF-8').decode("UTF-8").replace("&amp;", "&"))
+        print(xml_string)
+        print(file_id)
+        print(token)
+        print(upload_id)
+        headers = {"X-Cos-Security-Token": token, "Content-Type": "application/xml"}
+        url = f"https://ros-upload.xiaohongshu.com/{file_id}?uploadId={upload_id}"
+        return self.request("POST", url, data=xml_string, headers=headers)
+
+    def upload_file_with_slice(self, file_id: str, token: str,
+                               file_path: str):
+        headers = {"X-Cos-Security-Token": token}
+        url = "https://ros-upload.xiaohongshu.com/" + file_id
+        upload_id = self.get_upload_id(file_id, token)
+        parts = []
+        part_num = 1
+        with open(file_path, "rb") as f:
+            # read with 5M each time to upload
+            while True:
+                data = f.read(1024 * 1024 * 5)
+                if not data:
+                    break
+                params = {
+                    "partNumber": part_num,
+                    "uploadId": upload_id
+                }
+                res = self.request("PUT", url, params=params, data=data, headers=headers)
+                parts.append({
+                    "PartNumber": part_num,
+                    "ETag": res.headers["Etag"]
+                })
+                part_num += 1
+        return self.create_complete_multipart_upload(file_id, token, upload_id, parts)
 
     def upload_file(
             self,
@@ -704,10 +760,16 @@ class XhsClient:
         :param content_type:  【"video/mp4","image/jpeg","image/png"】
         :return:
         """
+        # 5M 为一个 part
+        max_file_size = 5 * 1024 * 1024
         url = "https://ros-upload.xiaohongshu.com/" + file_id
-        headers = {"X-Cos-Security-Token": token, "Content-Type": content_type}
-        with open(file_path, "rb") as f:
-            return self.request("PUT", url, data=f, headers=headers)
+        if os.path.getsize(file_path) > max_file_size and content_type == "video/mp4":
+            raise Exception("video too large, < 5M")
+            # return self.upload_file_with_slice(file_id, token, file_path)
+        else:
+            headers = {"X-Cos-Security-Token": token, "Content-Type": content_type}
+            with open(file_path, "rb") as f:
+                return self.request("PUT", url, data=f, headers=headers)
 
     def get_suggest_topic(self, keyword=""):
         """通过关键词获取话题信息，发布笔记用

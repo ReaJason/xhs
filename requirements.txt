@@ -1,4 +1,5 @@
 requests
+lxml
 flake8
 pre-commit
 tox
