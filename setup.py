@@ -23,7 +23,7 @@ setup(
     url=about["__url__"],
     license=about["__license__"],
     packages=["xhs"],
-    install_requires=["requests"],
+    install_requires=["requests", "lxml"],
     keywords="xhs crawl",
     include_package_data=True,
     zip_safe=False,
