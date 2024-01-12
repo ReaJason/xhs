@@ -95,7 +95,10 @@ def get_img_urls_by_trace_id(trace_id: str, format: str = "png"):
 
 
 def get_trace_id(img_url: str):
-    return img_url.split("/")[-1].split("!")[0]
+    trace_id = img_url.split("/")[-1].split("!")[0]
+    if "spectrum" in img_url:
+        return "spectrum/" + trace_id
+    return trace_id
 
 
 def get_imgs_url_from_note(note) -> list:
