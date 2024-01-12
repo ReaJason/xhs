@@ -5,6 +5,16 @@
 - Improve documentation
 - Add more test function
 
+## 0.2.8
+
+### Added
+
+- add get notification api
+
+### Fixed
+
+- trace id error when it contains spectrum
+
 ## 0.2.7
 
 ### Added
