@@ -321,6 +321,20 @@ class XhsClient:
         uri = "/api/sns/web/v2/user/me"
         return self.get(uri)
 
+    def get_user_by_keyword(self, keyword: str,
+                            page: int = 1,
+                            page_size: int = 20, ):
+        uri = "/api/sns/web/v1/search/usersearch"
+        data = {
+            "search_user_request": {
+                "keyword": keyword, "search_id": get_search_id(),
+                "page": page, "page_size": page_size,
+                "biz_type": "web_search_user",
+                "request_id": f"{int(round(time.time()))}-{int(round(time.time() * 1000))}",
+            }
+        }
+        return self.post(uri, data)
+
     def get_user_info(self, user_id: str):
         """
         :param user_id: user_id you want fetch
