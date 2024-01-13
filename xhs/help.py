@@ -280,10 +280,7 @@ lookup = [
 
 def tripletToBase64(e):
     return (
-            lookup[63 & (e >> 18)] +
-            lookup[63 & (e >> 12)] +
-            lookup[(e >> 6) & 63] +
-            lookup[e & 63]
+        lookup[63 & (e >> 18)] + lookup[63 & (e >> 12)] + lookup[(e >> 6) & 63] + lookup[e & 63]
     )
 
 
@@ -311,8 +308,7 @@ def b64Encode(e):
         U.append(lookup[F >> 2] + lookup[(F << 4) & 63] + "==")
     elif 2 == W:
         F = (e[P - 2] << 8) + e[P - 1]
-        U.append(lookup[F >> 10] + lookup[63 & (F >> 4)] +
-                 lookup[(F << 2) & 63] + "=")
+        U.append(lookup[F >> 10] + lookup[63 & (F >> 4)] + lookup[(F << 2) & 63] + "=")
     return "".join(U)
 
 

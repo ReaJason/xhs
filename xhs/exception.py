@@ -1,5 +1,6 @@
 from enum import Enum
 from typing import NamedTuple
+
 from requests import RequestException
 
 

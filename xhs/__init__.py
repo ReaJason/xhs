@@ -5,6 +5,6 @@ from logging import NullHandler
 from .__version__ import __author__, __copyright__, __title__, __version__
 from .core import (FeedType, Note, NoteType, SearchNoteType, SearchSortType,
                    XhsClient)
-from .exception import DataFetchError, IPBlockError, SignError, ErrorEnum
+from .exception import DataFetchError, ErrorEnum, IPBlockError, SignError
 
 logging.getLogger(__name__).addHandler(NullHandler())

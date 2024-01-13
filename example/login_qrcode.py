@@ -1,9 +1,11 @@
 import datetime
 import json
-import qrcode
 from time import sleep
-from xhs import XhsClient, DataFetchError
+
+import qrcode
 from playwright.sync_api import sync_playwright
+
+from xhs import XhsClient
 
 
 def sign(uri, data=None, a1="", web_session=""):

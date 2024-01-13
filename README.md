@@ -40,4 +40,3 @@ $ python -m pip install git+https://github.com/ReaJason/xhs
 > maybe now is more complex, Thanks [@NanmiCoder](https://github.com/NanmiCoder)
 
 Please find in the [document](https://reajason.github.io/xhs/basic)
-

@@ -8,5 +8,5 @@ docker buildx create --name mybuilder --driver docker-container
 
 docker buildx use mybuilder
 
-docker buildx build --platform linux/arm64,linux/amd64 -t reajason/xhs-api . --push 
+docker buildx build --platform linux/arm64,linux/amd64 -t reajason/xhs-api . --push
 ```

@@ -9,17 +9,12 @@ from typing import NamedTuple
 import requests
 from lxml import etree
 
-from xhs.exception import DataFetchError, IPBlockError, SignError, ErrorEnum
-from .help import (
-    cookie_jar_to_cookie_str,
-    download_file,
-    get_imgs_url_from_note,
-    get_search_id,
-    get_valid_path_name,
-    get_video_url_from_note,
-    sign,
-    update_session_cookies_from_cookie, parse_xml,
-)
+from xhs.exception import DataFetchError, ErrorEnum, IPBlockError, SignError
+
+from .help import (cookie_jar_to_cookie_str, download_file,
+                   get_imgs_url_from_note, get_search_id, get_valid_path_name,
+                   get_video_url_from_note, parse_xml, sign,
+                   update_session_cookies_from_cookie)
 
 
 class FeedType(Enum):
@@ -438,8 +433,7 @@ class XhsClient:
                 try:
                     note = self.get_note_by_id(note_id)
                 except DataFetchError as e:
-                    if (ErrorEnum.NOTE_ABNORMAL.value.msg in e.__repr__()
-                            or ErrorEnum.NOTE_SECRETE_FAULT.value.msg in e.__repr__()):
+                    if ErrorEnum.NOTE_ABNORMAL.value.msg in e.__repr__() or ErrorEnum.NOTE_SECRETE_FAULT.value.msg in e.__repr__():
                         continue
                     else:
                         raise
@@ -523,8 +517,7 @@ class XhsClient:
                 cur_sub_comments = comment["sub_comments"]
                 result.extend(cur_sub_comments)
                 sub_comments_has_more = (
-                        comment["sub_comment_has_more"]
-                        and len(cur_sub_comments) < cur_sub_comment_count
+                    comment["sub_comment_has_more"] and len(cur_sub_comments) < cur_sub_comment_count
                 )
                 sub_comment_cursor = comment["sub_comment_cursor"]
                 while sub_comments_has_more:
@@ -534,7 +527,7 @@ class XhsClient:
                     )
                     sub_comments = sub_comments_res["comments"]
                     sub_comments_has_more = (
-                            sub_comments_res["has_more"] and len(sub_comments) == page_num
+                        sub_comments_res["has_more"] and len(sub_comments) == page_num
                     )
                     sub_comment_cursor = sub_comments_res["cursor"]
                     result.extend(sub_comments)
@@ -710,8 +703,9 @@ class XhsClient:
             etag_elem.text = part['ETag'].replace('"', '&quot;')
             part_elem.append(etag_elem)
             root.append(part_elem)
-        xml_string = ("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"
-                      + etree.tostring(root, encoding='UTF-8').decode("UTF-8").replace("&amp;", "&"))
+        xml_string = ("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>" + etree.tostring(root,
+                                                                                                       encoding='UTF-8').decode(
+            "UTF-8").replace("&amp;", "&"))
         print(xml_string)
         print(file_id)
         print(token)

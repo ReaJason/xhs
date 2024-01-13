@@ -1,7 +1,8 @@
-from flask import Flask, request
-from playwright.sync_api import sync_playwright
-from gevent import monkey
 import time
+
+from flask import Flask, request
+from gevent import monkey
+from playwright.sync_api import sync_playwright
 
 monkey.patch_all()
 

@@ -1,8 +1,10 @@
 import datetime
 import json
 from time import sleep
-from xhs import XhsClient, DataFetchError
+
 from playwright.sync_api import sync_playwright
+
+from xhs import DataFetchError, XhsClient
 
 
 def sign(uri, data=None, a1="", web_session=""):
