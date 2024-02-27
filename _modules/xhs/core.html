@@ -5,7 +5,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>xhs.core &#8212; xhs 0.2.7 文档</title>
+    <title>xhs.core &#8212; xhs 0.2.10 文档</title>
     <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/alabaster.css" />
     <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
@@ -36,24 +36,19 @@
 <span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">re</span>
 <span class="kn">import</span> <span class="nn">time</span>
+<span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span>
 <span class="kn">from</span> <span class="nn">enum</span> <span class="kn">import</span> <span class="n">Enum</span>
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">NamedTuple</span>
-<span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span>
 
 <span class="kn">import</span> <span class="nn">requests</span>
+<span class="kn">from</span> <span class="nn">lxml</span> <span class="kn">import</span> <span class="n">etree</span>
 
-<span class="kn">from</span> <span class="nn">xhs.exception</span> <span class="kn">import</span> <span class="n">DataFetchError</span><span class="p">,</span> <span class="n">IPBlockError</span><span class="p">,</span> <span class="n">SignError</span><span class="p">,</span> <span class="n">ErrorEnum</span>
+<span class="kn">from</span> <span class="nn">xhs.exception</span> <span class="kn">import</span> <span class="n">DataFetchError</span><span class="p">,</span> <span class="n">ErrorEnum</span><span class="p">,</span> <span class="n">IPBlockError</span><span class="p">,</span> <span class="n">SignError</span>
 
-<span class="kn">from</span> <span class="nn">.help</span> <span class="kn">import</span> <span class="p">(</span>
-    <span class="n">cookie_jar_to_cookie_str</span><span class="p">,</span>
-    <span class="n">download_file</span><span class="p">,</span>
-    <span class="n">get_imgs_url_from_note</span><span class="p">,</span>
-    <span class="n">get_search_id</span><span class="p">,</span>
-    <span class="n">get_valid_path_name</span><span class="p">,</span>
-    <span class="n">get_video_url_from_note</span><span class="p">,</span>
-    <span class="n">sign</span><span class="p">,</span>
-    <span class="n">update_session_cookies_from_cookie</span><span class="p">,</span>
-<span class="p">)</span>
+<span class="kn">from</span> <span class="nn">.help</span> <span class="kn">import</span> <span class="p">(</span><span class="n">cookie_jar_to_cookie_str</span><span class="p">,</span> <span class="n">download_file</span><span class="p">,</span>
+                   <span class="n">get_imgs_url_from_note</span><span class="p">,</span> <span class="n">get_search_id</span><span class="p">,</span> <span class="n">get_valid_path_name</span><span class="p">,</span>
+                   <span class="n">get_video_url_from_note</span><span class="p">,</span> <span class="n">parse_xml</span><span class="p">,</span> <span class="n">sign</span><span class="p">,</span>
+                   <span class="n">update_session_cookies_from_cookie</span><span class="p">)</span>
 
 
 <div class="viewcode-block" id="FeedType"><a class="viewcode-back" href="../../source/xhs.html#xhs.FeedType">[文档]</a><span class="k">class</span> <span class="nc">FeedType</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
@@ -136,8 +131,9 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">proxies</span> <span class="o">=</span> <span class="n">proxies</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">__session</span><span class="p">:</span> <span class="n">requests</span><span class="o">.</span><span class="n">Session</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">session</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">timeout</span> <span class="o">=</span> <span class="n">timeout</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">sign</span> <span class="o">=</span> <span class="n">sign</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">external_sign</span> <span class="o">=</span> <span class="n">sign</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_host</span> <span class="o">=</span> <span class="s2">&quot;https://edith.xiaohongshu.com&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_creator_host</span> <span class="o">=</span> <span class="s2">&quot;https://creator.xiaohongshu.com&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">home</span> <span class="o">=</span> <span class="s2">&quot;https://www.xiaohongshu.com&quot;</span>
         <span class="n">user_agent</span> <span class="o">=</span> <span class="n">user_agent</span> <span class="ow">or</span> <span class="p">(</span>
             <span class="s2">&quot;Mozilla/5.0 &quot;</span>
@@ -184,7 +180,7 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">__session</span><span class="o">.</span><span class="n">headers</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s2">&quot;x-s-common&quot;</span><span class="p">:</span> <span class="n">signs</span><span class="p">[</span><span class="s2">&quot;x-s-common&quot;</span><span class="p">]})</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">__session</span><span class="o">.</span><span class="n">headers</span><span class="o">.</span><span class="n">update</span><span class="p">(</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">sign</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">external_sign</span><span class="p">(</span>
                     <span class="n">url</span><span class="p">,</span>
                     <span class="n">data</span><span class="p">,</span>
                     <span class="n">a1</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">cookie_dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;a1&quot;</span><span class="p">),</span>
@@ -198,7 +194,10 @@
         <span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">len</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">text</span><span class="p">):</span>
             <span class="k">return</span> <span class="n">response</span>
-        <span class="n">data</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
+        <span class="k">except</span> <span class="n">json</span><span class="o">.</span><span class="n">decoder</span><span class="o">.</span><span class="n">JSONDecodeError</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">response</span>
         <span class="k">if</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;success&quot;</span><span class="p">):</span>
             <span class="k">return</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;data&quot;</span><span class="p">,</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;success&quot;</span><span class="p">))</span>
         <span class="k">elif</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;code&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="n">ErrorEnum</span><span class="o">.</span><span class="n">IP_BLOCK</span><span class="o">.</span><span class="n">value</span><span class="o">.</span><span class="n">code</span><span class="p">:</span>
@@ -213,13 +212,15 @@
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
             <span class="n">final_uri</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{uri}</span><span class="s2">?&quot;</span> <span class="sa">f</span><span class="s2">&quot;{&#39;&amp;&#39;.join([f&#39;</span><span class="si">{k}</span><span class="s2">=</span><span class="si">{v}</span><span class="s2">&#39; for k, v in params.items()])}&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_pre_headers</span><span class="p">(</span><span class="n">final_uri</span><span class="p">,</span> <span class="n">is_creator</span><span class="o">=</span><span class="n">is_creator</span><span class="p">)</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">request</span><span class="p">(</span><span class="n">method</span><span class="o">=</span><span class="s2">&quot;GET&quot;</span><span class="p">,</span> <span class="n">url</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{self._host}{final_uri}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">request</span><span class="p">(</span><span class="n">method</span><span class="o">=</span><span class="s2">&quot;GET&quot;</span><span class="p">,</span> <span class="n">url</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;{self._creator_host if is_creator else self._host}</span><span class="si">{final_uri}</span><span class="s2">&quot;</span><span class="p">,</span>
+                            <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="XhsClient.post"><a class="viewcode-back" href="../../source/xhs.html#xhs.XhsClient.post">[文档]</a>    <span class="k">def</span> <span class="nf">post</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">uri</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">is_creator</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_pre_headers</span><span class="p">(</span><span class="n">uri</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">is_creator</span><span class="o">=</span><span class="n">is_creator</span><span class="p">)</span>
         <span class="n">json_str</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">separators</span><span class="o">=</span><span class="p">(</span><span class="s2">&quot;,&quot;</span><span class="p">,</span> <span class="s2">&quot;:&quot;</span><span class="p">),</span> <span class="n">ensure_ascii</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">request</span><span class="p">(</span>
-            <span class="n">method</span><span class="o">=</span><span class="s2">&quot;POST&quot;</span><span class="p">,</span> <span class="n">url</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{self._host}{uri}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">json_str</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s2">&quot;utf-8&quot;</span><span class="p">),</span> <span class="o">**</span><span class="n">kwargs</span>
+            <span class="n">method</span><span class="o">=</span><span class="s2">&quot;POST&quot;</span><span class="p">,</span> <span class="n">url</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;{self._creator_host if is_creator else self._host}</span><span class="si">{uri}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">json_str</span><span class="o">.</span><span class="n">encode</span><span class="p">(),</span>
+            <span class="o">**</span><span class="n">kwargs</span>
         <span class="p">)</span></div>
 
 <div class="viewcode-block" id="XhsClient.get_note_by_id"><a class="viewcode-back" href="../../source/xhs.html#xhs.XhsClient.get_note_by_id">[文档]</a>    <span class="k">def</span> <span class="nf">get_note_by_id</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">note_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
@@ -357,6 +358,20 @@
         <span class="n">uri</span> <span class="o">=</span> <span class="s2">&quot;/api/sns/web/v2/user/me&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">uri</span><span class="p">)</span></div>
 
+<div class="viewcode-block" id="XhsClient.get_user_by_keyword"><a class="viewcode-back" href="../../source/xhs.html#xhs.XhsClient.get_user_by_keyword">[文档]</a>    <span class="k">def</span> <span class="nf">get_user_by_keyword</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">keyword</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+                            <span class="n">page</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+                            <span class="n">page_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">20</span><span class="p">,</span> <span class="p">):</span>
+        <span class="n">uri</span> <span class="o">=</span> <span class="s2">&quot;/api/sns/web/v1/search/usersearch&quot;</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;search_user_request&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s2">&quot;keyword&quot;</span><span class="p">:</span> <span class="n">keyword</span><span class="p">,</span> <span class="s2">&quot;search_id&quot;</span><span class="p">:</span> <span class="n">get_search_id</span><span class="p">(),</span>
+                <span class="s2">&quot;page&quot;</span><span class="p">:</span> <span class="n">page</span><span class="p">,</span> <span class="s2">&quot;page_size&quot;</span><span class="p">:</span> <span class="n">page_size</span><span class="p">,</span>
+                <span class="s2">&quot;biz_type&quot;</span><span class="p">:</span> <span class="s2">&quot;web_search_user&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;request_id&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;{int(round(time.time()))}-{int(round(time.time() * 1000))}&quot;</span><span class="p">,</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="n">uri</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span></div>
+
 <div class="viewcode-block" id="XhsClient.get_user_info"><a class="viewcode-back" href="../../source/xhs.html#xhs.XhsClient.get_user_info">[文档]</a>    <span class="k">def</span> <span class="nf">get_user_info</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">user_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        :param user_id: user_id you want fetch</span>
@@ -469,8 +484,7 @@
                 <span class="k">try</span><span class="p">:</span>
                     <span class="n">note</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_note_by_id</span><span class="p">(</span><span class="n">note_id</span><span class="p">)</span>
                 <span class="k">except</span> <span class="n">DataFetchError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-                    <span class="k">if</span> <span class="p">(</span><span class="n">ErrorEnum</span><span class="o">.</span><span class="n">NOTE_ABNORMAL</span><span class="o">.</span><span class="n">value</span><span class="o">.</span><span class="n">msg</span> <span class="ow">in</span> <span class="n">e</span><span class="o">.</span><span class="fm">__repr__</span><span class="p">()</span>
-                            <span class="ow">or</span> <span class="n">ErrorEnum</span><span class="o">.</span><span class="n">NOTE_SECRETE_FAULT</span><span class="o">.</span><span class="n">value</span><span class="o">.</span><span class="n">msg</span> <span class="ow">in</span> <span class="n">e</span><span class="o">.</span><span class="fm">__repr__</span><span class="p">()):</span>
+                    <span class="k">if</span> <span class="n">ErrorEnum</span><span class="o">.</span><span class="n">NOTE_ABNORMAL</span><span class="o">.</span><span class="n">value</span><span class="o">.</span><span class="n">msg</span> <span class="ow">in</span> <span class="n">e</span><span class="o">.</span><span class="fm">__repr__</span><span class="p">()</span> <span class="ow">or</span> <span class="n">ErrorEnum</span><span class="o">.</span><span class="n">NOTE_SECRETE_FAULT</span><span class="o">.</span><span class="n">value</span><span class="o">.</span><span class="n">msg</span> <span class="ow">in</span> <span class="n">e</span><span class="o">.</span><span class="fm">__repr__</span><span class="p">():</span>
                         <span class="k">continue</span>
                     <span class="k">else</span><span class="p">:</span>
                         <span class="k">raise</span>
@@ -553,10 +567,8 @@
                 <span class="n">cur_sub_comment_count</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">comment</span><span class="p">[</span><span class="s2">&quot;sub_comment_count&quot;</span><span class="p">])</span>
                 <span class="n">cur_sub_comments</span> <span class="o">=</span> <span class="n">comment</span><span class="p">[</span><span class="s2">&quot;sub_comments&quot;</span><span class="p">]</span>
                 <span class="n">result</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">cur_sub_comments</span><span class="p">)</span>
-                <span class="n">sub_comments_has_more</span> <span class="o">=</span> <span class="p">(</span>
-                        <span class="n">comment</span><span class="p">[</span><span class="s2">&quot;sub_comment_has_more&quot;</span><span class="p">]</span>
-                        <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">cur_sub_comments</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">cur_sub_comment_count</span>
-                <span class="p">)</span>
+                <span class="n">sub_comments_has_more</span> <span class="o">=</span> <span class="n">comment</span><span class="p">[</span><span class="s2">&quot;sub_comment_has_more&quot;</span><span class="p">]</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span>
+                    <span class="n">cur_sub_comments</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">cur_sub_comment_count</span>
                 <span class="n">sub_comment_cursor</span> <span class="o">=</span> <span class="n">comment</span><span class="p">[</span><span class="s2">&quot;sub_comment_cursor&quot;</span><span class="p">]</span>
                 <span class="k">while</span> <span class="n">sub_comments_has_more</span><span class="p">:</span>
                     <span class="n">page_num</span> <span class="o">=</span> <span class="mi">30</span>
@@ -564,9 +576,7 @@
                         <span class="n">note_id</span><span class="p">,</span> <span class="n">comment</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">],</span> <span class="n">num</span><span class="o">=</span><span class="n">page_num</span><span class="p">,</span> <span class="n">cursor</span><span class="o">=</span><span class="n">sub_comment_cursor</span>
                     <span class="p">)</span>
                     <span class="n">sub_comments</span> <span class="o">=</span> <span class="n">sub_comments_res</span><span class="p">[</span><span class="s2">&quot;comments&quot;</span><span class="p">]</span>
-                    <span class="n">sub_comments_has_more</span> <span class="o">=</span> <span class="p">(</span>
-                            <span class="n">sub_comments_res</span><span class="p">[</span><span class="s2">&quot;has_more&quot;</span><span class="p">]</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">sub_comments</span><span class="p">)</span> <span class="o">==</span> <span class="n">page_num</span>
-                    <span class="p">)</span>
+                    <span class="n">sub_comments_has_more</span> <span class="o">=</span> <span class="n">sub_comments_res</span><span class="p">[</span><span class="s2">&quot;has_more&quot;</span><span class="p">]</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">sub_comments</span><span class="p">)</span> <span class="o">==</span> <span class="n">page_num</span>
                     <span class="n">sub_comment_cursor</span> <span class="o">=</span> <span class="n">sub_comments_res</span><span class="p">[</span><span class="s2">&quot;cursor&quot;</span><span class="p">]</span>
                     <span class="n">result</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">sub_comments</span><span class="p">)</span>
                     <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="n">crawl_interval</span><span class="p">)</span>
@@ -660,8 +670,8 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="n">uri</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="p">{})</span></div>
 
 <div class="viewcode-block" id="XhsClient.send_code"><a class="viewcode-back" href="../../source/xhs.html#xhs.XhsClient.send_code">[文档]</a>    <span class="k">def</span> <span class="nf">send_code</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">phone</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">zone</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="mi">86</span><span class="p">):</span>
-        <span class="n">uri</span> <span class="o">=</span> <span class="s2">&quot;/api/sns/web/v1/login/send_code&quot;</span>
-        <span class="n">params</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;phone&quot;</span><span class="p">:</span> <span class="n">phone</span><span class="p">,</span> <span class="s2">&quot;zone&quot;</span><span class="p">:</span> <span class="n">zone</span><span class="p">}</span>
+        <span class="n">uri</span> <span class="o">=</span> <span class="s2">&quot;/api/sns/web/v2/login/send_code&quot;</span>
+        <span class="n">params</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;phone&quot;</span><span class="p">:</span> <span class="n">phone</span><span class="p">,</span> <span class="s2">&quot;zone&quot;</span><span class="p">:</span> <span class="n">zone</span><span class="p">,</span> <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;login&quot;</span><span class="p">}</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">uri</span><span class="p">,</span> <span class="n">params</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="XhsClient.check_code"><a class="viewcode-back" href="../../source/xhs.html#xhs.XhsClient.check_code">[文档]</a>    <span class="k">def</span> <span class="nf">check_code</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">phone</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">code</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">zone</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="mi">86</span><span class="p">):</span>
@@ -688,6 +698,53 @@
         <span class="n">uri</span> <span class="o">=</span> <span class="s2">&quot;/api/im/redmoji/detail&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">uri</span><span class="p">)[</span><span class="s2">&quot;emoji&quot;</span><span class="p">][</span><span class="s2">&quot;tabs&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;collection&quot;</span><span class="p">]</span></div>
 
+<div class="viewcode-block" id="XhsClient.get_mention_notifications"><a class="viewcode-back" href="../../source/xhs.html#xhs.XhsClient.get_mention_notifications">[文档]</a>    <span class="k">def</span> <span class="nf">get_mention_notifications</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">num</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">20</span><span class="p">,</span> <span class="n">cursor</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">):</span>
+        <span class="n">uri</span> <span class="o">=</span> <span class="s2">&quot;/api/sns/web/v1/you/mentions&quot;</span>
+        <span class="n">params</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;num&quot;</span><span class="p">:</span> <span class="n">num</span><span class="p">,</span> <span class="s2">&quot;cursor&quot;</span><span class="p">:</span> <span class="n">cursor</span><span class="p">}</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">uri</span><span class="p">,</span> <span class="n">params</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="XhsClient.get_like_notifications"><a class="viewcode-back" href="../../source/xhs.html#xhs.XhsClient.get_like_notifications">[文档]</a>    <span class="k">def</span> <span class="nf">get_like_notifications</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">num</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">20</span><span class="p">,</span> <span class="n">cursor</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">):</span>
+        <span class="n">uri</span> <span class="o">=</span> <span class="s2">&quot;/api/sns/web/v1/you/likes&quot;</span>
+        <span class="n">params</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;num&quot;</span><span class="p">:</span> <span class="n">num</span><span class="p">,</span> <span class="s2">&quot;cursor&quot;</span><span class="p">:</span> <span class="n">cursor</span><span class="p">}</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">uri</span><span class="p">,</span> <span class="n">params</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="XhsClient.get_follow_notifications"><a class="viewcode-back" href="../../source/xhs.html#xhs.XhsClient.get_follow_notifications">[文档]</a>    <span class="k">def</span> <span class="nf">get_follow_notifications</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">num</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">20</span><span class="p">,</span> <span class="n">cursor</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">):</span>
+        <span class="n">uri</span> <span class="o">=</span> <span class="s2">&quot;/api/sns/web/v1/you/connections&quot;</span>
+        <span class="n">params</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;num&quot;</span><span class="p">:</span> <span class="n">num</span><span class="p">,</span> <span class="s2">&quot;cursor&quot;</span><span class="p">:</span> <span class="n">cursor</span><span class="p">}</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">uri</span><span class="p">,</span> <span class="n">params</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="XhsClient.get_notes_summary"><a class="viewcode-back" href="../../source/xhs.html#xhs.XhsClient.get_notes_summary">[文档]</a>    <span class="k">def</span> <span class="nf">get_notes_summary</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">uri</span> <span class="o">=</span> <span class="s2">&quot;/api/galaxy/creator/data/note_detail_new&quot;</span>
+        <span class="n">headers</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;Referer&quot;</span><span class="p">:</span> <span class="s2">&quot;https://creator.xiaohongshu.com/creator/notes?source=official&quot;</span>
+        <span class="p">}</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">uri</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="n">headers</span><span class="p">,</span> <span class="n">is_creator</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="XhsClient.get_notes_statistics"><a class="viewcode-back" href="../../source/xhs.html#xhs.XhsClient.get_notes_statistics">[文档]</a>    <span class="k">def</span> <span class="nf">get_notes_statistics</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">page</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">page_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">48</span><span class="p">,</span> <span class="n">sort_by</span><span class="o">=</span><span class="s2">&quot;time&quot;</span><span class="p">,</span> <span class="n">note_type</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">time</span><span class="o">=</span><span class="mi">30</span><span class="p">,</span>
+                             <span class="n">is_recent</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        :param page: page num default is 1</span>
+<span class="sd">        :param page_size: page size, 12 or 24 or 36 or 48</span>
+<span class="sd">        :param sort_by: time default</span>
+<span class="sd">        :param note_type: 0 is all, 1 is images, 2 is video</span>
+<span class="sd">        :param time: fetch date</span>
+<span class="sd">        :param is_recent: default is false, when time is 7, this should be false</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">uri</span> <span class="o">=</span> <span class="s2">&quot;/api/galaxy/creator/data/note_stats/new&quot;</span>
+        <span class="n">params</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;page&quot;</span><span class="p">:</span> <span class="n">page</span><span class="p">,</span>
+            <span class="s2">&quot;page_size&quot;</span><span class="p">:</span> <span class="n">page_size</span><span class="p">,</span>
+            <span class="s2">&quot;sort_by&quot;</span><span class="p">:</span> <span class="n">sort_by</span><span class="p">,</span>
+            <span class="s2">&quot;note_type&quot;</span><span class="p">:</span> <span class="n">note_type</span><span class="p">,</span>
+            <span class="s2">&quot;time&quot;</span><span class="p">:</span> <span class="n">time</span><span class="p">,</span>
+            <span class="s2">&quot;is_recent&quot;</span><span class="p">:</span> <span class="n">is_recent</span>
+        <span class="p">}</span>
+        <span class="n">headers</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;Referer&quot;</span><span class="p">:</span> <span class="s2">&quot;https://creator.xiaohongshu.com/creator/notes?source=official&quot;</span>
+        <span class="p">}</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">uri</span><span class="p">,</span> <span class="n">params</span><span class="p">,</span> <span class="n">is_creator</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="n">headers</span><span class="p">)</span></div>
+
 <div class="viewcode-block" id="XhsClient.get_upload_files_permit"><a class="viewcode-back" href="../../source/xhs.html#xhs.XhsClient.get_upload_files_permit">[文档]</a>    <span class="k">def</span> <span class="nf">get_upload_files_permit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file_type</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">count</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;获取文件上传的 id</span>
 
@@ -703,10 +760,64 @@
             <span class="s2">&quot;version&quot;</span><span class="p">:</span> <span class="s2">&quot;1&quot;</span><span class="p">,</span>
             <span class="s2">&quot;source&quot;</span><span class="p">:</span> <span class="s2">&quot;web&quot;</span><span class="p">,</span>
         <span class="p">}</span>
-        <span class="n">temp_permit</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">uri</span><span class="p">,</span> <span class="n">params</span><span class="p">)[</span><span class="s2">&quot;uploadTempPermits&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">res</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">uri</span><span class="p">,</span> <span class="n">params</span><span class="p">)</span>
+        <span class="n">temp_permit</span> <span class="o">=</span> <span class="n">res</span><span class="p">[</span><span class="s2">&quot;uploadTempPermits&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
         <span class="n">file_id</span> <span class="o">=</span> <span class="n">temp_permit</span><span class="p">[</span><span class="s2">&quot;fileIds&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
         <span class="n">token</span> <span class="o">=</span> <span class="n">temp_permit</span><span class="p">[</span><span class="s2">&quot;token&quot;</span><span class="p">]</span>
         <span class="k">return</span> <span class="n">file_id</span><span class="p">,</span> <span class="n">token</span></div>
+
+<div class="viewcode-block" id="XhsClient.get_upload_id"><a class="viewcode-back" href="../../source/xhs.html#xhs.XhsClient.get_upload_id">[文档]</a>    <span class="k">def</span> <span class="nf">get_upload_id</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file_id</span><span class="p">,</span> <span class="n">token</span><span class="p">):</span>
+        <span class="n">headers</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;X-Cos-Security-Token&quot;</span><span class="p">:</span> <span class="n">token</span><span class="p">}</span>
+        <span class="n">res</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">request</span><span class="p">(</span><span class="s2">&quot;POST&quot;</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;https://ros-upload.xiaohongshu.com/</span><span class="si">{file_id}</span><span class="s2">?uploads&quot;</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="n">headers</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">parse_xml</span><span class="p">(</span><span class="n">res</span><span class="o">.</span><span class="n">text</span><span class="p">)[</span><span class="s2">&quot;UploadId&quot;</span><span class="p">]</span></div>
+
+<div class="viewcode-block" id="XhsClient.create_complete_multipart_upload"><a class="viewcode-back" href="../../source/xhs.html#xhs.XhsClient.create_complete_multipart_upload">[文档]</a>    <span class="k">def</span> <span class="nf">create_complete_multipart_upload</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">token</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">upload_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">parts</span><span class="p">:</span> <span class="nb">list</span><span class="p">):</span>
+        <span class="n">root</span> <span class="o">=</span> <span class="n">etree</span><span class="o">.</span><span class="n">Element</span><span class="p">(</span><span class="s2">&quot;CompleteMultipartUpload&quot;</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">part</span> <span class="ow">in</span> <span class="n">parts</span><span class="p">:</span>
+            <span class="n">part_elem</span> <span class="o">=</span> <span class="n">etree</span><span class="o">.</span><span class="n">Element</span><span class="p">(</span><span class="s2">&quot;Part&quot;</span><span class="p">)</span>
+            <span class="n">part_number_elem</span> <span class="o">=</span> <span class="n">etree</span><span class="o">.</span><span class="n">Element</span><span class="p">(</span><span class="s2">&quot;PartNumber&quot;</span><span class="p">)</span>
+            <span class="n">part_number_elem</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">part</span><span class="p">[</span><span class="s1">&#39;PartNumber&#39;</span><span class="p">])</span>
+            <span class="n">part_elem</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">part_number_elem</span><span class="p">)</span>
+
+            <span class="n">etag_elem</span> <span class="o">=</span> <span class="n">etree</span><span class="o">.</span><span class="n">Element</span><span class="p">(</span><span class="s2">&quot;ETag&quot;</span><span class="p">)</span>
+            <span class="n">etag_elem</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="n">part</span><span class="p">[</span><span class="s1">&#39;ETag&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;&quot;&#39;</span><span class="p">,</span> <span class="s1">&#39;&amp;quot;&#39;</span><span class="p">)</span>
+            <span class="n">part_elem</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">etag_elem</span><span class="p">)</span>
+            <span class="n">root</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">part_elem</span><span class="p">)</span>
+        <span class="n">xml_string</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;&lt;?xml version=</span><span class="se">\&quot;</span><span class="s2">1.0</span><span class="se">\&quot;</span><span class="s2"> encoding=</span><span class="se">\&quot;</span><span class="s2">UTF-8</span><span class="se">\&quot;</span><span class="s2"> standalone=</span><span class="se">\&quot;</span><span class="s2">yes</span><span class="se">\&quot;</span><span class="s2">?&gt;&quot;</span> <span class="o">+</span> <span class="n">etree</span><span class="o">.</span><span class="n">tostring</span><span class="p">(</span><span class="n">root</span><span class="p">,</span>
+                                                                                                       <span class="n">encoding</span><span class="o">=</span><span class="s1">&#39;UTF-8&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span>
+            <span class="s2">&quot;UTF-8&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;&amp;amp;&quot;</span><span class="p">,</span> <span class="s2">&quot;&amp;&quot;</span><span class="p">))</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">xml_string</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">file_id</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">token</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">upload_id</span><span class="p">)</span>
+        <span class="n">headers</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;X-Cos-Security-Token&quot;</span><span class="p">:</span> <span class="n">token</span><span class="p">,</span> <span class="s2">&quot;Content-Type&quot;</span><span class="p">:</span> <span class="s2">&quot;application/xml&quot;</span><span class="p">}</span>
+        <span class="n">url</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;https://ros-upload.xiaohongshu.com/</span><span class="si">{file_id}</span><span class="s2">?uploadId=</span><span class="si">{upload_id}</span><span class="s2">&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">request</span><span class="p">(</span><span class="s2">&quot;POST&quot;</span><span class="p">,</span> <span class="n">url</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">xml_string</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="n">headers</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="XhsClient.upload_file_with_slice"><a class="viewcode-back" href="../../source/xhs.html#xhs.XhsClient.upload_file_with_slice">[文档]</a>    <span class="k">def</span> <span class="nf">upload_file_with_slice</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">token</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+                               <span class="n">file_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="n">headers</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;X-Cos-Security-Token&quot;</span><span class="p">:</span> <span class="n">token</span><span class="p">}</span>
+        <span class="n">url</span> <span class="o">=</span> <span class="s2">&quot;https://ros-upload.xiaohongshu.com/&quot;</span> <span class="o">+</span> <span class="n">file_id</span>
+        <span class="n">upload_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_upload_id</span><span class="p">(</span><span class="n">file_id</span><span class="p">,</span> <span class="n">token</span><span class="p">)</span>
+        <span class="n">parts</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">part_num</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">file_path</span><span class="p">,</span> <span class="s2">&quot;rb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="c1"># read with 5M each time to upload</span>
+            <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+                <span class="n">data</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="mi">1024</span> <span class="o">*</span> <span class="mi">1024</span> <span class="o">*</span> <span class="mi">5</span><span class="p">)</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">data</span><span class="p">:</span>
+                    <span class="k">break</span>
+                <span class="n">params</span> <span class="o">=</span> <span class="p">{</span>
+                    <span class="s2">&quot;partNumber&quot;</span><span class="p">:</span> <span class="n">part_num</span><span class="p">,</span>
+                    <span class="s2">&quot;uploadId&quot;</span><span class="p">:</span> <span class="n">upload_id</span>
+                <span class="p">}</span>
+                <span class="n">res</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">request</span><span class="p">(</span><span class="s2">&quot;PUT&quot;</span><span class="p">,</span> <span class="n">url</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="n">params</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="n">headers</span><span class="p">)</span>
+                <span class="n">parts</span><span class="o">.</span><span class="n">append</span><span class="p">({</span>
+                    <span class="s2">&quot;PartNumber&quot;</span><span class="p">:</span> <span class="n">part_num</span><span class="p">,</span>
+                    <span class="s2">&quot;ETag&quot;</span><span class="p">:</span> <span class="n">res</span><span class="o">.</span><span class="n">headers</span><span class="p">[</span><span class="s2">&quot;Etag&quot;</span><span class="p">]</span>
+                <span class="p">})</span>
+                <span class="n">part_num</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">create_complete_multipart_upload</span><span class="p">(</span><span class="n">file_id</span><span class="p">,</span> <span class="n">token</span><span class="p">,</span> <span class="n">upload_id</span><span class="p">,</span> <span class="n">parts</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="XhsClient.upload_file"><a class="viewcode-back" href="../../source/xhs.html#xhs.XhsClient.upload_file">[文档]</a>    <span class="k">def</span> <span class="nf">upload_file</span><span class="p">(</span>
             <span class="bp">self</span><span class="p">,</span>
@@ -723,10 +834,16 @@
 <span class="sd">        :param content_type:  【&quot;video/mp4&quot;,&quot;image/jpeg&quot;,&quot;image/png&quot;】</span>
 <span class="sd">        :return:</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># 5M 为一个 part</span>
+        <span class="n">max_file_size</span> <span class="o">=</span> <span class="mi">5</span> <span class="o">*</span> <span class="mi">1024</span> <span class="o">*</span> <span class="mi">1024</span>
         <span class="n">url</span> <span class="o">=</span> <span class="s2">&quot;https://ros-upload.xiaohongshu.com/&quot;</span> <span class="o">+</span> <span class="n">file_id</span>
-        <span class="n">headers</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;X-Cos-Security-Token&quot;</span><span class="p">:</span> <span class="n">token</span><span class="p">,</span> <span class="s2">&quot;Content-Type&quot;</span><span class="p">:</span> <span class="n">content_type</span><span class="p">}</span>
-        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">file_path</span><span class="p">,</span> <span class="s2">&quot;rb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
-            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">request</span><span class="p">(</span><span class="s2">&quot;PUT&quot;</span><span class="p">,</span> <span class="n">url</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">f</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="n">headers</span><span class="p">)</span></div>
+        <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">getsize</span><span class="p">(</span><span class="n">file_path</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">max_file_size</span> <span class="ow">and</span> <span class="n">content_type</span> <span class="o">==</span> <span class="s2">&quot;video/mp4&quot;</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;video too large, &lt; 5M&quot;</span><span class="p">)</span>
+            <span class="c1"># return self.upload_file_with_slice(file_id, token, file_path)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">headers</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;X-Cos-Security-Token&quot;</span><span class="p">:</span> <span class="n">token</span><span class="p">,</span> <span class="s2">&quot;Content-Type&quot;</span><span class="p">:</span> <span class="n">content_type</span><span class="p">}</span>
+            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">file_path</span><span class="p">,</span> <span class="s2">&quot;rb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">request</span><span class="p">(</span><span class="s2">&quot;PUT&quot;</span><span class="p">,</span> <span class="n">url</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">f</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="n">headers</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="XhsClient.get_suggest_topic"><a class="viewcode-back" href="../../source/xhs.html#xhs.XhsClient.get_suggest_topic">[文档]</a>    <span class="k">def</span> <span class="nf">get_suggest_topic</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">keyword</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;通过关键词获取话题信息，发布笔记用</span>
@@ -796,7 +913,7 @@
             <span class="s2">&quot;Referer&quot;</span><span class="p">:</span> <span class="s2">&quot;https://creator.xiaohongshu.com/&quot;</span>
         <span class="p">}</span>
         <span class="nb">print</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="n">uri</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="n">headers</span><span class="p">)</span></div>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="n">uri</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="n">headers</span><span class="p">,</span> <span class="n">is_creator</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="XhsClient.create_image_note"><a class="viewcode-back" href="../../source/xhs.html#xhs.XhsClient.create_image_note">[文档]</a>    <span class="k">def</span> <span class="nf">create_image_note</span><span class="p">(</span>
             <span class="bp">self</span><span class="p">,</span>
