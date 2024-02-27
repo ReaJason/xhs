@@ -97,8 +97,9 @@ class XhsClient:
         self.proxies = proxies
         self.__session: requests.Session = requests.session()
         self.timeout = timeout
-        self.sign = sign
+        self.external_sign = sign
         self._host = "https://edith.xiaohongshu.com"
+        self._creator_host = "https://creator.xiaohongshu.com"
         self.home = "https://www.xiaohongshu.com"
         user_agent = user_agent or (
             "Mozilla/5.0 "
@@ -145,7 +146,7 @@ class XhsClient:
             self.__session.headers.update({"x-s-common": signs["x-s-common"]})
         else:
             self.__session.headers.update(
-                self.sign(
+                self.external_sign(
                     url,
                     data,
                     a1=self.cookie_dict.get("a1"),
@@ -177,13 +178,15 @@ class XhsClient:
         if isinstance(params, dict):
             final_uri = f"{uri}?" f"{'&'.join([f'{k}={v}' for k, v in params.items()])}"
         self._pre_headers(final_uri, is_creator=is_creator)
-        return self.request(method="GET", url=f"{self._host}{final_uri}", **kwargs)
+        return self.request(method="GET", url=f"{self._creator_host if is_creator else self._host}{final_uri}",
+                            **kwargs)
 
     def post(self, uri: str, data: dict, is_creator: bool = False, **kwargs):
         self._pre_headers(uri, data, is_creator=is_creator)
         json_str = json.dumps(data, separators=(",", ":"), ensure_ascii=False)
         return self.request(
-            method="POST", url=f"{self._host}{uri}", data=json_str.encode("utf-8"), **kwargs
+            method="POST", url=f"{self._creator_host if is_creator else self._host}{uri}", data=json_str.encode(),
+            **kwargs
         )
 
     def get_note_by_id(self, note_id: str):
@@ -530,9 +533,8 @@ class XhsClient:
                 cur_sub_comment_count = int(comment["sub_comment_count"])
                 cur_sub_comments = comment["sub_comments"]
                 result.extend(cur_sub_comments)
-                sub_comments_has_more = (
-                    comment["sub_comment_has_more"] and len(cur_sub_comments) < cur_sub_comment_count
-                )
+                sub_comments_has_more = comment["sub_comment_has_more"] and len(
+                    cur_sub_comments) < cur_sub_comment_count
                 sub_comment_cursor = comment["sub_comment_cursor"]
                 while sub_comments_has_more:
                     page_num = 30
@@ -540,9 +542,7 @@ class XhsClient:
                         note_id, comment["id"], num=page_num, cursor=sub_comment_cursor
                     )
                     sub_comments = sub_comments_res["comments"]
-                    sub_comments_has_more = (
-                        sub_comments_res["has_more"] and len(sub_comments) == page_num
-                    )
+                    sub_comments_has_more = sub_comments_res["has_more"] and len(sub_comments) == page_num
                     sub_comment_cursor = sub_comments_res["cursor"]
                     result.extend(sub_comments)
                     time.sleep(crawl_interval)
@@ -636,8 +636,8 @@ class XhsClient:
         return self.post(uri, data={})
 
     def send_code(self, phone: str, zone: str = 86):
-        uri = "/api/sns/web/v1/login/send_code"
-        params = {"phone": phone, "zone": zone}
+        uri = "/api/sns/web/v2/login/send_code"
+        params = {"phone": phone, "zone": zone, "type": "login"}
         return self.get(uri, params)
 
     def check_code(self, phone: str, code: str, zone: str = 86):
@@ -678,6 +678,38 @@ class XhsClient:
         uri = "/api/sns/web/v1/you/connections"
         params = {"num": num, "cursor": cursor}
         return self.get(uri, params)
+
+    def get_notes_summary(self):
+        uri = "/api/galaxy/creator/data/note_detail_new"
+        headers = {
+            "Referer": "https://creator.xiaohongshu.com/creator/notes?source=official"
+        }
+        return self.get(uri, headers=headers, is_creator=True)
+
+    def get_notes_statistics(self, page: int = 1, page_size: int = 48, sort_by="time", note_type=0, time=30,
+                             is_recent=True):
+        """
+        :param page: page num default is 1
+        :param page_size: page size, 12 or 24 or 36 or 48
+        :param sort_by: time default
+        :param note_type: 0 is all, 1 is images, 2 is video
+        :param time: fetch date
+        :param is_recent: default is false, when time is 7, this should be false
+        :return:
+        """
+        uri = "/api/galaxy/creator/data/note_stats/new"
+        params = {
+            "page": page,
+            "page_size": page_size,
+            "sort_by": sort_by,
+            "note_type": note_type,
+            "time": time,
+            "is_recent": is_recent
+        }
+        headers = {
+            "Referer": "https://creator.xiaohongshu.com/creator/notes?source=official"
+        }
+        return self.get(uri, params, is_creator=True, headers=headers)
 
     def get_upload_files_permit(self, file_type: str, count: int = 1) -> tuple:
         """获取文件上传的 id
@@ -847,7 +879,7 @@ class XhsClient:
             "Referer": "https://creator.xiaohongshu.com/"
         }
         print(data)
-        return self.post(uri, data, headers=headers)
+        return self.post(uri, data, headers=headers, is_creator=True)
 
     def create_image_note(
             self,

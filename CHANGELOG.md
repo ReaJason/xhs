@@ -5,6 +5,17 @@
 - Improve documentation
 - Add more test function
 
+## 0.2.10
+
+### Added
+
+- add get_notes_summary api
+- add get_notes_statistics api
+
+### Fixed
+
+- send_code v1 to v2
+
 ## 0.2.8
 
 ### Added
