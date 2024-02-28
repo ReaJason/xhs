@@ -9,7 +9,8 @@ from typing import NamedTuple
 import requests
 from lxml import etree
 
-from xhs.exception import DataFetchError, ErrorEnum, IPBlockError, SignError
+from xhs.exception import (DataFetchError, ErrorEnum, IPBlockError,
+                           NeedVerifyError, SignError)
 
 from .help import (cookie_jar_to_cookie_str, download_file,
                    get_imgs_url_from_note, get_search_id, get_valid_path_name,
@@ -166,12 +167,17 @@ class XhsClient:
             return response
         if data.get("success"):
             return data.get("data", data.get("success"))
-        elif data["code"] == ErrorEnum.IP_BLOCK.value.code:
-            raise IPBlockError(ErrorEnum.IP_BLOCK.value.msg)
-        elif data["code"] == ErrorEnum.SIGN_FAULT.value.code:
-            raise SignError(ErrorEnum.SIGN_FAULT.value.msg)
+        elif response.status_code == 471:
+            # someday someone maybe will bypass captcha
+            raise NeedVerifyError(
+                f"出现验证码，请求失败，Verifytype: {response.headers['Verifytype']}，Verifyuuid: {response.headers['Verifyuuid']}",
+                response=response)
+        elif data.get("code") == ErrorEnum.IP_BLOCK.value.code:
+            raise IPBlockError(ErrorEnum.IP_BLOCK.value.msg, response=response)
+        elif data.get("code") == ErrorEnum.SIGN_FAULT.value.code:
+            raise SignError(ErrorEnum.SIGN_FAULT.value.msg, response=response)
         else:
-            raise DataFetchError(data)
+            raise DataFetchError(data, response=response)
 
     def get(self, uri: str, params=None, is_creator: bool = False, **kwargs):
         final_uri = uri
