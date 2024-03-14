@@ -5,7 +5,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>xhs.core &#8212; xhs 0.2.10 文档</title>
+    <title>xhs.core &#8212; xhs 0.2.11 文档</title>
     <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/alabaster.css" />
     <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
@@ -43,7 +43,8 @@
 <span class="kn">import</span> <span class="nn">requests</span>
 <span class="kn">from</span> <span class="nn">lxml</span> <span class="kn">import</span> <span class="n">etree</span>
 
-<span class="kn">from</span> <span class="nn">xhs.exception</span> <span class="kn">import</span> <span class="n">DataFetchError</span><span class="p">,</span> <span class="n">ErrorEnum</span><span class="p">,</span> <span class="n">IPBlockError</span><span class="p">,</span> <span class="n">SignError</span>
+<span class="kn">from</span> <span class="nn">xhs.exception</span> <span class="kn">import</span> <span class="p">(</span><span class="n">DataFetchError</span><span class="p">,</span> <span class="n">ErrorEnum</span><span class="p">,</span> <span class="n">IPBlockError</span><span class="p">,</span>
+                           <span class="n">NeedVerifyError</span><span class="p">,</span> <span class="n">SignError</span><span class="p">)</span>
 
 <span class="kn">from</span> <span class="nn">.help</span> <span class="kn">import</span> <span class="p">(</span><span class="n">cookie_jar_to_cookie_str</span><span class="p">,</span> <span class="n">download_file</span><span class="p">,</span>
                    <span class="n">get_imgs_url_from_note</span><span class="p">,</span> <span class="n">get_search_id</span><span class="p">,</span> <span class="n">get_valid_path_name</span><span class="p">,</span>
@@ -200,12 +201,17 @@
             <span class="k">return</span> <span class="n">response</span>
         <span class="k">if</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;success&quot;</span><span class="p">):</span>
             <span class="k">return</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;data&quot;</span><span class="p">,</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;success&quot;</span><span class="p">))</span>
-        <span class="k">elif</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;code&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="n">ErrorEnum</span><span class="o">.</span><span class="n">IP_BLOCK</span><span class="o">.</span><span class="n">value</span><span class="o">.</span><span class="n">code</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="n">IPBlockError</span><span class="p">(</span><span class="n">ErrorEnum</span><span class="o">.</span><span class="n">IP_BLOCK</span><span class="o">.</span><span class="n">value</span><span class="o">.</span><span class="n">msg</span><span class="p">)</span>
-        <span class="k">elif</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;code&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="n">ErrorEnum</span><span class="o">.</span><span class="n">SIGN_FAULT</span><span class="o">.</span><span class="n">value</span><span class="o">.</span><span class="n">code</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="n">SignError</span><span class="p">(</span><span class="n">ErrorEnum</span><span class="o">.</span><span class="n">SIGN_FAULT</span><span class="o">.</span><span class="n">value</span><span class="o">.</span><span class="n">msg</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">response</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="mi">471</span><span class="p">:</span>
+            <span class="c1"># someday someone maybe will bypass captcha</span>
+            <span class="k">raise</span> <span class="n">NeedVerifyError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;出现验证码，请求失败，Verifytype: </span><span class="si">{response.headers[&#39;Verifytype&#39;]}</span><span class="s2">，Verifyuuid: </span><span class="si">{response.headers[&#39;Verifyuuid&#39;]}</span><span class="s2">&quot;</span><span class="p">,</span>
+                <span class="n">response</span><span class="o">=</span><span class="n">response</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;code&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="n">ErrorEnum</span><span class="o">.</span><span class="n">IP_BLOCK</span><span class="o">.</span><span class="n">value</span><span class="o">.</span><span class="n">code</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">IPBlockError</span><span class="p">(</span><span class="n">ErrorEnum</span><span class="o">.</span><span class="n">IP_BLOCK</span><span class="o">.</span><span class="n">value</span><span class="o">.</span><span class="n">msg</span><span class="p">,</span> <span class="n">response</span><span class="o">=</span><span class="n">response</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;code&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="n">ErrorEnum</span><span class="o">.</span><span class="n">SIGN_FAULT</span><span class="o">.</span><span class="n">value</span><span class="o">.</span><span class="n">code</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">SignError</span><span class="p">(</span><span class="n">ErrorEnum</span><span class="o">.</span><span class="n">SIGN_FAULT</span><span class="o">.</span><span class="n">value</span><span class="o">.</span><span class="n">msg</span><span class="p">,</span> <span class="n">response</span><span class="o">=</span><span class="n">response</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="n">DataFetchError</span><span class="p">(</span><span class="n">data</span><span class="p">)</span></div>
+            <span class="k">raise</span> <span class="n">DataFetchError</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">response</span><span class="o">=</span><span class="n">response</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="XhsClient.get"><a class="viewcode-back" href="../../source/xhs.html#xhs.XhsClient.get">[文档]</a>    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">uri</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">is_creator</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="n">final_uri</span> <span class="o">=</span> <span class="n">uri</span>
@@ -266,7 +272,7 @@
             <span class="k">return</span> <span class="n">dict_new</span>
 
         <span class="n">url</span> <span class="o">=</span> <span class="s2">&quot;https://www.xiaohongshu.com/explore/&quot;</span> <span class="o">+</span> <span class="n">note_id</span>
-        <span class="n">res</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;user-agent&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">user_agent</span><span class="p">})</span>
+        <span class="n">res</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;user-agent&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">user_agent</span><span class="p">,</span> <span class="s2">&quot;referer&quot;</span><span class="p">:</span> <span class="s2">&quot;https://www.xiaohongshu.com/&quot;</span><span class="p">})</span>
         <span class="n">html</span> <span class="o">=</span> <span class="n">res</span><span class="o">.</span><span class="n">text</span>
         <span class="n">state</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;window.__INITIAL_STATE__=({.*})&lt;/script&gt;&quot;</span><span class="p">,</span> <span class="n">html</span><span class="p">)[</span>
             <span class="mi">0</span>
@@ -912,8 +918,7 @@
         <span class="n">headers</span> <span class="o">=</span> <span class="p">{</span>
             <span class="s2">&quot;Referer&quot;</span><span class="p">:</span> <span class="s2">&quot;https://creator.xiaohongshu.com/&quot;</span>
         <span class="p">}</span>
-        <span class="nb">print</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="n">uri</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="n">headers</span><span class="p">,</span> <span class="n">is_creator</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></div>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="n">uri</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="n">headers</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="XhsClient.create_image_note"><a class="viewcode-back" href="../../source/xhs.html#xhs.XhsClient.create_image_note">[文档]</a>    <span class="k">def</span> <span class="nf">create_image_note</span><span class="p">(</span>
             <span class="bp">self</span><span class="p">,</span>
@@ -973,7 +978,6 @@
         <span class="p">)</span>
 
         <span class="n">res</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
-        <span class="nb">print</span><span class="p">(</span><span class="n">res</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">res</span><span class="p">[</span><span class="s2">&quot;data&quot;</span><span class="p">][</span><span class="s2">&quot;hasFirstFrame&quot;</span><span class="p">]:</span>
             <span class="n">image_id</span> <span class="o">=</span> <span class="n">res</span><span class="p">[</span><span class="s2">&quot;data&quot;</span><span class="p">][</span><span class="s2">&quot;firstFrameFileId&quot;</span><span class="p">]</span>
             <span class="k">return</span> <span class="n">image_id</span>
