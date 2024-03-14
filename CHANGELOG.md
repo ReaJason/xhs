@@ -5,6 +5,12 @@
 - Improve documentation
 - Add more test function
 
+## 0.2.11
+
+### Fixed
+
+- fix image and video post error
+
 ## 0.2.10
 
 ### Added

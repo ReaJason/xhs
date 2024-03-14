@@ -238,7 +238,7 @@ class XhsClient:
             return dict_new
 
         url = "https://www.xiaohongshu.com/explore/" + note_id
-        res = self.session.get(url, headers={"user-agent": self.user_agent})
+        res = self.session.get(url, headers={"user-agent": self.user_agent, "referer": "https://www.xiaohongshu.com/"})
         html = res.text
         state = re.findall(r"window.__INITIAL_STATE__=({.*})</script>", html)[
             0
@@ -884,8 +884,7 @@ class XhsClient:
         headers = {
             "Referer": "https://creator.xiaohongshu.com/"
         }
-        print(data)
-        return self.post(uri, data, headers=headers, is_creator=True)
+        return self.post(uri, data, headers=headers)
 
     def create_image_note(
             self,
@@ -945,7 +944,6 @@ class XhsClient:
         )
 
         res = response.json()
-        print(res)
         if res["data"]["hasFirstFrame"]:
             image_id = res["data"]["firstFrameFileId"]
             return image_id
