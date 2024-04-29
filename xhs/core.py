@@ -49,7 +49,7 @@ class NoteType(Enum):
 
 
 class SearchSortType(Enum):
-    """serach sort type"""
+    """search sort type"""
 
     # default
     GENERAL = "general"
@@ -71,7 +71,7 @@ class SearchNoteType(Enum):
 
 
 class Note(NamedTuple):
-    """note typle"""
+    """note type"""
 
     note_id: str
     title: str
@@ -102,7 +102,7 @@ class XhsClient:
         self._host = "https://edith.xiaohongshu.com"
         self._creator_host = "https://creator.xiaohongshu.com"
         self.home = "https://www.xiaohongshu.com"
-        user_agent = user_agent or (
+        self.user_agent = user_agent or (
             "Mozilla/5.0 "
             "(Windows NT 10.0; Win64; x64) "
             "AppleWebKit/537.36 "
@@ -131,14 +131,6 @@ class XhsClient:
     def session(self):
         return self.__session
 
-    @property
-    def user_agent(self):
-        return self.__session.headers.get("user-agent")
-
-    @user_agent.setter
-    def user_agent(self, user_agent: str):
-        self.__session.headers.update({"user-agent": user_agent})
-
     def _pre_headers(self, url: str, data=None, is_creator: bool = False):
         if is_creator:
             signs = sign(url, data, a1=self.cookie_dict.get("a1"))
@@ -151,7 +143,7 @@ class XhsClient:
                     url,
                     data,
                     a1=self.cookie_dict.get("a1"),
-                    web_session=self.cookie_dict.get("web_session"),
+                    web_session=self.cookie_dict.get("web_session", ""),
                 )
             )
 
@@ -240,9 +232,7 @@ class XhsClient:
         url = "https://www.xiaohongshu.com/explore/" + note_id
         res = self.session.get(url, headers={"user-agent": self.user_agent, "referer": "https://www.xiaohongshu.com/"})
         html = res.text
-        state = re.findall(r"window.__INITIAL_STATE__=({.*})</script>", html)[
-            0
-        ].replace("undefined", '""')
+        state = re.findall(r"window.__INITIAL_STATE__=({.*})</script>", html)[0].replace("undefined", '""')
         if state != "{}":
             note_dict = transform_json_keys(state)
             return note_dict["note"]["note_detail_map"][note_id]["note"]
@@ -570,7 +560,11 @@ class XhsClient:
         return self.post(uri, data)
 
     def comment_user(self, note_id: str, comment_id: str, content: str):
-        """
+        """comment a user comment
+
+        :param content: comment content
+        :param note_id: the id of the note
+        :param comment_id: target comment_id you want to comment
         :rtype: dict
         """
         uri = "/api/sns/web/v1/comment/post"
@@ -607,19 +601,19 @@ class XhsClient:
         data = {"note_oid": note_id}
         return self.post(uri, data)
 
-    def like_comment(self, note_id: str, comment_id: str):
-        uri = "/api/sns/web/v1/comment/like"
-        data = {"note_id": note_id, "comment_id": comment_id}
-        return self.post(uri, data)
-
     def dislike_note(self, note_id: str):
         uri = "/api/sns/web/v1/note/dislike"
         data = {"note_oid": note_id}
         return self.post(uri, data)
 
-    def dislike_comment(self, comment_id: str):
+    def like_comment(self, note_id: str, comment_id: str):
+        uri = "/api/sns/web/v1/comment/like"
+        data = {"note_id": note_id, "comment_id": comment_id}
+        return self.post(uri, data)
+
+    def dislike_comment(self, note_id: str, comment_id: str):
         uri = "/api/sns/web/v1/comment/dislike"
-        data = {"note_oid": comment_id}
+        data = {"note_id": note_id, "comment_id": comment_id}
         return self.post(uri, data)
 
     def get_qrcode(self):
