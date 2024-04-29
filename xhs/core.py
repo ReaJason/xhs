@@ -110,7 +110,7 @@ class XhsClient:
             "Chrome/111.0.0.0 Safari/537.36"
         )
         self.__session.headers = {
-            "user-agent": user_agent,
+            "user-agent": self.user_agent,
             "Content-Type": "application/json",
         }
         self.cookie = cookie
@@ -157,6 +157,7 @@ class XhsClient:
             data = response.json()
         except json.decoder.JSONDecodeError:
             return response
+        print(data)
         if response.status_code == 471 or response.status_code == 461:
             # someday someone maybe will bypass captcha
             verify_type = response.headers['Verifytype']

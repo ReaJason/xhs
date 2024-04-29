@@ -5,6 +5,12 @@
 - Improve documentation
 - Add more test function
 
+## 0.2.13
+
+### Fixed
+
+- fix login phone and logon qrcode error
+
 ## 0.2.12
 
 ### Fixed
