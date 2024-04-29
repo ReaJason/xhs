@@ -31,3 +31,8 @@ class SignError(RequestException):
 
 class NeedVerifyError(RequestException):
     """fetch error because need captcha"""
+
+    def __init__(self, *args, **kwargs):
+        self.verify_type = kwargs.pop("verify_type", None)
+        self.verify_uuid = kwargs.pop("verify_uuid", None)
+        super().__init__(*args, **kwargs)

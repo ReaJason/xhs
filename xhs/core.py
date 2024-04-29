@@ -157,13 +157,15 @@ class XhsClient:
             data = response.json()
         except json.decoder.JSONDecodeError:
             return response
-        if data.get("success"):
-            return data.get("data", data.get("success"))
-        elif response.status_code == 471:
+        if response.status_code == 471 or response.status_code == 461:
             # someday someone maybe will bypass captcha
+            verify_type = response.headers['Verifytype']
+            verify_uuid = response.headers['Verifyuuid']
             raise NeedVerifyError(
-                f"出现验证码，请求失败，Verifytype: {response.headers['Verifytype']}，Verifyuuid: {response.headers['Verifyuuid']}",
-                response=response)
+                f"出现验证码，请求失败，Verifytype: {verify_type}，Verifyuuid: {verify_uuid}",
+                response=response, verify_type=verify_type, verify_uuid=verify_uuid)
+        elif data.get("success"):
+            return data.get("data", data.get("success"))
         elif data.get("code") == ErrorEnum.IP_BLOCK.value.code:
             raise IPBlockError(ErrorEnum.IP_BLOCK.value.msg, response=response)
         elif data.get("code") == ErrorEnum.SIGN_FAULT.value.code:
