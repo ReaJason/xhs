@@ -5,6 +5,13 @@
 - Improve documentation
 - Add more test function
 
+## 0.2.12
+
+### Fixed
+
+- fix get_note_by_id_from_html broken
+- fix 461 and 471 should throw error
+
 ## 0.2.11
 
 ### Fixed
