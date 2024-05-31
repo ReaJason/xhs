@@ -1,4 +1,6 @@
 import os
+import random
+import time
 from time import sleep
 from playwright.sync_api import sync_playwright
 from plus.core_plus import XhsClientPLUS
@@ -33,18 +35,40 @@ def sign(uri, data=None, a1="", web_session=""):
             pass
     raise Exception("重试了这么多次还是无法签名成功，寄寄寄")
 
+def get_random(items):
+    return items[random.randint(0, len(items) - 1)]
+def comment_note(cl, note_id, my_comment, 需回复的评论):
+    comments_cursor = ""
+    result = []
+    comments_has_more = True
+    while comments_has_more:
+        comments_res = cl.get_note_comments(note_id, comments_cursor)
+        comments_has_more = comments_res.get("has_more", False)
+        comments_cursor = comments_res.get("cursor", "")
+        comments = comments_res["comments"]
+        for comment in comments:
+            content = comment["content"]
+            for c in 需回复的评论:
+                if c in content:
+                    result.append(comment)
+        time.sleep(1)
+    for item in result:
+        cl.comment_user(item["note_id"], comment_id=item["id"], content=my_comment)
+        print("评论：" + item["content"])
+    if len(result) > 0:
+        print("已评论：" + str(len(result)) + "条")
+
 class XhsCli():
 
     @staticmethod
     def get_client():
-        cookie = ("a1=18899128b85l5n8twc100c9axk1spz7kx7ki6j47f50000247056; webId=15840f0fd45c7d6368c7ee14b82e26cf; gid=yYYjjyJYj2CKyYYjjyJYDWV4Y212IY9ESy88TWiSj0CTy328MUuWTK888J4W82K8qYKJ4W2f; gid.sign=0bbbu1JE19T6P9g0+QaoPEwa61M=; abRequestId=15840f0fd45c7d6368c7ee14b82e26cf; customerClientId=106623081685495; customer-sso-sid=662a3091300000000000000236fecfb13cc3fac0; x-user-id-creator.xiaohongshu.com=641a8696000000001201269c; access-token-creator.xiaohongshu.com=customer.ares.AT-9d03357963a244878db71c7cc47e9c20-3bbd6fac68ef4c31ac1714f64f361526; web_session=040069b4a5e736438e5e8db173344b290f4ba6; websectiga=634d3ad75ffb42a2ade2c5e1705a73c845837578aeb31ba0e442d75c648da36a; sec_poison_id=6557c200-a45a-4c63-9fb9-af89bb8a5946; acw_tc=438041a218a18d743ec09ffe38fd6ae3d9455ea0ac7660fd86f8a78236038b4f; webBuild=4.16.1; xsecappid=xhs-pc-web; unread={%22ub%22:%226641e1f9000000001e024579%22%2C%22ue%22:%22664caed1000000001500bfe9%22%2C%22uc%22:22}")
+        cookie = "a1=18899128b85l5n8twc100c9axk1spz7kx7ki6j47f50000247056; webId=15840f0fd45c7d6368c7ee14b82e26cf; gid=yYYjjyJYj2CKyYYjjyJYDWV4Y212IY9ESy88TWiSj0CTy328MUuWTK888J4W82K8qYKJ4W2f; gid.sign=0bbbu1JE19T6P9g0+QaoPEwa61M=; abRequestId=15840f0fd45c7d6368c7ee14b82e26cf; customerClientId=106623081685495; x-user-id-creator.xiaohongshu.com=641a8696000000001201269c; acw_tc=2cb7f56c2db1ab1178d88ec9349ae7716ee5039359fb98f99b352f7b4639fe27; webBuild=4.17.2; web_session=040069b56ec5de1b76caaafa64344b95b6d93d; unread={%22ub%22:%22665094320000000015013592%22%2C%22ue%22:%226650b30300000000050049dc%22%2C%22uc%22:33}; websectiga=82e85efc5500b609ac1166aaf086ff8aa4261153a448ef0be5b17417e4512f28; sec_poison_id=3c5235c3-dd1b-4e5d-9399-6fd0045f6e9a; customer-sso-sid=68c51737287096782851612473a37ceec4330635; access-token-creator.xiaohongshu.com=customer.creator.AT-68c5173728709678285161271fr2elxhpukyeinu; galaxy_creator_session_id=i33NiON6p9INMejwq0rnzRlxnb7YKOiOZ9PR; galaxy.creator.beaker.session.id=1716630293620025046551; xsecappid=ugc"
         return XhsClientPLUS(cookie, sign=sign)
 
-list = ["6008201e000000000100a78e"]
+list = ["急需"]
 from tests.utils import beauty_print
 os.environ['HTTPS_PROXY'] = 'http://127.0.0.1:7890'
 os.environ['HTTP_PROXY'] = 'http://127.0.0.1:7890'
 cl = XhsCli.get_client()
-for item in list:
-    # print(cl.get_user_info(user_id=item))
-    cl.save_user_all_notes(user_id=item, dir_path="D:/xhs2", crawl_interval = 0)
+
+comment_note(cl, "664d568400000000050054b5", "121", list)

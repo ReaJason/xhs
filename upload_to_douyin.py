@@ -49,15 +49,20 @@ def find_file(find_path, file_type) -> list:
     return data_list
 
 def check_in(cookie_name, number):
-
+    chek_file(f"temp/issue.json")
     with open(f"temp/issue.json", "r") as file:
         json_data = json.load(file)
     data = json_data.get(cookie_name)
     if data is None:
         return False
     return number in data
-
+def chek_file(file_path):
+    if not os.path.exists(file_path):
+        # 如果文件不存在，使用open()函数以写入模式创建文件
+        with open(file_path, 'w') as file:
+            file.write({})
 def add_issue_id(cookie_name, id):
+    chek_file(f"temp/issue.json")
     with open(f"temp/issue.json", "r") as file:
         json_data = json.load(file)
     if cookie_name in json_data:

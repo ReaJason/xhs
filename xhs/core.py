@@ -101,6 +101,7 @@ class XhsClient:
         self.external_sign = sign
         self._host = "https://edith.xiaohongshu.com"
         self._creator_host = "https://creator.xiaohongshu.com"
+        self._pro_host = "https://pro.xiaohongshu.com"
         self.home = "https://www.xiaohongshu.com"
         self.user_agent = user_agent or (
             "Mozilla/5.0 "
@@ -157,7 +158,7 @@ class XhsClient:
             data = response.json()
         except json.decoder.JSONDecodeError:
             return response
-        print(data)
+        # print(data)
         if response.status_code == 471 or response.status_code == 461:
             # someday someone maybe will bypass captcha
             verify_type = response.headers['Verifytype']
@@ -187,6 +188,14 @@ class XhsClient:
         json_str = json.dumps(data, separators=(",", ":"), ensure_ascii=False)
         return self.request(
             method="POST", url=f"{self._creator_host if is_creator else self._host}{uri}", data=json_str.encode(),
+            **kwargs
+        )
+
+    def post2(self, uri: str, data: dict, is_creator: bool = False, **kwargs):
+        self._pre_headers(uri, data, is_creator=True)
+        json_str = json.dumps(data, separators=(",", ":"), ensure_ascii=False)
+        return self.request(
+            method="POST", url=f"{self._pro_host}{uri}", data=json_str.encode(),
             **kwargs
         )
 
@@ -841,6 +850,21 @@ class XhsClient:
             "page": {"page_size": 20, "page": 1},
         }
         return self.post(uri, data)["user_info_dtos"]
+
+    def val_del(self, note_id=""):
+        uri = f"web_api/sns/capa/postgw/permission/validate?note_id={note_id}&function_type=delete"
+        data = {
+        }
+        return self.post(uri, data)
+
+    def delete_note(self, note_id=""):
+        print(self.val_del(note_id))
+        uri = "web_api/sns/capa/postgw/note/delete"
+        data = {
+            "note_id": note_id
+        }
+        return self.post(uri, data)
+
 
     def create_note(self, title, desc, note_type, ats: list = None, topics: list = None,
                     image_info: dict = None,

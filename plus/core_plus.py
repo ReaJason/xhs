@@ -10,6 +10,15 @@ from xhs import XhsClient, Note, NoteType
 
 class XhsClientPLUS(XhsClient):
 
+    def send(self, user_id, msg):
+        uri = "/api/eros/pm/chat/message/send"
+        # "cursor": ,
+        data = {
+            "content" : msg,
+            "content_type": "TEXT",
+            "receiver_id":user_id
+        }
+        return self.post2(uri, data)
     def get_follow_user_list(self):
         uri = "/api/sns/v2/user/followings/self"
         # "cursor": ,
