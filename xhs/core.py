@@ -101,6 +101,7 @@ class XhsClient:
         self.external_sign = sign
         self._host = "https://edith.xiaohongshu.com"
         self._creator_host = "https://creator.xiaohongshu.com"
+        self._customer_host = "https://customer.xiaohongshu.com"
         self.home = "https://www.xiaohongshu.com"
         self.user_agent = user_agent or (
             "Mozilla/5.0 "
@@ -131,8 +132,8 @@ class XhsClient:
     def session(self):
         return self.__session
 
-    def _pre_headers(self, url: str, data=None, is_creator: bool = False):
-        if is_creator:
+    def _pre_headers(self, url: str, data=None, quick_sign: bool = False):
+        if quick_sign:
             signs = sign(url, data, a1=self.cookie_dict.get("a1"))
             self.__session.headers.update({"x-s": signs["x-s"]})
             self.__session.headers.update({"x-t": signs["x-t"]})
@@ -157,7 +158,6 @@ class XhsClient:
             data = response.json()
         except json.decoder.JSONDecodeError:
             return response
-        print(data)
         if response.status_code == 471 or response.status_code == 461:
             # someday someone maybe will bypass captcha
             verify_type = response.headers['Verifytype']
@@ -174,21 +174,34 @@ class XhsClient:
         else:
             raise DataFetchError(data, response=response)
 
-    def get(self, uri: str, params=None, is_creator: bool = False, **kwargs):
+    def get(self, uri: str, params=None, is_creator: bool = False, is_customer: bool = False, **kwargs):
         final_uri = uri
         if isinstance(params, dict):
             final_uri = f"{uri}?" f"{'&'.join([f'{k}={v}' for k, v in params.items()])}"
-        self._pre_headers(final_uri, is_creator=is_creator)
-        return self.request(method="GET", url=f"{self._creator_host if is_creator else self._host}{final_uri}",
+        self._pre_headers(final_uri, quick_sign=is_creator or is_customer)
+        endpoint = self._host
+        if is_customer:
+            endpoint = self._customer_host
+        elif is_creator:
+            endpoint = self._creator_host
+        return self.request(method="GET", url=f"{endpoint}{final_uri}",
                             **kwargs)
 
-    def post(self, uri: str, data: dict, is_creator: bool = False, **kwargs):
-        self._pre_headers(uri, data, is_creator=is_creator)
+    def post(self, uri: str, data: dict | None, is_creator: bool = False, is_customer: bool = False, **kwargs):
         json_str = json.dumps(data, separators=(",", ":"), ensure_ascii=False)
-        return self.request(
-            method="POST", url=f"{self._creator_host if is_creator else self._host}{uri}", data=json_str.encode(),
-            **kwargs
-        )
+        self._pre_headers(uri, data, quick_sign=is_creator or is_customer)
+        endpoint = self._host
+        if is_customer:
+            endpoint = self._customer_host
+        elif is_creator:
+            endpoint = self._creator_host
+        if data:
+            return self.request(
+                method="POST", url=f"{endpoint}{uri}", data=json_str.encode(),
+                **kwargs
+            )
+        else:
+            return self.request(method="POST", url=f"{endpoint}{uri}", **kwargs)
 
     def get_note_by_id(self, note_id: str):
         """
@@ -322,6 +335,13 @@ class XhsClient:
     def get_self_info2(self):
         uri = "/api/sns/web/v2/user/me"
         return self.get(uri)
+
+    def get_self_info_from_creator(self):
+        uri = "/api/galaxy/creator/home/personal_info"
+        headers = {
+            "referer": "https://creator.xiaohongshu.com/creator/home"
+        }
+        return self.get(uri, is_creator=True, headers=headers)
 
     def get_user_by_keyword(self, keyword: str,
                             page: int = 1,
@@ -652,6 +672,36 @@ class XhsClient:
         uri = "/api/sns/web/v1/login/code"
         data = {"mobile_token": mobile_token, "zone": zone, "phone": phone}
         return self.post(uri, data)
+
+    def get_qrcode_from_creator(self):
+        uri = "/api/cas/customer/web/qr-code"
+        data = {"service": "https://creator.xiaohongshu.com"}
+        return self.post(uri, data, is_customer=True)
+
+    def check_qrcode_from_creator(self, qr_code_id: str):
+        uri = "/api/cas/customer/web/qr-code"
+        params = {
+            "service": "https://creator.xiaohongshu.com",
+            "qr_code_id": qr_code_id,
+        }
+        return self.get(uri, params, is_customer=True)
+
+    def customer_login(self, ticket: str):
+        uri = "/sso/customer_login"
+        data = {
+            "ticket": ticket,
+            "login_service": "https://creator.xiaohongshu.com",
+            "subsystem_alias": "creator",
+            "set_global_domain": True
+        }
+        return self.post(uri, data, is_creator=True)
+
+    def login_from_creator(self):
+        uri = "/api/galaxy/user/cas/login"
+        headers = {
+            "referer": "https://creator.xiaohongshu.com/login"
+        }
+        return self.post(uri, None, is_creator=True, headers=headers)
 
     def get_user_collect_notes(self, user_id: str, num: int = 30, cursor: str = ""):
         uri = "/api/sns/web/v2/note/collect/page"
