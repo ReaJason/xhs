@@ -505,7 +505,7 @@ class XhsClient:
         :rtype: dict
         """
         uri = "/api/sns/web/v2/comment/page"
-        params = {"note_id": note_id, "cursor": cursor}
+        params = {"note_id": note_id, "cursor": cursor, "image_formats": "jpg,webp,avif"}
         return self.get(uri, params)
 
     def get_note_sub_comments(
@@ -739,14 +739,14 @@ class XhsClient:
         }
         return self.get(uri, headers=headers, is_creator=True)
 
-    def get_creator_note_list(self, tab:int = 0, page:int = 0):
+    def get_creator_note_list(self, tab: int = 0, page: int = 0):
         uri = "/api/galaxy/creator/note/user/posted"
         params = {"tab": tab, "page": page}
         headers = {
             "Referer": "https://creator.xiaohongshu.com/new/note-manager"
         }
         return self.get(uri, params, headers=headers, is_creator=True)
-      
+
     def get_notes_statistics(self, page: int = 1, page_size: int = 48, sort_by="time", note_type=0, time=30,
                              is_recent=True):
         """
