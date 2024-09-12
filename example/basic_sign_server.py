@@ -8,6 +8,8 @@ monkey.patch_all()
 
 app = Flask(__name__)
 
+A1 = ""
+
 
 def get_context_page(instance, stealth_js_path):
     chromium = instance.chromium
@@ -31,6 +33,7 @@ time.sleep(1)
 cookies = browser_context.cookies()
 for cookie in cookies:
     if cookie["name"] == "a1":
+        A1 = cookie["value"]
         print("当前浏览器 cookie 中 a1 值为：" + cookie["value"] + "，请将需要使用的 a1 设置成一样方可签名成功")
 print("跳转小红书首页成功，等待调用")
 
@@ -51,6 +54,11 @@ def hello_world():
     a1 = json["a1"]
     web_session = json["web_session"]
     return sign(uri, data, a1, web_session)
+
+
+@app.route("/a1", methods=["GET"])
+def get_a1():
+    return {'a1': A1}
 
 
 if __name__ == '__main__':
