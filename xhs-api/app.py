@@ -63,5 +63,10 @@ def hello_world():
     return sign(uri, data, a1, web_session)
 
 
+@app.route("/a1", methods=["GET"])
+def get_a1():
+    return {'a1': global_a1}
+
+
 if __name__ == '__main__':
     app.run(host="0.0.0.0", port=5005)
