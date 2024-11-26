@@ -47,7 +47,7 @@ if __name__ == '__main__':
     for _ in range(10):
         # 即便上面做了重试，还是有可能会遇到签名失败的情况，重试即可
         try:
-            note = xhs_client.get_note_by_id("6505318c000000001f03c5a6")
+            note = xhs_client.get_note_by_id("6505318c000000001f03c5a6", "xsec_token of the note")
             print(json.dumps(note, indent=4))
             print(help.get_imgs_url_from_note(note))
             break

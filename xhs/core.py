@@ -203,18 +203,25 @@ class XhsClient:
         else:
             return self.request(method="POST", url=f"{endpoint}{uri}", **kwargs)
 
-    def get_note_by_id(self, note_id: str):
+    def get_note_by_id(self, note_id: str, xsec_token: str, xsec_source: str = "pc_feed"):
         """
         :param note_id: note_id you want to fetch
         :type note_id: str
         :rtype: dict
         """
-        data = {"source_note_id": note_id, "image_scenes": ["CRD_WM_WEBP"]}
+
+        data = {
+            "source_note_id": note_id,
+            "image_formats": ["jpg", "webp", "avif"],
+            "extra": {"need_body_topic": 1},
+            "xsec_source": xsec_source,
+            "xsec_token": xsec_token
+        }
         uri = "/api/sns/web/v1/feed"
         res = self.post(uri, data)
         return res["items"][0]["note_card"]
 
-    def get_note_by_id_from_html(self, note_id: str):
+    def get_note_by_id_from_html(self, note_id: str, xsec_token: str, xsec_source: str = "pc_feed"):
         """get note info from "https://www.xiaohongshu.com/explore/" + note_id,
         and the return obj is equal to get_note_by_id
 
@@ -245,7 +252,7 @@ class XhsClient:
                     dict_new[new_key] = value
             return dict_new
 
-        url = "https://www.xiaohongshu.com/explore/" + note_id
+        url = f"https://www.xiaohongshu.com/explore/{note_id}?xsec_token={xsec_token}&xsec_source={xsec_source}"
         res = self.session.get(url, headers={"user-agent": self.user_agent, "referer": "https://www.xiaohongshu.com/"})
         html = res.text
         state = re.findall(r"window.__INITIAL_STATE__=({.*})</script>", html)[0].replace("undefined", '""')
@@ -463,11 +470,10 @@ class XhsClient:
             res = self.get_user_notes(user_id, cursor)
             has_more = res["has_more"]
             cursor = res["cursor"]
-            note_ids = map(lambda item: item["note_id"], res["notes"])
 
-            for note_id in note_ids:
+            for item in res["notes"]:
                 try:
-                    note = self.get_note_by_id(note_id)
+                    note = self.get_note_by_id(item["note_id"], item["xsec_token"])
                 except DataFetchError as e:
                     if ErrorEnum.NOTE_ABNORMAL.value.msg in e.__repr__() or ErrorEnum.NOTE_SECRETE_FAULT.value.msg in e.__repr__():
                         continue
