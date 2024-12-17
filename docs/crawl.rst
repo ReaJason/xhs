@@ -64,7 +64,7 @@
 
 评论用户
 ^^^^^^^^^^^^^^^^^^
-``xhs_client.delete_note_comment("笔记ID", "评论ID", "评论内容")``
+``xhs_client.comment_user("笔记ID", "评论ID", "评论内容")``
 
 关注用户
 ^^^^^^^^^^^^^^^^^^
