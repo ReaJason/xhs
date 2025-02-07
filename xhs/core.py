@@ -501,7 +501,7 @@ class XhsClient:
                 time.sleep(crawl_interval)
         return result
 
-    def get_note_comments(self, note_id: str, cursor: str = ""):
+    def get_note_comments(self, note_id: str, cursor: str = "", xsec_token: str = ""):
         """get note comments
 
         :param note_id: note id you want to fetch
@@ -511,7 +511,7 @@ class XhsClient:
         :rtype: dict
         """
         uri = "/api/sns/web/v2/comment/page"
-        params = {"note_id": note_id, "cursor": cursor, "image_formats": "jpg,webp,avif"}
+        params = {"note_id": note_id, "cursor": cursor, "image_formats": "jpg,webp,avif", 'xsec_token': xsec_token}
         return self.get(uri, params)
 
     def get_note_sub_comments(
