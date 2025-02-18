@@ -538,7 +538,7 @@ class XhsClient:
         }
         return self.get(uri, params)
 
-    def get_note_all_comments(self, note_id: str, crawl_interval: int = 1):
+    def get_note_all_comments(self, note_id: str, crawl_interval: int = 1, xsec_token: str = ""):
         """get note all comments include sub comments
 
         :param crawl_interval: crawl interval for fetch
@@ -549,7 +549,7 @@ class XhsClient:
         comments_has_more = True
         comments_cursor = ""
         while comments_has_more:
-            comments_res = self.get_note_comments(note_id, comments_cursor)
+            comments_res = self.get_note_comments(note_id, comments_cursor, xsec_token)
             comments_has_more = comments_res.get("has_more", False)
             comments_cursor = comments_res.get("cursor", "")
             comments = comments_res["comments"]
