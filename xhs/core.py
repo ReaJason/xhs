@@ -943,6 +943,7 @@ class XhsClient:
             "video_info": video_info,
         }
         headers = {
+            "Origin": "https://creator.xiaohongshu.com",
             "Referer": "https://creator.xiaohongshu.com/"
         }
         return self.post(uri, data, headers=headers)
