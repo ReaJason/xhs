@@ -14,7 +14,7 @@ RUN set -ex \
 # reference -> https://playwright.dev/python/docs/ci#via-containers
 RUN python -m pip install --upgrade pip \
     && pip install Flask gevent xhs playwright \
-    && rm -rf /var/lib/apt/lists/*ç
+    && rm -rf /var/lib/apt/lists/*
 
 RUN curl --insecure -L -o stealth.min.js  https://cdn.jsdelivr.net/gh/requireCool/stealth.min.js/stealth.min.js
 
